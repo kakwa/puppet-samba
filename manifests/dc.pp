@@ -35,7 +35,11 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class samba {
 
+class samba::dc(
 
+){
+    package{ $samba::params::packages:
+        ensure => installed,
+    }
 }
