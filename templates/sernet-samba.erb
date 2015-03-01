@@ -1,0 +1,34 @@
+# SAMBA_START_MODE defines how Samba should be started. Valid options are one of
+#   "none"    to not enable it at all,
+#   "classic" to use the classic smbd/nmbd/winbind daemons
+#   "ad"      to use the Active Directory server (which starts the smbd on its own)
+# (Be aware that you also need to enable the services/init scripts that
+# automatically start up the desired daemons.)
+SAMBA_START_MODE="ad"
+
+# SAMBA_RESTART_ON_UPDATE defines if the the services should be restarted when
+# the RPMs are updated. Setting this to "yes" effectively enables the
+# functionality of the try-restart parameter of the init scripts.
+SAMBA_RESTART_ON_UPDATE="no"
+
+# NMBD_EXTRA_OPTS may contain extra options that are passed as additional
+# arguments to the nmbd daemon
+NMBD_EXTRA_OPTS=""
+
+# WINBINDD_EXTRA_OPTS may contain extra options that are passed as additional
+# arguments to the winbindd daemon
+WINBINDD_EXTRA_OPTS=""
+
+# SMBD_EXTRA_OPTS may contain extra options that are passed as additional
+# arguments to the smbd daemon
+SMBD_EXTRA_OPTS=""
+
+# SAMBA_EXTRA_OPTS may contain extra options that are passed as additional
+# arguments to the samba daemon
+SAMBA_EXTRA_OPTS=""
+
+# SAMBA_IGNORE_NSUPDATE_G defines whether the samba daemon should be started
+# when 'nsupdate -g' is not available. Setting this to "yes" would mean that
+# samba will be started even without 'nsupdate -g'. This will lead to severe
+# problems without a proper workaround! 
+SAMBA_IGNORE_NSUPDATE_G="no"

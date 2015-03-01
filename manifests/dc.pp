@@ -36,10 +36,47 @@
 # Copyright 2015 Your name here, unless otherwise noted.
 #
 
-class samba::dc(
+class  samba::dc(
+  $domain     = undef,
+  $realm      = undef,
+  $dnsbackend = undef,
+  $adminpassword = undef,
+  $targetdir = '/var/lib/samba/'
+) inherits ::samba::params{
 
-){
-    package{ $samba::params::packages:
-        ensure => installed,
-    }
+  package{ 'SambaDC':
+    allow_virtual => true,
+    name   => "${::samba::params::packageSambaDC}",
+    ensure => 'installed',
+  }
+
+  exec{ 'provisionAD':
+    unless  => "/usr/bin/test -d ${targetdir}/sysvol/${realm}/",
+    command => "${::samba::params::sambaCmd} domain provision \
+--domain=${domain} --realm=${realm} --dns-backend=${dnsbackend} \
+--targetdir=${targetdir} --use-rfc2307",
+
+    require => Package['SambaDC'],
+  }
+
+  service{ 'SambaDC':
+    ensure => 'running',
+    name   => "${::samba::params::serviveSambaDC}",
+    require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
+  }
+
+  file{ "SambaOptsFile":
+    path    => "${::samba::params::sambaOptsFile}",
+    content => template("${::samba::params::sambaOptsTmpl}"),
+    require => Package['SambaDC'],
+  }
+
+  exec{ 'setAdminPassword':
+    unless  => "${::samba::params::sambaClientCmd} \
+//localhost/netlogon ${adminpassword} -UAdministrator  -c 'ls'",
+    command => "${::samba::params::sambaCmd} user setpassword \
+Administrator --newpassword=${adminpassword}",
+    require => Service['SambaDC'],
+  }
+
 }
