@@ -1,0 +1,14 @@
+{
+  "name": "kakwa-samba",
+  "version": "0.1.0",
+  "author": "kakwa",
+  "summary": "Samba Module",
+  "license": "MIT",
+  "source": "https://github.com/kakwa/puppet-samba",
+  "project_page": "https://github.com/kakwa/puppet-samba",
+  "issues_url": "https://github.com/kakwa/puppet-samba/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+
