@@ -29,11 +29,11 @@
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Pierre-Francois Carpentier <carpentier.pf@gmail.com>
 #
 # === Copyright
 #
-# Copyright 2015 Your name here, unless otherwise noted.
+# Copyright 2015 Pierre-Francois Carpentier, unless otherwise noted.
 #
 
 class  samba::dc(
@@ -44,6 +44,21 @@ class  samba::dc(
   $targetdir = '/var/lib/samba/'
 ) inherits ::samba::params{
 
+  case $dnsbackend {
+    'internal': {
+        $SamaDNS   = 'SAMBA_INTERNAL' 
+    }
+    'bindFlat': {
+        $SamaDNS   = 'BIND9_FLATFILE' 
+    }
+    'bindDLZ': {
+        $SamaDNS   = 'BIND9_FLATFILE' 
+    }
+    default: {
+        fail('unsupported dns backend, must be in [internal, bindFlat, bindDLZ]')
+    }
+  }
+
   package{ 'SambaDC':
     allow_virtual => true,
     name   => "${::samba::params::packageSambaDC}",
@@ -51,12 +66,16 @@ class  samba::dc(
   }
 
   exec{ 'provisionAD':
-    unless  => "/usr/bin/test -d ${targetdir}/sysvol/${realm}/",
-    command => "${::samba::params::sambaCmd} domain provision \
---domain=${domain} --realm=${realm} --dns-backend=${dnsbackend} \
---targetdir=${targetdir} --use-rfc2307",
-
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    unless  => "[ `find '${targetdir}/state/sysvol/' -iname '${realm}' | wc -l` -ne 0 ]",
+    command => "printf '' > '${::samba::params::smbConfFile}' && \
+${::samba::params::sambaCmd} domain provision \
+--domain='${domain}' --realm='${realm}' --dns-backend='$SamaDNS' \
+--targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
+--configfile='${::samba::params::smbConfFile}' && \
+mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     require => Package['SambaDC'],
+    notify  => Service['SambaDC'],
   }
 
   service{ 'SambaDC':

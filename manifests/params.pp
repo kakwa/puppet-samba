@@ -13,6 +13,7 @@ class samba::params(
           $sambaClientCmd   = '/usr/bin/smbclient'  
 	  $sambaOptsFile    = '/etc/default/sernet-samba'
 	  $sambaOptsTmpl    = "${module_name}/sernet-samba.erb"
+	  $smbConfFile      = '/etc/samba/smb.conf'
       }
       default: {
           fail('unsupported os')
