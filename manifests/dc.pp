@@ -73,6 +73,8 @@ class  samba::dc(
     fail('dns forwarder must be a valid IP address')
   }
 
+  validate_absolute_path($targetdir)
+
   package{ 'SambaDC':
     allow_virtual => true,
     name   => "${::samba::params::packageSambaDC}",
