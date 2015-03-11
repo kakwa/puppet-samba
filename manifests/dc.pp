@@ -37,11 +37,12 @@
 #
 
 class  samba::dc(
-  $domain     = undef,
-  $realm      = undef,
-  $dnsbackend = undef,
+  $domain        = undef,
+  $realm         = undef,
+  $dnsbackend    = undef,
+  $dnsforwarder  = undef,
   $adminpassword = undef,
-  $targetdir = '/var/lib/samba/'
+  $targetdir     = '/var/lib/samba/'
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -57,6 +58,19 @@ class  samba::dc(
     default: {
         fail('unsupported dns backend, must be in [internal, bindFlat, bindDLZ]')
     }
+  }
+
+  unless is_domain_name($realm){
+    fail('realm must be a valid domain')
+  }
+
+  $tmparr = split($realm, '[.]')
+  unless "$domain" == $tmparr[0] {
+    fail('domain must be the fist part of realm, ex: domain="ad" and realm="ad.example.com"')
+  }
+
+  unless $dnsforwarder == undef or is_ip_address($dnsforwarder){
+    fail('dns forwarder must be a valid IP address')
   }
 
   package{ 'SambaDC':
@@ -88,6 +102,18 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     path    => "${::samba::params::sambaOptsFile}",
     content => template("${::samba::params::sambaOptsTmpl}"),
     require => Package['SambaDC'],
+  }
+
+  if $dnsforwarder != undef {
+    ini_setting { "DnsForwareder":
+      ensure  => present,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'global',
+      setting => 'dns forwarder',
+      value   => "$dnsforwarder",
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
   }
 
   exec{ 'setAdminPassword':
