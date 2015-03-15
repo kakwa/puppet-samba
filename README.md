@@ -34,14 +34,6 @@ As of  march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choice in 
 
 This module requires puppetlabs-stdlib and puppetlabs-inifile modules.
 
-### Beginning with samba
-
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
-
 ## Usage
 
 ### Samba 4 AD DC
@@ -64,10 +56,9 @@ class { ::samba::dc:
 }
 ```
 
-
 ## Limitations
 
-For now, this module only works on RedHat CentOS
+For now, this module only works on RedHat/CentOS
 
 ## Development
 
