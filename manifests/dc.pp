@@ -37,13 +37,19 @@
 #
 
 class  samba::dc(
-  $domain        = undef,
-  $realm         = undef,
-  $dnsbackend    = undef,
-  $dnsforwarder  = undef,
-  $adminpassword = undef,
-  $targetdir     = '/var/lib/samba/',
-  $domainlevel   = '2008 R2',
+  $domain		= undef,
+  $realm		= undef,
+  $dnsbackend		= undef,
+  $dnsforwarder		= undef,
+  $adminpassword	= undef,
+  $ppolicycomplexity	= 'on',
+  $ppolicyplaintext	= 'off',
+  $ppolicyhistorylength = 24,
+  $ppolicyminpwdlength  = 7,
+  $ppolicyminpwdage     = 1,
+  $ppolicymaxpwdage     = 42,
+  $targetdir		= '/var/lib/samba/',
+  $domainlevel		= '2003',
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -74,6 +80,33 @@ class  samba::dc(
     default: {
         fail('unsupported domain level, must be in ["2003", "2008", "2008 R2"]')
     }
+  }
+
+  $checkpp = ['on', 'off', 'default']
+  $checkppstr = join($checkpp, ', ')
+
+  unless member($checkpp, $ppolicycomplexity){
+     fail("ppolicycomplexity must be in [${checkppstr}]")
+  }
+
+  unless member($checkpp, $ppolicyplaintext){
+     fail("ppolicyplaintext must be in [${checkppstr}]")
+  }
+
+  unless is_integer($ppolicyhistorylength){
+    fail('ppolicyhistorylength must be an integer')
+  }
+
+  unless is_integer($ppolicyminpwdlength){
+    fail('ppolicyminpwdlength must be an integer')
+  }
+
+  unless is_integer($ppolicyminpwdage){
+    fail('ppolicyminpwdage must be an integer')
+  }
+
+  unless is_integer($ppolicymaxpwdage){
+    fail('ppolicymaxpwdage must be an integer')
   }
 
   unless is_domain_name($realm){
@@ -157,4 +190,20 @@ Administrator --newpassword=${adminpassword}",
     command => "${::samba::params::sambaCmd} domain level raise --forest-level='${domainLevel}'",
     require => Exec['setDomainFunctionLevel'],
   }
+
+  exec{ 'setPPolicy':
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    unless  => "[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show \
+|sed 's/^.*:\ *\([0-9]\+\|on\|off\).*$/\1/gp;d' | md5sum )\" = \
+\"\$( printf '${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
+\\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' | md5sum )\" ]",
+    command => "${::samba::params::sambaCmd} domain passwordsettings set \
+--complexity='${ppolicycomplexity}' \
+--store-plaintext='${ppolicyplaintext}' \
+--history-length='${ppolicyhistorylength}' \
+--min-pwd-length='${ppolicyminpwdlength}' \
+--min-pwd-age='${ppolicyminpwdage}' \
+--max-pwd-age='${ppolicymaxpwdage}'",
+  }
+    
 }
