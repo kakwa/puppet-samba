@@ -50,6 +50,7 @@ class  samba::dc(
   $ppolicymaxpwdage     = 42,
   $targetdir		= '/var/lib/samba/',
   $domainlevel		= '2003',
+  $groups		= [],
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -206,4 +207,32 @@ Administrator --newpassword=${adminpassword}",
 --max-pwd-age='${ppolicymaxpwdage}'",
   }
     
+  define groupAdd{
+    $groupName        = $::samba::dc::groups[$title]['name']
+    $groupScope       = $::samba::dc::groups[$title]['scope']
+    $groupType        = $::samba::dc::groups[$title]['type']
+    $groupDescription = $::samba::dc::groups[$title]['description']
+
+    unless member($groupScope, ['Security', 'Distribution']) {
+	fail("scope of group '${groupName}' must be in ['Security', 'Distribution']")
+    }
+
+    unless member($groupType, ['Domain', 'Global', 'Universal']) {
+	fail("type of group '${groupName}' must be in ['Domain', 'Global', 'Universal']")
+    }
+
+    exec{ "add Group $name":
+      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+      unless  => "${::samba::params::sambaCmd} group list --verbose \
+|grep -qe '^${groupName}\ *${groupType}\ *${groupScope}$'",
+      command => "${::samba::params::sambaCmd} group add '${groupName}' \
+--group-scope='${groupScope}' --group-type='${groupType}' --description='${groupDescription}'",
+      require => Service['SambaDC'],
+    }
+  }
+
+  $groupSize  = size($::samba::dc::groups) - 1
+  $groupIndex = range(0, $groupSize)
+  groupAdd{ $groupIndex: }
+
 }
