@@ -194,6 +194,7 @@ Administrator --newpassword=${adminpassword}",
 
   exec{ 'setPPolicy':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    require => Service['SambaDC'],
     unless  => "[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show \
 |sed 's/^.*:\ *\([0-9]\+\|on\|off\).*$/\1/gp;d' | md5sum )\" = \
 \"\$( printf '${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
