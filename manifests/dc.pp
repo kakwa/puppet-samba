@@ -214,12 +214,16 @@ Administrator --newpassword=${adminpassword}",
     $groupType        = $::samba::dc::groups[$title]['type']
     $groupDescription = $::samba::dc::groups[$title]['description']
 
-    unless member($groupScope, ['Security', 'Distribution']) {
-	fail("scope of group '${groupName}' must be in ['Security', 'Distribution']")
+    $groupTypeList = ['Security', 'Distribution']
+    $groupTypeStr  = join($groupTypeList, ', ')
+    unless member($groupTypeList, $groupType) {
+	fail("type of group '${groupName}' must be in [$groupTypeStr]")
     }
 
-    unless member($groupType, ['Domain', 'Global', 'Universal']) {
-	fail("type of group '${groupName}' must be in ['Domain', 'Global', 'Universal']")
+    $groupScopeList = ['Domain', 'Global', 'Universal']
+    $groupScopeStr  = join($groupScopeList, ', ')
+    unless member($groupScopeList, $groupScope) {
+	fail("scope of group '${groupName}' must be in [$groupScopeStr]")
     }
 
     exec{ "add Group $name":
