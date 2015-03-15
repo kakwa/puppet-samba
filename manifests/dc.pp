@@ -42,7 +42,8 @@ class  samba::dc(
   $dnsbackend    = undef,
   $dnsforwarder  = undef,
   $adminpassword = undef,
-  $targetdir     = '/var/lib/samba/'
+  $targetdir     = '/var/lib/samba/',
+  $domainlevel   = '2008 R2',
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -56,7 +57,22 @@ class  samba::dc(
         $SamaDNS   = 'BIND9_FLATFILE' 
     }
     default: {
-        fail('unsupported dns backend, must be in [internal, bindFlat, bindDLZ]')
+        fail('unsupported dns backend, must be in ["internal", "bindFlat", "bindDLZ"]')
+    }
+  }
+
+  case $domainlevel {
+    '2003': {
+	$domainLevel = '2003'
+    }
+    '2008': {
+	$domainLevel = '2008'
+    }
+    '2008 R2': {
+	$domainLevel = '2008_R2'
+    }
+    default: {
+        fail('unsupported domain level, must be in ["2003", "2008", "2008 R2"]')
     }
   }
 
@@ -126,4 +142,19 @@ Administrator --newpassword=${adminpassword}",
     require => Service['SambaDC'],
   }
 
+  exec{ 'setDomainFunctionLevel':
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    unless  => "${::samba::params::sambaCmd} domain level show \
+| grep 'Domain function level' | grep -q \"${domainlevel}$\"",
+    command => "${::samba::params::sambaCmd} domain level raise --domain-level='${domainLevel}'",
+    require => Service['SambaDC'],
+  }
+
+  exec{ 'setForestFunctionLevel':
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    unless  => "${::samba::params::sambaCmd} domain level show \
+| grep 'Forest function level' | grep -q '${domainlevel}$'",
+    command => "${::samba::params::sambaCmd} domain level raise --forest-level='${domainLevel}'",
+    require => Exec['setDomainFunctionLevel'],
+  }
 }
