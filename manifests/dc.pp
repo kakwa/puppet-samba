@@ -196,7 +196,7 @@ Administrator --newpassword=${adminpassword}",
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     require => Service['SambaDC'],
     unless  => "[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show \
-|sed 's/^.*:\ *\([0-9]\+\|on\|off\).*$/\1/gp;d' | md5sum )\" = \
+|sed 's/^.*:\\ *\\([0-9]\\+\\|on\\|off\\).*$/\\1/gp;d' | md5sum )\" = \
 \"\$( printf '${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
 \\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' | md5sum )\" ]",
     command => "${::samba::params::sambaCmd} domain passwordsettings set \
@@ -229,7 +229,7 @@ Administrator --newpassword=${adminpassword}",
     exec{ "add Group $name":
       path    => '/bin:/sbin:/usr/bin:/usr/sbin',
       unless  => "${::samba::params::sambaCmd} group list --verbose \
-|grep -qe '^${groupName}\ *${groupType}\ *${groupScope}$'",
+|grep -qe '^${groupName}\\ *${groupType}\\ *${groupScope}$'",
       command => "${::samba::params::sambaCmd} group add '${groupName}' \
 --group-scope='${groupScope}' --group-type='${groupType}' --description='${groupDescription}'",
       require => Service['SambaDC'],
