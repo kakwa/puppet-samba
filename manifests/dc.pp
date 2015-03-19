@@ -36,7 +36,7 @@
 # Copyright 2015 Pierre-Francois Carpentier, unless otherwise noted.
 #
 
-class  samba::dc(
+class samba::dc(
   $domain		= undef,
   $realm		= undef,
   $dnsbackend		= undef,
@@ -54,6 +54,9 @@ class  samba::dc(
   $logonscripts         = [],
   $sambaloglevel        = 1,
   $logtosyslog          = false,
+  $globaloptions        = [],
+  $netlogonoptions      = [],
+  $sysvoloptions        = [],
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -327,4 +330,60 @@ Administrator --newpassword=${adminpassword}",
   $scriptIndex = range(0, $scriptSize)
   scriptAdd{ $scriptIndex: }
 
+  define globaloptionsDef{
+    $globaloptionsSetting    = $::samba::dc::globaloptions[$title]['setting']
+    $globaloptionsValue      = $::samba::dc::globaloptions[$title]['value']
+
+    ini_setting { "global param: ${globaloptionsSetting}":
+      ensure  => present,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'global',
+      setting => $globaloptionsSetting,
+      value   => $globaloptionsValue,
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
+  }
+
+  $globaloptionsSize  = size($::samba::dc::globaloptions) - 1
+  $globaloptionsIndex = range(0, $globaloptionsSize)
+  globaloptionsDef{ $globaloptionsIndex: }
+
+  define netlogonoptionsDef{
+    $netlogonoptionsSetting    = $::samba::dc::netlogonoptions[$title]['setting']
+    $netlogonoptionsValue      = $::samba::dc::netlogonoptions[$title]['value']
+
+    ini_setting { "netlogon param: ${netlogonoptionsSetting}":
+      ensure  => present,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'netlogon',
+      setting => $netlogonoptionsSetting,
+      value   => $netlogonoptionsValue,
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
+  }
+
+  $netlogonoptionsSize  = size($::samba::dc::netlogonoptions) - 1
+  $netlogonoptionsIndex = range(0, $netlogonoptionsSize)
+  netlogonoptionsDef{ $netlogonoptionsIndex: }
+
+  define sysvoloptionsDef{
+    $sysvoloptionsSetting    = $::samba::dc::sysvoloptions[$title]['setting']
+    $sysvoloptionsValue      = $::samba::dc::sysvoloptions[$title]['value']
+
+    ini_setting { "sysvol param: ${sysvoloptionsSetting}":
+      ensure  => present,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'sysvol',
+      setting => $sysvoloptionsSetting,
+      value   => $sysvoloptionsValue,
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
+  }
+
+  $sysvoloptionsSize  = size($::samba::dc::sysvoloptions) - 1 
+  $sysvoloptionsIndex = range(0, $sysvoloptionsSize)
+  sysvoloptionsDef{ $sysvoloptionsIndex: }
 }
