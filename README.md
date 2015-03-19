@@ -55,7 +55,7 @@ class { ::samba::dc:
   domainlevel           => '2003',              # Functionnality level ('2003', '2008' or '2008 R2')
   sambaloglevel         => 3,                   # Log level (from 1 to 10)
   logtosyslog           => false,               # Log not to file but to syslog
-  globaloptions         => [ 			            # custom options in section [global]
+  globaloptions         => [                    # custom options in section [global]
           { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
           { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
   ],
@@ -68,7 +68,7 @@ class { ::samba::dc:
       type        => 'Security',                # group type ('Security' or 'Distribution')
     },
     { name        => 'group2',
-      description	=> 'Group 2',
+      description => 'Group 2',
       scope	      => 'Global',
       type        => 'Distribution',
     },
