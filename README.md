@@ -58,8 +58,8 @@ class { ::samba::dc:
   ppolicymaxpwdage      => 42,                  # * Maximum password age (default: 42)
   targetdir             => '/var/lib/samba/',   # * Deployment directory 
                                                 #   (default: '/var/lib/samba/')
-  domainlevel           => '2003',              # * Functionnality level 
-                                                #   ('2003', '2008' or '2008 R2') (default 2003)
+  domainlevel           => '2003',              # * Functionnality level ('2003',
+                                                #   '2008' or '2008 R2') (default 2003)
   sambaloglevel         => 3,                   # * Log level (from 1 to 10) (default: 1)
   logtosyslog           => false,               # * Log not to file but to syslog 
                                                 #   (default: false)
