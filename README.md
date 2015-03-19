@@ -40,32 +40,32 @@ This module requires puppetlabs-stdlib and puppetlabs-inifile modules.
 
 ```puppet
 class { ::samba::dc:
-  domain		=> 'ad',		# AD domain name
-  realm			=> 'ad.example.org',	# realm name (must match domain)
-  dnsbackend		=> 'internal',		# DNS backend ('internal', 'bindFlat' or 'bindDLZ')
-  dnsforwarder		=> 8.8.8.8,		# Dns forwarder IP
-  adminpassword		=> P455WordS,		# Administrator password
-  ppolicycomplexity	=> 'on',		# Enable password policy
-  ppolicyplaintext	=> 'off',		# Store password in plain text
-  ppolicyhistorylength	=> 24,			# Password history length
-  ppolicyminpwdlength	=> 7,			# Minimum password length
-  ppolicyminpwdage	=> 1,			# Minimum password age
-  ppolicymaxpwdage	=> 42,			# Maximum password age
-  targetdir		=> '/var/lib/samba/',	# Deployment directory
-  domainlevel		=> '2003',		# Functionnality level ('2003', '2008' or '2008 R2')
+  domain                => 'ad',                # AD domain name
+  realm                 => 'ad.example.org',    # realm name (must match domain)
+  dnsbackend            => 'internal',          # DNS backend ('internal', 'bindFlat' or 'bindDLZ')
+  dnsforwarder          => 8.8.8.8,             # Dns forwarder IP
+  adminpassword         => P455WordS,           # Administrator password
+  ppolicycomplexity     => 'on',                # Enable password policy
+  ppolicyplaintext      => 'off',               # Store password in plain text
+  ppolicyhistorylength  => 24,                  # Password history length
+  ppolicyminpwdlength   => 7,                   # Minimum password length
+  ppolicyminpwdage      => 1,                   # Minimum password age
+  ppolicymaxpwdage      => 42,                  # Maximum password age
+  targetdir             => '/var/lib/samba/',   # Deployment directory
+  domainlevel           => '2003',              # Functionnality level ('2003', '2008' or '2008 R2')
   sambaloglevel         => 3,                   # Log level (from 1 to 10)
   logtosyslog           => false,               # Log not to file but to syslog
   globaloptions         => [ 			# custom options in section [global]
           { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
           { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
   ],
-  netlogonoptions       => [],			# custom options in section [netlogon]
-  sysvoloptions         => [],			# custom options in section [sysvol]
+  netlogonoptions       => [],                  # custom options in section [netlogon]
+  sysvoloptions         => [],                  # custom options in section [sysvol]
   groups		=> [
-		{ name		=> 'group1',	# group name
-		  description	=> 'Group 1', 	# group description
-		  scope		=> 'Domain',	# group scope ('Domain', 'Global' or 'Universal')
-		  type		=> 'Security',	# group type ('Security' or 'Distribution')
+		{ name		=> 'group1',    # group name
+		  description	=> 'Group 1',   # group description
+		  scope		=> 'Domain',    # group scope ('Domain', 'Global' or 'Universal')
+		  type		=> 'Security',  # group type ('Security' or 'Distribution')
 		},
 		{ name		=> 'group2',
 		  description	=> 'Group 2',
@@ -75,9 +75,9 @@ class { ::samba::dc:
   ],
   logonscripts    => [
                 { name          => 'login1.cmd', # logon script name
-                  content       => 'echo login script 1 # logon script content
+                  content       => 'echo login script 1 
 ping -n 11 127.0.0.1 > nul
-',
+',                                               # logon script content
                 },
                 { name          => 'login2.cmd',
                   content       => 'echo login script 2
