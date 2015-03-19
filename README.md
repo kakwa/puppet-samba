@@ -89,12 +89,12 @@ class { ::samba::dc:
       content       => 'echo login script 1 
 ping -n 11 127.0.0.1 > nul
 ',                                            # * logon script content
-                },
-                { name          => 'login2.cmd',
+    },
+    { name          => 'login2.cmd',
                   content       => 'echo login script 2
 ping -n 11 127.0.0.1 > nul
 ',
-                },
+    },
   ],
 }
 ```
