@@ -42,7 +42,7 @@ This module requires puppetlabs-stdlib and puppetlabs-inifile modules.
 class { ::samba::dc:
   # Mandatory parameters
   domain                => 'ad',              # * AD domain name
-  realm                 => 'ad.example.org',  # * realm name (must match domain)
+  realm                 => 'ad.example.org',  # * Realm name (must match domain)
   dnsbackend            => 'internal',        # * DNS backend ('internal', 
                                               #   'bindFlat' or 'bindDLZ')
   adminpassword         => P455WordS,         # * Administrator password
@@ -63,14 +63,14 @@ class { ::samba::dc:
   sambaloglevel         => 3,                 # * Log level (from 1 to 10) (default: 1)
   logtosyslog           => false,             # * Log not to file but to syslog 
                                               #   (default: false)
-  globaloptions         => [                  # * custom options in section [global] 
+  globaloptions         => [                  # * Custom options in section [global] 
                                               #   (default: [])
           { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
           { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
   ],
-  netlogonoptions       => [],                # * custom options in section [netlogon]
-  sysvoloptions         => [],                # * custom options in section [sysvol]
-  groups		=> [                          # list of groups (default: [])
+  netlogonoptions       => [],                # * Custom options in section [netlogon]
+  sysvoloptions         => [],                # * Custom options in section [sysvol]
+  groups		=> [                          # * List of groups (default: [])
     { name        => 'group1',                # * group name
       description => 'Group 1',               # * group description
       scope       => 'Domain',                # * group scope 
@@ -84,11 +84,11 @@ class { ::samba::dc:
       type        => 'Distribution',
     },
   ],
-  logonscripts    => [                        # * logon scripts (default: [])
-    { name          => 'login1.cmd',          # * logon script name
+  logonscripts    => [                        # * Logon scripts (default: [])
+    { name          => 'login1.cmd',          # * Logon script name
       content       => 'echo login script 1 
 ping -n 11 127.0.0.1 > nul
-',                                            # * logon script content
+',                                            # * Logon script content
     },
     { name          => 'login2.cmd',
                   content       => 'echo login script 2
