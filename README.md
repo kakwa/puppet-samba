@@ -53,6 +53,8 @@ class { ::samba::dc:
   ppolicymaxpwdage	=> 42,			# Maximum password age
   targetdir		=> '/var/lib/samba/',	# Deployment directory
   domainlevel		=> '2003',		# Functionnality level ('2003', '2008' or '2008 R2')
+  sambaloglevel         => 3,                   # Log level (from 1 to 10)
+  logtosyslog           => false,               # Log not to file but to syslog
   groups		=> [
 		{ name		=> 'group1',	# group name
 		  description	=> 'Group 1', 	# group description

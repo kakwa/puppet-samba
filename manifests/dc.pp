@@ -52,6 +52,8 @@ class  samba::dc(
   $domainlevel		= '2003',
   $groups		= [],
   $logonscripts         = [],
+  $sambaloglevel        = 1,
+  $logtosyslog          = false,
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -101,6 +103,14 @@ class  samba::dc(
 
   unless is_integer($ppolicyminpwdlength){
     fail('ppolicyminpwdlength must be an integer')
+  }
+
+  unless is_integer($sambaloglevel) and $sambaloglevel >= 0 and $sambaloglevel <= 10{
+    fail('loglevel must be an integer between 0 and 10')
+  }
+
+  unless is_bool($logtosyslog){
+    fail('logtosyslog must be a boolean')
   }
 
   unless is_integer($ppolicyminpwdage){
@@ -157,6 +167,61 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     path    => "${::samba::params::sambaOptsFile}",
     content => template("${::samba::params::sambaOptsTmpl}"),
     require => Package['SambaDC'],
+  }
+
+  ini_setting { "LogLevel":
+    ensure  => present,
+    path    => "${::samba::params::smbConfFile}",
+    section => 'global',
+    setting => 'log level',
+    value   => "$sambaloglevel",
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
+  }
+
+  if $logtosyslog {
+
+    ini_setting { "SyslogLogLevel":
+      ensure  => present,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'global',
+      setting => 'syslog',
+      value   => "$sambaloglevel",
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
+
+    ini_setting { "LogToSyslog":
+      ensure  => present,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'global',
+      setting => 'syslog only',
+      value   => "yes",
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
+  }
+  else {
+    ini_setting { "DontLogToSyslog":
+      ensure  => present,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'global',
+      setting => 'syslog only',
+      value   => "no",
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
+
+    ini_setting { "SyslogLogLevel":
+      ensure  => absent,
+      path    => "${::samba::params::smbConfFile}",
+      section => 'global',
+      setting => 'syslog',
+      require => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
+    }
+
+
   }
 
   if $dnsforwarder != undef {
