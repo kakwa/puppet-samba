@@ -55,22 +55,22 @@ class { ::samba::dc:
   domainlevel           => '2003',              # Functionnality level ('2003', '2008' or '2008 R2')
   sambaloglevel         => 3,                   # Log level (from 1 to 10)
   logtosyslog           => false,               # Log not to file but to syslog
-  globaloptions         => [ 			# custom options in section [global]
+  globaloptions         => [ 			            # custom options in section [global]
           { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
           { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
   ],
   netlogonoptions       => [],                  # custom options in section [netlogon]
   sysvoloptions         => [],                  # custom options in section [sysvol]
-  groups		=> [
-    { name		=> 'group1',            # group name
-      description	=> 'Group 1',           # group description
-      scope		=> 'Domain',            # group scope ('Domain', 'Global' or 'Universal')
-      type		=> 'Security',          # group type ('Security' or 'Distribution')
+  groups		=> [                                # list of groups
+    { name        => 'group1',                  # group name
+      description	=> 'Group 1',                 # group description
+      scope       => 'Domain',                  # group scope ('Domain', 'Global' or 'Universal')
+      type        => 'Security',                # group type ('Security' or 'Distribution')
     },
-    { name		=> 'group2',
+    { name        => 'group2',
       description	=> 'Group 2',
-      scope		=> 'Global',
-      type		=> 'Distribution',
+      scope	      => 'Global',
+      type        => 'Distribution',
     },
   ],
   logonscripts    => [
