@@ -62,22 +62,22 @@ class { ::samba::dc:
   netlogonoptions       => [],                  # custom options in section [netlogon]
   sysvoloptions         => [],                  # custom options in section [sysvol]
   groups		=> [
-		{ name		=> 'group1',    # group name
-		  description	=> 'Group 1',   # group description
-		  scope		=> 'Domain',    # group scope ('Domain', 'Global' or 'Universal')
-		  type		=> 'Security',  # group type ('Security' or 'Distribution')
-		},
-		{ name		=> 'group2',
-		  description	=> 'Group 2',
-		  scope		=> 'Global',
-		  type		=> 'Distribution',
-		},
+    { name		=> 'group1',            # group name
+      description	=> 'Group 1',           # group description
+      scope		=> 'Domain',            # group scope ('Domain', 'Global' or 'Universal')
+      type		=> 'Security',          # group type ('Security' or 'Distribution')
+    },
+    { name		=> 'group2',
+      description	=> 'Group 2',
+      scope		=> 'Global',
+      type		=> 'Distribution',
+    },
   ],
   logonscripts    => [
-                { name          => 'login1.cmd', # logon script name
-                  content       => 'echo login script 1 
+    { name          => 'login1.cmd',            # logon script name
+      content       => 'echo login script 1 
 ping -n 11 127.0.0.1 > nul
-',                                               # logon script content
+',                                              # logon script content
                 },
                 { name          => 'login2.cmd',
                   content       => 'echo login script 2
