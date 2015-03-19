@@ -67,7 +67,7 @@ class { ::samba::dc:
 		  type		=> 'Distribution',
 		}
 		],
-logonscripts    => [
+  logonscripts    => [
                 { name          => 'login1.cmd', # logon script name
                   content       => 'echo login script 1 # logon script content
 ping -n 11 127.0.0.1 > nul
