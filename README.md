@@ -71,7 +71,7 @@ class { ::samba::dc:
 		  description	=> 'Group 2',
 		  scope		=> 'Global',
 		  type		=> 'Distribution',
-		}
+		},
   ],
   logonscripts    => [
                 { name          => 'login1.cmd', # logon script name
