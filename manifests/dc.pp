@@ -51,6 +51,7 @@ class  samba::dc(
   $targetdir		= '/var/lib/samba/',
   $domainlevel		= '2003',
   $groups		= [],
+  $logonscripts         = [],
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -125,6 +126,8 @@ class  samba::dc(
 
   validate_absolute_path($targetdir)
 
+  $realmDowncase = downcase($realm)
+
   package{ 'SambaDC':
     allow_virtual => true,
     name   => "${::samba::params::packageSambaDC}",
@@ -133,7 +136,7 @@ class  samba::dc(
 
   exec{ 'provisionAD':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "[ `find '${targetdir}/state/sysvol/' -iname '${realm}' | wc -l` -ne 0 ]",
+    unless  => "test -d '${targetdir}/state/sysvol/$realmDowncase/'",
     command => "printf '' > '${::samba::params::smbConfFile}' && \
 ${::samba::params::sambaCmd} domain provision \
 --domain='${domain}' --realm='${realm}' --dns-backend='$SamaDNS' \
@@ -239,5 +242,24 @@ Administrator --newpassword=${adminpassword}",
   $groupSize  = size($::samba::dc::groups) - 1
   $groupIndex = range(0, $groupSize)
   groupAdd{ $groupIndex: }
+
+  define scriptAdd{
+    $scriptName       = $::samba::dc::logonscripts[$title]['name']
+    $scriptContent    = $::samba::dc::logonscripts[$title]['content']
+
+    $scriptPath = "${::samba::dc::targetdir}/state/sysvol/${::samba::dc::realmDowncase}/scripts/${scriptName}"
+    validate_absolute_path($scriptPath)
+
+
+    file { "${scriptPath}":
+       content => "${scriptContent}",
+       mode    => "0755",
+       require => Exec['provisionAD'],
+    }
+  }
+
+  $scriptSize  = size($::samba::dc::logonscripts) - 1
+  $scriptIndex = range(0, $scriptSize)
+  scriptAdd{ $scriptIndex: }
 
 }
