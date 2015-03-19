@@ -62,9 +62,9 @@ class { ::samba::dc:
           { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
           { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
   ],
-  netlogonoptions       => [],                  # custom options in section [netlogon] (default: [])
-  sysvoloptions         => [],                  # custom options in section [sysvol] (default: [])
-  groups		=> [                    # list of groups (default: [])
+  netlogonoptions       => [],                  # custom options in section [netlogon]
+  sysvoloptions         => [],                  # custom options in section [sysvol]
+  groups		=> [                            # list of groups (default: [])
     { name        => 'group1',                  # group name
       description => 'Group 1',                 # group description
       scope       => 'Domain',                  # group scope ('Domain', 'Global' or 'Universal')
