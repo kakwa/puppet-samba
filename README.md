@@ -61,15 +61,15 @@ class { ::samba::dc:
   ],
   netlogonoptions       => [],                  # custom options in section [netlogon]
   sysvoloptions         => [],                  # custom options in section [sysvol]
-  groups		=> [                                # list of groups
+  groups		=> [                    # list of groups
     { name        => 'group1',                  # group name
-      description	=> 'Group 1',                 # group description
+      description => 'Group 1',                 # group description
       scope       => 'Domain',                  # group scope ('Domain', 'Global' or 'Universal')
       type        => 'Security',                # group type ('Security' or 'Distribution')
     },
     { name        => 'group2',
       description => 'Group 2',
-      scope	      => 'Global',
+      scope       => 'Global',
       type        => 'Distribution',
     },
   ],
@@ -90,7 +90,7 @@ ping -n 11 127.0.0.1 > nul
 
 ## Limitations
 
-For now, this module only works on RedHat/CentOS
+For now, this module only works on RedHat/CentOS, with Sernet packages.
 
 ## Development
 
