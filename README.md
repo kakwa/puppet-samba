@@ -40,28 +40,31 @@ This module requires puppetlabs-stdlib and puppetlabs-inifile modules.
 
 ```puppet
 class { ::samba::dc:
+  # Mandatory parameters
   domain                => 'ad',                # AD domain name
   realm                 => 'ad.example.org',    # realm name (must match domain)
   dnsbackend            => 'internal',          # DNS backend ('internal', 'bindFlat' or 'bindDLZ')
-  dnsforwarder          => 8.8.8.8,             # Dns forwarder IP
   adminpassword         => P455WordS,           # Administrator password
-  ppolicycomplexity     => 'on',                # Enable password policy
-  ppolicyplaintext      => 'off',               # Store password in plain text
-  ppolicyhistorylength  => 24,                  # Password history length
-  ppolicyminpwdlength   => 7,                   # Minimum password length
-  ppolicyminpwdage      => 1,                   # Minimum password age
-  ppolicymaxpwdage      => 42,                  # Maximum password age
-  targetdir             => '/var/lib/samba/',   # Deployment directory
-  domainlevel           => '2003',              # Functionnality level ('2003', '2008' or '2008 R2')
-  sambaloglevel         => 3,                   # Log level (from 1 to 10)
-  logtosyslog           => false,               # Log not to file but to syslog
-  globaloptions         => [                    # custom options in section [global]
+
+  # Optionnal parameters
+  dnsforwarder          => 8.8.8.8,             # Dns forwarder IP (default: undef)
+  ppolicycomplexity     => 'on',                # Enable password policy (default: on)
+  ppolicyplaintext      => 'off',               # Store password in plain text (default: off)
+  ppolicyhistorylength  => 24,                  # Password history length (default: 24)
+  ppolicyminpwdlength   => 7,                   # Minimum password length (default: 7)
+  ppolicyminpwdage      => 1,                   # Minimum password age (default: 1)
+  ppolicymaxpwdage      => 42,                  # Maximum password age (default: 42)
+  targetdir             => '/var/lib/samba/',   # Deployment directory (default: '/var/lib/samba/')
+  domainlevel           => '2003',              # Functionnality level ('2003', '2008' or '2008 R2') (default 2003)
+  sambaloglevel         => 3,                   # Log level (from 1 to 10) (default: 1)
+  logtosyslog           => false,               # Log not to file but to syslog (default false)
+  globaloptions         => [                    # custom options in section [global] (default: [])
           { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
           { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
   ],
-  netlogonoptions       => [],                  # custom options in section [netlogon]
-  sysvoloptions         => [],                  # custom options in section [sysvol]
-  groups		=> [                    # list of groups
+  netlogonoptions       => [],                  # custom options in section [netlogon] (default: [])
+  sysvoloptions         => [],                  # custom options in section [sysvol] (default: [])
+  groups		=> [                    # list of groups (default: [])
     { name        => 'group1',                  # group name
       description => 'Group 1',                 # group description
       scope       => 'Domain',                  # group scope ('Domain', 'Global' or 'Universal')
@@ -73,7 +76,7 @@ class { ::samba::dc:
       type        => 'Distribution',
     },
   ],
-  logonscripts    => [
+  logonscripts    => [                          # logon scripts (default: [])
     { name          => 'login1.cmd',            # logon script name
       content       => 'echo login script 1 
 ping -n 11 127.0.0.1 > nul
