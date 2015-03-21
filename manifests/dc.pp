@@ -147,6 +147,7 @@ class samba::dc(
     ensure => 'installed',
   }
 
+  # Provision the Domain Controler
   exec{ 'provisionAD':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "test -d '${targetdir}/state/sysvol/$realmDowncase/'",
@@ -166,12 +167,14 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
   }
 
+  # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
   file{ "SambaOptsFile":
     path    => "${::samba::params::sambaOptsFile}",
     content => template("${::samba::params::sambaOptsTmpl}"),
     require => Package['SambaDC'],
   }
 
+  # Configure Loglevel
   ini_setting { "LogLevel":
     ensure  => present,
     path    => "${::samba::params::smbConfFile}",
@@ -182,6 +185,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     notify  => Service['SambaDC'],
   }
 
+  # If specify, configure syslog
   if $logtosyslog {
 
     ini_setting { "SyslogLogLevel":
@@ -204,6 +208,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
       notify  => Service['SambaDC'],
     }
   }
+  # If not, keep login ing file, and disable syslog
   else {
     ini_setting { "DontLogToSyslog":
       ensure  => present,
@@ -227,6 +232,8 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
 
   }
 
+  # Configure dns forwarder 
+  # (if not specify, keep the default from provisioning)
   if $dnsforwarder != undef {
     ini_setting { "DnsForwareder":
       ensure  => present,
@@ -239,6 +246,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     }
   }
 
+  # Check and set administrator password
   exec{ 'setAdminPassword':
     unless  => "${::samba::params::sambaClientCmd} \
 //localhost/netlogon ${adminpassword} -UAdministrator  -c 'ls'",
@@ -247,6 +255,7 @@ Administrator --newpassword=${adminpassword}",
     require => Service['SambaDC'],
   }
 
+  # Configure Domain function level
   exec{ 'setDomainFunctionLevel':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "${::samba::params::sambaCmd} domain level show \
@@ -255,6 +264,7 @@ Administrator --newpassword=${adminpassword}",
     require => Service['SambaDC'],
   }
 
+  # Configure Forest function level
   exec{ 'setForestFunctionLevel':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "${::samba::params::sambaCmd} domain level show \
@@ -263,6 +273,7 @@ Administrator --newpassword=${adminpassword}",
     require => Exec['setDomainFunctionLevel'],
   }
 
+  # Configure Password Policy
   exec{ 'setPPolicy':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     require => Service['SambaDC'],
@@ -279,32 +290,17 @@ Administrator --newpassword=${adminpassword}",
 --max-pwd-age='${ppolicymaxpwdage}'",
   }
     
-
+  # Iteration to add groups
   $groupSize  = size($::samba::dc::groups) - 1
   $groupIndex = range(0, $groupSize)
   ::samba::dc::groupadd{ $groupIndex: }
 
-  #define scriptAdd{
-  #  $scriptName       = $::samba::dc::logonscripts[$title]['name']
-  #  $scriptContent    = $::samba::dc::logonscripts[$title]['content']
-
-  #  $scriptPath = "${::samba::dc::targetdir}/state/sysvol/${::samba::dc::realmDowncase}/scripts/${scriptName}"
-  #  validate_absolute_path($scriptPath)
-
-
-  #  file { "${scriptPath}":
-  #     content => "${scriptContent}",
-  #     mode    => "0755",
-  #     require => Exec['provisionAD'],
-  #  }
-  #}
-
+  # Iteration to add logon scripts
   $scriptSize  = size($::samba::dc::logonscripts) - 1
   $scriptIndex = range(0, $scriptSize)
   ::samba::dc::scriptadd{ $scriptIndex: }
-  #scriptAdd{ $scriptIndex: }
 
-  # iteration on global options
+  # Iteration on global options
   $globaloptionsSize  = size($::samba::dc::globaloptions) - 1
   $globaloptionsIndex = range(0, $globaloptionsSize)
   ::samba::option{ $globaloptionsIndex: 
@@ -314,7 +310,7 @@ Administrator --newpassword=${adminpassword}",
     notify  => Service['SambaDC'],
   }
 
-  # iteration on netlogon options
+  # Iteration on netlogon options
   $netlogonoptionsSize  = size($::samba::dc::netlogonoptions) - 1
   $netlogonoptionsIndex = range(0, $netlogonoptionsSize)
   ::samba::option{ $netlogonoptionsIndex: 
@@ -324,7 +320,7 @@ Administrator --newpassword=${adminpassword}",
     notify  => Service['SambaDC'],
   }
  
-  # iteration on sysvol options
+  # Iteration on sysvol options
   $sysvoloptionsSize  = size($::samba::dc::sysvoloptions) - 1 
   $sysvoloptionsIndex = range(0, $sysvoloptionsSize)
   ::samba::option{ $sysvoloptionsIndex: 
