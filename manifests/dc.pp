@@ -279,111 +279,58 @@ Administrator --newpassword=${adminpassword}",
 --max-pwd-age='${ppolicymaxpwdage}'",
   }
     
-  define groupAdd{
-    $groupName        = $::samba::dc::groups[$title]['name']
-    $groupScope       = $::samba::dc::groups[$title]['scope']
-    $groupType        = $::samba::dc::groups[$title]['type']
-    $groupDescription = $::samba::dc::groups[$title]['description']
-
-    $groupTypeList = ['Security', 'Distribution']
-    $groupTypeStr  = join($groupTypeList, ', ')
-    unless member($groupTypeList, $groupType) {
-	fail("type of group '${groupName}' must be in [$groupTypeStr]")
-    }
-
-    $groupScopeList = ['Domain', 'Global', 'Universal']
-    $groupScopeStr  = join($groupScopeList, ', ')
-    unless member($groupScopeList, $groupScope) {
-	fail("scope of group '${groupName}' must be in [$groupScopeStr]")
-    }
-
-    exec{ "add Group $name":
-      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-      unless  => "${::samba::params::sambaCmd} group list --verbose \
-|grep -qe '^${groupName}\\ *${groupType}\\ *${groupScope}$'",
-      command => "${::samba::params::sambaCmd} group add '${groupName}' \
---group-scope='${groupScope}' --group-type='${groupType}' --description='${groupDescription}'",
-      require => Service['SambaDC'],
-    }
-  }
 
   $groupSize  = size($::samba::dc::groups) - 1
   $groupIndex = range(0, $groupSize)
-  groupAdd{ $groupIndex: }
+  ::samba::dc::groupadd{ $groupIndex: }
 
-  define scriptAdd{
-    $scriptName       = $::samba::dc::logonscripts[$title]['name']
-    $scriptContent    = $::samba::dc::logonscripts[$title]['content']
+  #define scriptAdd{
+  #  $scriptName       = $::samba::dc::logonscripts[$title]['name']
+  #  $scriptContent    = $::samba::dc::logonscripts[$title]['content']
 
-    $scriptPath = "${::samba::dc::targetdir}/state/sysvol/${::samba::dc::realmDowncase}/scripts/${scriptName}"
-    validate_absolute_path($scriptPath)
+  #  $scriptPath = "${::samba::dc::targetdir}/state/sysvol/${::samba::dc::realmDowncase}/scripts/${scriptName}"
+  #  validate_absolute_path($scriptPath)
 
 
-    file { "${scriptPath}":
-       content => "${scriptContent}",
-       mode    => "0755",
-       require => Exec['provisionAD'],
-    }
-  }
+  #  file { "${scriptPath}":
+  #     content => "${scriptContent}",
+  #     mode    => "0755",
+  #     require => Exec['provisionAD'],
+  #  }
+  #}
 
   $scriptSize  = size($::samba::dc::logonscripts) - 1
   $scriptIndex = range(0, $scriptSize)
-  scriptAdd{ $scriptIndex: }
+  ::samba::dc::scriptadd{ $scriptIndex: }
+  #scriptAdd{ $scriptIndex: }
 
-  define globaloptionsDef{
-    $globaloptionsSetting    = $::samba::dc::globaloptions[$title]['setting']
-    $globaloptionsValue      = $::samba::dc::globaloptions[$title]['value']
-
-    ini_setting { "global param: ${globaloptionsSetting}":
-      ensure  => present,
-      path    => "${::samba::params::smbConfFile}",
-      section => 'global',
-      setting => $globaloptionsSetting,
-      value   => $globaloptionsValue,
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
-  }
-
+  # iteration on global options
   $globaloptionsSize  = size($::samba::dc::globaloptions) - 1
   $globaloptionsIndex = range(0, $globaloptionsSize)
-  globaloptionsDef{ $globaloptionsIndex: }
-
-  define netlogonoptionsDef{
-    $netlogonoptionsSetting    = $::samba::dc::netlogonoptions[$title]['setting']
-    $netlogonoptionsValue      = $::samba::dc::netlogonoptions[$title]['value']
-
-    ini_setting { "netlogon param: ${netlogonoptionsSetting}":
-      ensure  => present,
-      path    => "${::samba::params::smbConfFile}",
-      section => 'netlogon',
-      setting => $netlogonoptionsSetting,
-      value   => $netlogonoptionsValue,
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
+  ::samba::option{ $globaloptionsIndex: 
+    options => $globaloptions,
+    section => 'global',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
   }
 
+  # iteration on netlogon options
   $netlogonoptionsSize  = size($::samba::dc::netlogonoptions) - 1
   $netlogonoptionsIndex = range(0, $netlogonoptionsSize)
-  netlogonoptionsDef{ $netlogonoptionsIndex: }
-
-  define sysvoloptionsDef{
-    $sysvoloptionsSetting    = $::samba::dc::sysvoloptions[$title]['setting']
-    $sysvoloptionsValue      = $::samba::dc::sysvoloptions[$title]['value']
-
-    ini_setting { "sysvol param: ${sysvoloptionsSetting}":
-      ensure  => present,
-      path    => "${::samba::params::smbConfFile}",
-      section => 'sysvol',
-      setting => $sysvoloptionsSetting,
-      value   => $sysvoloptionsValue,
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
+  ::samba::option{ $netlogonoptionsIndex: 
+    options => $netlogonoptions,
+    section => 'netlogon',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
   }
-
+ 
+  # iteration on sysvol options
   $sysvoloptionsSize  = size($::samba::dc::sysvoloptions) - 1 
   $sysvoloptionsIndex = range(0, $sysvoloptionsSize)
-  sysvoloptionsDef{ $sysvoloptionsIndex: }
+  ::samba::option{ $sysvoloptionsIndex: 
+    options => $sysvoloptions,
+    section => 'sysvol',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
+  }
 }
