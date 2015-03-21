@@ -70,7 +70,7 @@ class { ::samba::dc:
   ],
   netlogonoptions       => [],                # * Custom options in section [netlogon]
   sysvoloptions         => [],                # * Custom options in section [sysvol]
-  groups		=> [                          # * List of groups (default: [])
+  groups                => [                  # * List of groups (default: [])
     { name        => 'group1',                # * group name
       description => 'Group 1',               # * group description
       scope       => 'Domain',                # * group scope 
@@ -84,14 +84,14 @@ class { ::samba::dc:
       type        => 'Distribution',
     },
   ],
-  logonscripts    => [                        # * Logon scripts (default: [])
+  logonscripts          => [                  # * Logon scripts (default: [])
     { name          => 'login1.cmd',          # * Logon script name
       content       => 'echo login script 1 
 ping -n 11 127.0.0.1 > nul
 ',                                            # * Logon script content
     },
     { name          => 'login2.cmd',
-                  content       => 'echo login script 2
+      content       => 'echo login script 2
 ping -n 11 127.0.0.1 > nul
 ',
     },
