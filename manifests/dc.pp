@@ -37,20 +37,20 @@
 #
 
 class samba::dc(
-  $domain		= undef,
-  $realm		= undef,
-  $dnsbackend		= undef,
-  $dnsforwarder		= undef,
-  $adminpassword	= undef,
-  $ppolicycomplexity	= 'on',
-  $ppolicyplaintext	= 'off',
+  $domain               = undef,
+  $realm                = undef,
+  $dnsbackend           = undef,
+  $dnsforwarder         = undef,
+  $adminpassword        = undef,
+  $ppolicycomplexity    = 'on',
+  $ppolicyplaintext     = 'off',
   $ppolicyhistorylength = 24,
   $ppolicyminpwdlength  = 7,
   $ppolicyminpwdage     = 1,
   $ppolicymaxpwdage     = 42,
-  $targetdir		= '/var/lib/samba/',
-  $domainlevel		= '2003',
-  $groups		= [],
+  $targetdir            = '/var/lib/samba/',
+  $domainlevel          = '2003',
+  $groups               = [],
   $logonscripts         = [],
   $sambaloglevel        = 1,
   $logtosyslog          = false,
@@ -61,31 +61,33 @@ class samba::dc(
 
   case $dnsbackend {
     'internal': {
-        $SamaDNS   = 'SAMBA_INTERNAL'
+      $SamaDNS   = 'SAMBA_INTERNAL'
     }
     'bindFlat': {
-        $SamaDNS   = 'BIND9_FLATFILE'
+      $SamaDNS   = 'BIND9_FLATFILE'
     }
     'bindDLZ': {
-        $SamaDNS   = 'BIND9_FLATFILE'
+      $SamaDNS   = 'BIND9_FLATFILE'
     }
     default: {
-        fail('unsupported dns backend, must be in ["internal", "bindFlat", "bindDLZ"]')
+      fail('unsupported dns backend, \
+must be in ["internal", "bindFlat", "bindDLZ"]')
     }
   }
 
   case $domainlevel {
     '2003': {
-	$domainLevel = '2003'
+      $domainLevel = '2003'
     }
     '2008': {
-	$domainLevel = '2008'
+      $domainLevel = '2008'
     }
     '2008 R2': {
-	$domainLevel = '2008_R2'
+      $domainLevel = '2008_R2'
     }
     default: {
-        fail('unsupported domain level, must be in ["2003", "2008", "2008 R2"]')
+      fail('unsupported domain level, \
+must be in ["2003", "2008", "2008 R2"]')
     }
   }
 
@@ -93,11 +95,11 @@ class samba::dc(
   $checkppstr = join($checkpp, ', ')
 
   unless member($checkpp, $ppolicycomplexity){
-     fail("ppolicycomplexity must be in [${checkppstr}]")
+    fail("ppolicycomplexity must be in [${checkppstr}]")
   }
 
   unless member($checkpp, $ppolicyplaintext){
-     fail("ppolicyplaintext must be in [${checkppstr}]")
+    fail("ppolicyplaintext must be in [${checkppstr}]")
   }
 
   unless is_integer($ppolicyhistorylength){
@@ -108,7 +110,9 @@ class samba::dc(
     fail('ppolicyminpwdlength must be an integer')
   }
 
-  unless is_integer($sambaloglevel) and $sambaloglevel >= 0 and $sambaloglevel <= 10{
+  unless is_integer($sambaloglevel)
+    and $sambaloglevel >= 0
+    and $sambaloglevel <= 10{
     fail('loglevel must be an integer between 0 and 10')
   }
 
@@ -130,7 +134,8 @@ class samba::dc(
 
   $tmparr = split($realm, '[.]')
   unless $domain == $tmparr[0] {
-    fail('domain must be the fist part of realm, ex: domain="ad" and realm="ad.example.com"')
+    fail('domain must be the fist part of realm, \
+ex: domain="ad" and realm="ad.example.com"')
   }
 
   unless $dnsforwarder == undef or is_ip_address($dnsforwarder){
@@ -142,9 +147,9 @@ class samba::dc(
   $realmDowncase = downcase($realm)
 
   package{ 'SambaDC':
+    ensure        => 'installed',
     allow_virtual => true,
-    name   => $::samba::params::packageSambaDC,
-    ensure => 'installed',
+    name          => $::samba::params::packageSambaDC,
   }
 
   # Provision the Domain Controler
@@ -162,15 +167,15 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   }
 
   service{ 'SambaDC':
-    ensure => 'running',
-    name   => $::samba::params::serviveSambaDC,
+    ensure  => 'running',
+    name    => $::samba::params::serviveSambaDC,
     require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
   }
 
   # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
   file{ 'SambaOptsFile':
     path    => $::samba::params::sambaOptsFile,
-    content => template($::samba::params::sambaOptsTmpl}),
+    content => template($::samba::params::sambaOptsTmpl),
     require => Package['SambaDC'],
   }
 
@@ -257,7 +262,8 @@ Administrator --newpassword=${adminpassword}",
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "${::samba::params::sambaCmd} domain level show \
 | grep 'Domain function level' | grep -q \"${domainlevel}$\"",
-    command => "${::samba::params::sambaCmd} domain level raise --domain-level='${domainLevel}'",
+    command => "${::samba::params::sambaCmd} domain \
+level raise --domain-level='${domainLevel}'",
     require => Service['SambaDC'],
   }
 
@@ -266,7 +272,8 @@ Administrator --newpassword=${adminpassword}",
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "${::samba::params::sambaCmd} domain level show \
 | grep 'Forest function level' | grep -q '${domainlevel}$'",
-    command => "${::samba::params::sambaCmd} domain level raise --forest-level='${domainLevel}'",
+    command => "${::samba::params::sambaCmd} domain \
+level raise --forest-level='${domainLevel}'",
     require => Exec['setDomainFunctionLevel'],
   }
 
@@ -274,10 +281,15 @@ Administrator --newpassword=${adminpassword}",
   exec{ 'setPPolicy':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     require => Service['SambaDC'],
-    unless  => "[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show \
+
+    unless  => "\
+[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show\
 |sed 's/^.*:\\ *\\([0-9]\\+\\|on\\|off\\).*$/\\1/gp;d' | md5sum )\" = \
-\"\$( printf '${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
-\\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' | md5sum )\" ]",
+\"\$(printf \
+'${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
+\\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' \
+| md5sum )\" ]",
+
     command => "${::samba::params::sambaCmd} domain passwordsettings set \
 --complexity='${ppolicycomplexity}' \
 --store-plaintext='${ppolicyplaintext}' \
@@ -327,3 +339,5 @@ Administrator --newpassword=${adminpassword}",
     notify  => Service['SambaDC'],
   }
 }
+
+# vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2

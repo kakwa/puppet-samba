@@ -35,9 +35,9 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class ::samba::share(
-
-) inherits ::samba::params{
-
-
-}
+#class ::samba::share(
+#
+#) inherits ::samba::params{
+#
+#
+#}
