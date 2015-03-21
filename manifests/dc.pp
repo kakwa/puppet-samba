@@ -129,7 +129,7 @@ class samba::dc(
   }
 
   $tmparr = split($realm, '[.]')
-  unless "$domain" == $tmparr[0] {
+  unless $domain == $tmparr[0] {
     fail('domain must be the fist part of realm, ex: domain="ad" and realm="ad.example.com"')
   }
 
@@ -143,7 +143,7 @@ class samba::dc(
 
   package{ 'SambaDC':
     allow_virtual => true,
-    name   => "${::samba::params::packageSambaDC}",
+    name   => $::samba::params::packageSambaDC,
     ensure => 'installed',
   }
 
@@ -163,84 +163,81 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
 
   service{ 'SambaDC':
     ensure => 'running',
-    name   => "${::samba::params::serviveSambaDC}",
+    name   => $::samba::params::serviveSambaDC,
     require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
   }
 
   # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
-  file{ "SambaOptsFile":
-    path    => "${::samba::params::sambaOptsFile}",
-    content => template("${::samba::params::sambaOptsTmpl}"),
+  file{ 'SambaOptsFile':
+    path    => $::samba::params::sambaOptsFile,
+    content => template($::samba::params::sambaOptsTmpl}),
     require => Package['SambaDC'],
   }
 
   # Configure Loglevel
-  ini_setting { "LogLevel":
+  ini_setting { 'LogLevel':
     ensure  => present,
-    path    => "${::samba::params::smbConfFile}",
+    path    => $::samba::params::smbConfFile,
     section => 'global',
     setting => 'log level',
-    value   => "$sambaloglevel",
+    value   => $sambaloglevel,
     require => Exec['provisionAD'],
     notify  => Service['SambaDC'],
   }
 
   # If specify, configure syslog
   if $logtosyslog {
-
-    ini_setting { "SyslogLogLevel":
+    ini_setting { 'SyslogLogLevel':
       ensure  => present,
-      path    => "${::samba::params::smbConfFile}",
+      path    => $::samba::params::smbConfFile,
       section => 'global',
       setting => 'syslog',
-      value   => "$sambaloglevel",
+      value   => $sambaloglevel,
       require => Exec['provisionAD'],
       notify  => Service['SambaDC'],
     }
 
-    ini_setting { "LogToSyslog":
+    ini_setting { 'LogToSyslog':
       ensure  => present,
-      path    => "${::samba::params::smbConfFile}",
+      path    => $::samba::params::smbConfFile,
       section => 'global',
       setting => 'syslog only',
-      value   => "yes",
+      value   => 'yes',
       require => Exec['provisionAD'],
       notify  => Service['SambaDC'],
     }
   }
   # If not, keep login ing file, and disable syslog
   else {
-    ini_setting { "DontLogToSyslog":
+    ini_setting { 'DontLogToSyslog':
       ensure  => present,
-      path    => "${::samba::params::smbConfFile}",
+      path    => $::samba::params::smbConfFile,
       section => 'global',
       setting => 'syslog only',
-      value   => "no",
+      value   => 'no',
       require => Exec['provisionAD'],
       notify  => Service['SambaDC'],
     }
 
-    ini_setting { "SyslogLogLevel":
+    ini_setting { 'SyslogLogLevel':
       ensure  => absent,
-      path    => "${::samba::params::smbConfFile}",
+      path    => $::samba::params::smbConfFile,
       section => 'global',
       setting => 'syslog',
       require => Exec['provisionAD'],
       notify  => Service['SambaDC'],
     }
-
-
   }
 
   # Configure dns forwarder 
   # (if not specify, keep the default from provisioning)
   if $dnsforwarder != undef {
-    ini_setting { "DnsForwareder":
+    ini_setting { 'DnsForwareder':
       ensure  => present,
-      path    => "${::samba::params::smbConfFile}",
+      path    => $::samba::params::smbConfFile,
       section => 'global',
       setting => 'dns forwarder',
-      value   => "$dnsforwarder",
+      value   => $dnsforwarder,
       require => Exec['provisionAD'],
       notify  => Service['SambaDC'],
     }
