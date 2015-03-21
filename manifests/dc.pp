@@ -61,13 +61,13 @@ class samba::dc(
 
   case $dnsbackend {
     'internal': {
-        $SamaDNS   = 'SAMBA_INTERNAL' 
+        $SamaDNS   = 'SAMBA_INTERNAL'
     }
     'bindFlat': {
-        $SamaDNS   = 'BIND9_FLATFILE' 
+        $SamaDNS   = 'BIND9_FLATFILE'
     }
     'bindDLZ': {
-        $SamaDNS   = 'BIND9_FLATFILE' 
+        $SamaDNS   = 'BIND9_FLATFILE'
     }
     default: {
         fail('unsupported dns backend, must be in ["internal", "bindFlat", "bindDLZ"]')
@@ -229,7 +229,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     }
   }
 
-  # Configure dns forwarder 
+  # Configure dns forwarder
   # (if not specify, keep the default from provisioning)
   if $dnsforwarder != undef {
     ini_setting { 'DnsForwareder':
@@ -286,7 +286,7 @@ Administrator --newpassword=${adminpassword}",
 --min-pwd-age='${ppolicyminpwdage}' \
 --max-pwd-age='${ppolicymaxpwdage}'",
   }
-    
+
   # Iteration to add groups
   $groupSize  = size($::samba::dc::groups) - 1
   $groupIndex = range(0, $groupSize)
@@ -300,7 +300,7 @@ Administrator --newpassword=${adminpassword}",
   # Iteration on global options
   $globaloptionsSize  = size($::samba::dc::globaloptions) - 1
   $globaloptionsIndex = range(0, $globaloptionsSize)
-  ::samba::option{ $globaloptionsIndex: 
+  ::samba::option{ $globaloptionsIndex:
     options => $globaloptions,
     section => 'global',
     require => Exec['provisionAD'],
@@ -310,17 +310,17 @@ Administrator --newpassword=${adminpassword}",
   # Iteration on netlogon options
   $netlogonoptionsSize  = size($::samba::dc::netlogonoptions) - 1
   $netlogonoptionsIndex = range(0, $netlogonoptionsSize)
-  ::samba::option{ $netlogonoptionsIndex: 
+  ::samba::option{ $netlogonoptionsIndex:
     options => $netlogonoptions,
     section => 'netlogon',
     require => Exec['provisionAD'],
     notify  => Service['SambaDC'],
   }
- 
+
   # Iteration on sysvol options
-  $sysvoloptionsSize  = size($::samba::dc::sysvoloptions) - 1 
+  $sysvoloptionsSize  = size($::samba::dc::sysvoloptions) - 1
   $sysvoloptionsIndex = range(0, $sysvoloptionsSize)
-  ::samba::option{ $sysvoloptionsIndex: 
+  ::samba::option{ $sysvoloptionsIndex:
     options => $sysvoloptions,
     section => 'sysvol',
     require => Exec['provisionAD'],
