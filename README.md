@@ -45,7 +45,7 @@ class { ::samba::dc:
   realm                 => 'ad.example.org',  # * Realm name (must match domain)
   dnsbackend            => 'internal',        # * DNS backend ('internal', 
                                               #   'bindFlat' or 'bindDLZ')
-  adminpassword         => P455WordS,         # * Administrator password
+  adminpassword         => 'P455WordS',       # * Administrator password
 
   # Optionnal parameters
   dnsforwarder          => 8.8.8.8,           # * Dns forwarder IP (default: undef)
