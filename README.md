@@ -65,8 +65,8 @@ class { ::samba::dc:
                                               #   (default: false)
   globaloptions         => [                  # * Custom options in section [global] 
                                               #   (default: [])
-          { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
-          { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
+    { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
+    { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
   ],
   netlogonoptions       => [],                # * Custom options in section [netlogon]
   sysvoloptions         => [],                # * Custom options in section [sysvol]
