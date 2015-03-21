@@ -9,11 +9,11 @@ class samba::params(
       'redhat': {
           $packageSambaDC   = 'sernet-samba-ad'
           $serviveSambaDC   = 'sernet-samba-ad'
-	  $sambaCmd	    = '/usr/bin/samba-tool'
-          $sambaClientCmd   = '/usr/bin/smbclient'  
-	  $sambaOptsFile    = '/etc/default/sernet-samba'
-	  $sambaOptsTmpl    = "${module_name}/sernet-samba.erb"
-	  $smbConfFile      = '/etc/samba/smb.conf'
+          $sambaCmd         = '/usr/bin/samba-tool'
+          $sambaClientCmd   = '/usr/bin/smbclient'
+          $sambaOptsFile    = '/etc/default/sernet-samba'
+          $sambaOptsTmpl    = "${module_name}/sernet-samba.erb"
+          $smbConfFile      = '/etc/samba/smb.conf'
       }
       default: {
           fail('unsupported os')
@@ -30,3 +30,5 @@ class samba::params(
     }
   }
 }
+
+# vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2
