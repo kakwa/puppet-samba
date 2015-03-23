@@ -182,11 +182,13 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
   }
 
+  $sambaMode = 'ad'
   # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
   file{ 'SambaOptsFile':
     path    => $::samba::params::sambaOptsFile,
     content => template($::samba::params::sambaOptsTmpl),
     require => Package['SambaDC'],
+    notify  => Service['SambaDC'],
   }
 
   # Configure Loglevel
