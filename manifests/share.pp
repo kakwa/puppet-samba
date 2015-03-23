@@ -35,11 +35,12 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class ::samba::share(
-  $sambaloglevel        = 1,
-  $logtosyslog          = false,
-  $globaloptions        = [],
-  $shares               = [],
-) inherits ::samba::params{
+
+define samba::share(
+  $sharename,
+  $path,
+  $description,
+  $customoptions,
+) {
   fail('not implemented')
 }
