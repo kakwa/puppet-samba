@@ -42,6 +42,7 @@ class samba::dc(
   $dnsbackend           = undef,
   $dnsforwarder         = undef,
   $adminpassword        = undef,
+  $role                 = 'dc',
   $ppolicycomplexity    = 'on',
   $ppolicyplaintext     = 'off',
   $ppolicyhistorylength = 24,
@@ -89,6 +90,15 @@ must be in ["internal", "bindFlat", "bindDLZ"]')
       fail('unsupported domain level, \
 must be in ["2003", "2008", "2008 R2"]')
     }
+  }
+
+  # for futur use when samba 4 will support other modes
+  #$checkrole = ['dc', 'member', 'standalone']
+  $checkrole = ['dc']
+  $checkrolestr = join($checkrole, ', ')
+
+  unless member($checkrole, $role){
+    fail("role must be in [${checkrolestr}]")
   }
 
   $checkpp = ['on', 'off', 'default']
@@ -160,7 +170,7 @@ ex: domain="ad" and realm="ad.example.com"')
 ${::samba::params::sambaCmd} domain provision \
 --domain='${domain}' --realm='${realm}' --dns-backend='$SamaDNS' \
 --targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
---configfile='${::samba::params::smbConfFile}' && \
+--configfile='${::samba::params::smbConfFile}' --server-role='$role' && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
