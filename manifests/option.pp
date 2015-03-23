@@ -5,7 +5,7 @@ define samba::option(
   $optionsSetting    = $options[$title]['setting']
   $optionsValue      = $options[$title]['value']
 
-  smb_setting { "$section param: ${optionsSetting}":
+  smb_setting { "${section}/${optionsSetting}":
     ensure            => present,
     path              => $::samba::params::smbConfFile,
     section           => $section,

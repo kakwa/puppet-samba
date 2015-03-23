@@ -86,10 +86,21 @@ ex: domain="ad" and realm="ad.example.com"')
 
   $realmDowncase = downcase($realm)
 
+  file { '/etc/samba/':
+    ensure  => 'directory',
+  }
+
+  file { '/etc/samba/smb_path':
+    ensure  => 'present',
+    content => $::samba::params::smbConfFile,
+    require => File['/etc/samba/'],
+  }
+
   package{ 'SambaClassic':
     ensure        => 'installed',
     allow_virtual => true,
     name          => $::samba::params::packageSambaClassic,
+    require       => File['/etc/samba/smb_path'],
   }
 
   service{ 'SambaClassic':
@@ -135,7 +146,7 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   # Configure Loglevel
-  smb_setting { 'LogLevel':
+  smb_setting { 'global/log level':
     ensure  => present,
     path    => $::samba::params::smbConfFile,
     section => 'global',
@@ -147,7 +158,7 @@ ex: domain="ad" and realm="ad.example.com"')
 
   # If specify, configure syslog
   if $logtosyslog {
-    smb_setting { 'SyslogLogLevel':
+    smb_setting { 'global/syslog':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -157,7 +168,7 @@ ex: domain="ad" and realm="ad.example.com"')
       notify  => Service['SambaClassic'],
     }
 
-    smb_setting { 'LogToSyslog':
+    smb_setting { 'global/syslog only':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -169,7 +180,7 @@ ex: domain="ad" and realm="ad.example.com"')
   }
   # If not, keep login ing file, and disable syslog
   else {
-    smb_setting { 'DontLogToSyslog':
+    smb_setting { 'global/syslog only':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -179,7 +190,7 @@ ex: domain="ad" and realm="ad.example.com"')
       notify  => Service['SambaClassic'],
     }
 
-    smb_setting { 'SyslogLogLevel':
+    smb_setting { 'global/syslog':
       ensure  => absent,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -197,7 +208,12 @@ ex: domain="ad" and realm="ad.example.com"')
     section => 'global',
     require => Package['SambaClassic'],
     notify  => Service['SambaClassic'],
+    purge => true,
   }
+
+  resources { 'smb_setting':
+    purge => true,
+  } 
 
 }
 

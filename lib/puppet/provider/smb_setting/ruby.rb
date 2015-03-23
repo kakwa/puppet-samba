@@ -12,6 +12,19 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
     # declaration).  This allows 'purging' to be used to clear out
     # all settings from a particular ini file except those included in
     # the catalog.
+
+    def self.file_path
+      File.open('/etc/samba/smb_path', &:readline).strip
+    end
+
+    def section
+      resource[:name].split('/', 2).first
+    end
+    def setting
+      # implement setting as the second part of the namevar
+      resource[:name].split('/', 2).last
+    end
+
     if self.respond_to?(:file_path)
       # figure out what to do about the seperator
       ini_file  = Puppet::Util::IniFile.new(file_path, '=')
