@@ -78,7 +78,9 @@ module Util
 
     def remove_setting(section_name, setting)
       section = @sections_hash[section_name]
-      if (section.has_existing_setting?(setting))
+      section_index = @section_names.index(section_name)
+     
+      if !section.nil? and (section.has_existing_setting?(setting))
         # If the setting is found, we have some work to do.
         # First, we remove the line from our array of lines:
         remove_line(section, setting)
@@ -90,9 +92,23 @@ module Util
         # Finally, we need to update all of the start/end line
         # numbers for all of the sections *after* the one that
         # was modified.
-        section_index = @section_names.index(section_name)
         decrement_section_line_numbers(section_index + 1)
+        if section.setting_names.length == 0
+          remove_section(section)
+          @sections_hash.delete(section_name)
+          @section_names.delete_at(section_index)
+          decrement_section_line_numbers(section_index)
+        end
+      elsif !section.nil? and setting == 'emptySection'
+        remove_section(section)
+        @sections_hash.delete(section_name)
+        @section_names.delete_at(section_index)
+        decrement_section_line_numbers(section_index)
       end
+    end
+
+    def remove_section(section)
+      lines.delete_at(section.start_line)
     end
 
     def save
@@ -100,7 +116,6 @@ module Util
 
         @section_names.each_index do |index|
           name = @section_names[index]
-
           section = @sections_hash[name]
 
           # We need a buffer to cache lines that are only whitespace

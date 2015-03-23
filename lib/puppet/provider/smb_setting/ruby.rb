@@ -30,14 +30,25 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
       ini_file  = Puppet::Util::IniFile.new(file_path, '=')
       resources = []
       ini_file.section_names.each do |section_name|
-        ini_file.get_settings(section_name).each do |setting, value|
-          resources.push(
+        settings = ini_file.get_settings(section_name)
+        if settings.length == 0 and section_name != ''
+           resources.push(
             new(
-              :name   => namevar(section_name, setting),
-              :value  => value,
+              :name   => namevar(section_name, 'emptySection'),
+              :value  => 'None',
               :ensure => :present
             )
           )
+        else
+          settings.each do |setting, value|
+            resources.push(
+              new(
+                :name   => namevar(section_name, setting),
+                :value  => value,
+                :ensure => :present
+              )
+            )
+          end
         end
       end
       resources
@@ -51,7 +62,7 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
   end
 
   def exists?
-    !ini_file.get_value(section, setting).nil?
+    setting == 'emptySection' or !ini_file.get_value(section, setting).nil?
   end
 
   def create
