@@ -7,13 +7,16 @@ class samba::params(
   if $sernetRepo {
     case $::osfamily {
       'redhat': {
-          $packageSambaDC   = 'sernet-samba-ad'
-          $serviveSambaDC   = 'sernet-samba-ad'
-          $sambaCmd         = '/usr/bin/samba-tool'
-          $sambaClientCmd   = '/usr/bin/smbclient'
-          $sambaOptsFile    = '/etc/default/sernet-samba'
-          $sambaOptsTmpl    = "${module_name}/sernet-samba.erb"
-          $smbConfFile      = '/etc/samba/smb.conf'
+          $packageSambaDC      = 'sernet-samba-ad'
+          $packageSambaClassic = 'sernet-samba'
+          $serviveSambaDC      = 'sernet-samba-ad'
+          $serviveSambaClassic = [ 'sernet-samba-smbd',
+            'sernet-samba-winbindd' ]
+          $sambaCmd            = '/usr/bin/samba-tool'
+          $sambaClientCmd      = '/usr/bin/smbclient'
+          $sambaOptsFile       = '/etc/default/sernet-samba'
+          $sambaOptsTmpl       = "${module_name}/sernet-samba.erb"
+          $smbConfFile         = '/etc/samba/smb.conf'
       }
       default: {
           fail('unsupported os')

@@ -37,9 +37,12 @@
 #
 
 class samba::classic(
+  $smbname              = undef,
   $domain               = undef,
   $realm                = undef,
   $adminpassword        = undef,
+  $idrangemin           = undef,
+  $idrangemax           = undef,
   $sambaloglevel        = 1,
   $logtosyslog          = false,
   $globaloptions        = [],
@@ -51,12 +54,28 @@ class samba::classic(
     fail('loglevel must be an integer between 0 and 10')
   }
 
+  unless is_integer($idrangemin)
+    and is_integer($idrangemax)
+    and $idrangemin >= 0
+    and $idrangemax >= $idrangemin {
+    fail("idrangemin and idrangemax must be integers \
+and idrangemin <= idrangemax")
+  }
+
   unless is_bool($logtosyslog){
     fail('logtosyslog must be a boolean')
   }
 
   unless is_domain_name($realm){
     fail('realm must be a valid domain')
+  }
+
+  unless is_domain_name($realm){
+    fail('realm must be a valid domain')
+  }
+
+  unless is_domain_name("${smbname}.${realm}"){
+    fail('smbname must be a valid domain')
   }
 
   $tmparr = split($realm, '[.]')
@@ -76,7 +95,8 @@ ex: domain="ad" and realm="ad.example.com"')
   service{ 'SambaClassic':
     ensure  => 'running',
     name    => $::samba::params::serviveSambaClassic,
-    require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
+    #name    => [ 'sernet-samba-smbd', 'sernet-samba-winbindd' ],
+    require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
   }
 
   $sambaMode = 'classic'
@@ -87,6 +107,33 @@ ex: domain="ad" and realm="ad.example.com"')
     require => Package['SambaClassic'],
   }
 
+  $mandatoryGlobalOptions = [
+   {setting => 'workgroup',                          value => "$domain"},
+   {setting => 'realm',                              value => "$realm"},
+   {setting => 'netbios name',                       value => "${smbname}.${realm}"},
+   {setting => 'security',                           value => 'ADS'},
+   {setting => 'dedicated keytab file',              value => '/etc/krb5.keytab'},
+   {setting => 'winbind nss info',                   value => 'rfc2307'},
+   {setting => 'map untrusted to domain',            value => 'Yes'},
+   {setting => 'winbind trusted domains only',       value => 'No'},
+   {setting => 'winbind use default domain',         value => 'Yes'},
+   {setting => 'winbind enum users',                 value => 'Yes'},
+   {setting => 'winbind enum groups',                value => 'Yes'},
+   {setting => 'winbind refresh tickets',            value => 'Yes'},
+   #{setting => "idmap config ${domain}:backend",     value => 'ad'},
+   #{setting => "idmap config ${domain}\:schema_mode", value => 'rfc2307'},
+   #{setting => "idmap config ${domain}\:range",       value => "${idrangemin}-${idrangemax}"},
+  ]
+
+  $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
+  $mandatoryGlobalOptionsIndex = range(0, $mandatoryGlobalOptionsSize)
+  ::samba::option{ $mandatoryGlobalOptionsIndex:
+    options => $mandatoryGlobalOptions,
+    section => 'global',
+    require => Package['SambaClassic'],
+    notify  => Service['SambaClassic'],
+  }
+
   # Configure Loglevel
   ini_setting { 'LogLevel':
     ensure  => present,
@@ -94,7 +141,7 @@ ex: domain="ad" and realm="ad.example.com"')
     section => 'global',
     setting => 'log level',
     value   => $sambaloglevel,
-    require => Exec['provisionAD'],
+    require => Package['SambaClassic'],
     notify  => Service['SambaClassic'],
   }
 
@@ -106,7 +153,7 @@ ex: domain="ad" and realm="ad.example.com"')
       section => 'global',
       setting => 'syslog',
       value   => $sambaloglevel,
-      require => Exec['provisionAD'],
+      require => Package['SambaClassic'],
       notify  => Service['SambaClassic'],
     }
 
@@ -116,7 +163,7 @@ ex: domain="ad" and realm="ad.example.com"')
       section => 'global',
       setting => 'syslog only',
       value   => 'yes',
-      require => Exec['provisionAD'],
+      require => Package['SambaClassic'],
       notify  => Service['SambaClassic'],
     }
   }
@@ -128,7 +175,7 @@ ex: domain="ad" and realm="ad.example.com"')
       section => 'global',
       setting => 'syslog only',
       value   => 'no',
-      require => Exec['provisionAD'],
+      require => Package['SambaClassic'],
       notify  => Service['SambaClassic'],
     }
 
@@ -137,32 +184,18 @@ ex: domain="ad" and realm="ad.example.com"')
       path    => $::samba::params::smbConfFile,
       section => 'global',
       setting => 'syslog',
-      require => Exec['provisionAD'],
-      notify  => Service['SambaClassic'],
-    }
-  }
-
-  # Configure dns forwarder
-  # (if not specify, keep the default from provisioning)
-  if $dnsforwarder != undef {
-    ini_setting { 'DnsForwareder':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'dns forwarder',
-      value   => $dnsforwarder,
-      require => Exec['provisionAD'],
+      require => Package['SambaClassic'],
       notify  => Service['SambaClassic'],
     }
   }
 
   # Iteration on global options
-  $globaloptionsSize  = size($::samba::dc::globaloptions) - 1
+  $globaloptionsSize  = size($::samba::classic::globaloptions) - 1
   $globaloptionsIndex = range(0, $globaloptionsSize)
   ::samba::option{ $globaloptionsIndex:
     options => $globaloptions,
     section => 'global',
-    require => Exec['provisionAD'],
+    require => Package['SambaClassic'],
     notify  => Service['SambaClassic'],
   }
 
