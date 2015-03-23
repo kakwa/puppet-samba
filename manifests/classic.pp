@@ -58,8 +58,8 @@ class samba::classic(
     and is_integer($idrangemax)
     and $idrangemin >= 0
     and $idrangemax >= $idrangemin {
-    fail("idrangemin and idrangemax must be integers \
-and idrangemin <= idrangemax")
+    fail('idrangemin and idrangemax must be integers \
+and idrangemin <= idrangemax')
   }
 
   unless is_bool($logtosyslog){
@@ -106,7 +106,6 @@ ex: domain="ad" and realm="ad.example.com"')
   service{ 'SambaClassic':
     ensure  => 'running',
     name    => $::samba::params::serviveSambaClassic,
-    #name    => [ 'sernet-samba-smbd', 'sernet-samba-winbindd' ],
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
   }
 
@@ -119,21 +118,21 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   $mandatoryGlobalOptions = [
-   {setting => 'workgroup',                          value => "$domain"},
-   {setting => 'realm',                              value => "$realm"},
-   {setting => 'netbios name',                       value => "${smbname}.${realm}"},
-   {setting => 'security',                           value => 'ADS'},
-   {setting => 'dedicated keytab file',              value => '/etc/krb5.keytab'},
-   {setting => 'winbind nss info',                   value => 'rfc2307'},
-   {setting => 'map untrusted to domain',            value => 'Yes'},
-   {setting => 'winbind trusted domains only',       value => 'No'},
-   {setting => 'winbind use default domain',         value => 'Yes'},
-   {setting => 'winbind enum users',                 value => 'Yes'},
-   {setting => 'winbind enum groups',                value => 'Yes'},
-   {setting => 'winbind refresh tickets',            value => 'Yes'},
-   {setting => "idmap config ${domain}:backend",     value => 'ad'},
-   {setting => "idmap config ${domain}:schema_mode", value => 'rfc2307'},
-   {setting => "idmap config ${domain}:range",       value => "${idrangemin}-${idrangemax}"},
+    {setting => 'workgroup',                          value => $domain},
+    {setting => 'realm',                              value => $realm},
+    {setting => 'netbios name',                       value => "${smbname}.${realm}"},
+    {setting => 'security',                           value => 'ADS'},
+    {setting => 'dedicated keytab file',              value => '/etc/krb5.keytab'},
+    {setting => 'winbind nss info',                   value => 'rfc2307'},
+    {setting => 'map untrusted to domain',            value => 'Yes'},
+    {setting => 'winbind trusted domains only',       value => 'No'},
+    {setting => 'winbind use default domain',         value => 'Yes'},
+    {setting => 'winbind enum users',                 value => 'Yes'},
+    {setting => 'winbind enum groups',                value => 'Yes'},
+    {setting => 'winbind refresh tickets',            value => 'Yes'},
+    {setting => "idmap config ${domain}:backend",     value => 'ad'},
+    {setting => "idmap config ${domain}:schema_mode", value => 'rfc2307'},
+    {setting => "idmap config ${domain}:range",       value => "${idrangemin}-${idrangemax}"},
   ]
 
   $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
@@ -208,12 +207,11 @@ ex: domain="ad" and realm="ad.example.com"')
     section => 'global',
     require => Package['SambaClassic'],
     notify  => Service['SambaClassic'],
-    purge => true,
   }
 
   resources { 'smb_setting':
     purge => true,
-  } 
+  }
 
 }
 
