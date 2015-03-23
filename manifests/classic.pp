@@ -120,9 +120,9 @@ ex: domain="ad" and realm="ad.example.com"')
    {setting => 'winbind enum users',                 value => 'Yes'},
    {setting => 'winbind enum groups',                value => 'Yes'},
    {setting => 'winbind refresh tickets',            value => 'Yes'},
-   #{setting => "idmap config ${domain}:backend",     value => 'ad'},
-   #{setting => "idmap config ${domain}\:schema_mode", value => 'rfc2307'},
-   #{setting => "idmap config ${domain}\:range",       value => "${idrangemin}-${idrangemax}"},
+   {setting => "idmap config ${domain}:backend",     value => 'ad'},
+   {setting => "idmap config ${domain}:schema_mode", value => 'rfc2307'},
+   {setting => "idmap config ${domain}:range",       value => "${idrangemin}-${idrangemax}"},
   ]
 
   $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
@@ -135,7 +135,7 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   # Configure Loglevel
-  ini_setting { 'LogLevel':
+  smb_setting { 'LogLevel':
     ensure  => present,
     path    => $::samba::params::smbConfFile,
     section => 'global',
@@ -147,7 +147,7 @@ ex: domain="ad" and realm="ad.example.com"')
 
   # If specify, configure syslog
   if $logtosyslog {
-    ini_setting { 'SyslogLogLevel':
+    smb_setting { 'SyslogLogLevel':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -157,7 +157,7 @@ ex: domain="ad" and realm="ad.example.com"')
       notify  => Service['SambaClassic'],
     }
 
-    ini_setting { 'LogToSyslog':
+    smb_setting { 'LogToSyslog':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -169,7 +169,7 @@ ex: domain="ad" and realm="ad.example.com"')
   }
   # If not, keep login ing file, and disable syslog
   else {
-    ini_setting { 'DontLogToSyslog':
+    smb_setting { 'DontLogToSyslog':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -179,7 +179,7 @@ ex: domain="ad" and realm="ad.example.com"')
       notify  => Service['SambaClassic'],
     }
 
-    ini_setting { 'SyslogLogLevel':
+    smb_setting { 'SyslogLogLevel':
       ensure  => absent,
       path    => $::samba::params::smbConfFile,
       section => 'global',

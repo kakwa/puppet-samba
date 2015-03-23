@@ -192,7 +192,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   }
 
   # Configure Loglevel
-  ini_setting { 'LogLevel':
+  smb_setting { 'LogLevel':
     ensure  => present,
     path    => $::samba::params::smbConfFile,
     section => 'global',
@@ -204,7 +204,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
 
   # If specify, configure syslog
   if $logtosyslog {
-    ini_setting { 'SyslogLogLevel':
+    smb_setting { 'SyslogLogLevel':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -214,7 +214,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
       notify  => Service['SambaDC'],
     }
 
-    ini_setting { 'LogToSyslog':
+    smb_setting { 'LogToSyslog':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -226,7 +226,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   }
   # If not, keep login ing file, and disable syslog
   else {
-    ini_setting { 'DontLogToSyslog':
+    smb_setting { 'DontLogToSyslog':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -236,7 +236,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
       notify  => Service['SambaDC'],
     }
 
-    ini_setting { 'SyslogLogLevel':
+    smb_setting { 'SyslogLogLevel':
       ensure  => absent,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -249,7 +249,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   # Configure dns forwarder
   # (if not specify, keep the default from provisioning)
   if $dnsforwarder != undef {
-    ini_setting { 'DnsForwareder':
+    smb_setting { 'DnsForwareder':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
