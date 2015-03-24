@@ -126,7 +126,7 @@ class { '::samba::classic':
   # Mandatory parameters
   path            => '/srv/test/',
   # Optionnal parameters
-  options         => [],            # * Custom options in section [global] 
+  options         => [],            # * Custom options in section [Test Share] 
 }
 ```
 
