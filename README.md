@@ -63,6 +63,12 @@ class { ::samba::dc:
   sambaloglevel         => 3,                 # * Log level (from 1 to 10) (default: 1)
   logtosyslog           => false,             # * Log not to file but to syslog 
                                               #   (default: false)
+  sambaclassloglevel    => {                  # * Set log level by log classes
+    'printdrivers' => 1,                      #   (default: undef)
+    'idmap'        => 5,
+    'winbind'      => 3,
+  },
+
   globaloptions         => [                  # * Custom options in section [global] 
                                               #   (default: [])
     { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
@@ -115,7 +121,13 @@ class { '::samba::classic':
   idrangemax      => 19999,         # * max uid for Domain users
 
   # Optionnal parameters
+  sambaclassloglevel    => {        # * Set log level by log classes
+    'printdrivers' => 1,            #   (default: undef)
+    'idmap'        => 5,
+    'winbind'      => 3,
+  },
   globaloptions   => [],            # * Custom options in section [global] 
+
 }
 ```
 

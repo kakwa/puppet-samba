@@ -44,6 +44,7 @@ class samba::classic(
   $idrangemin           = undef,
   $idrangemax           = undef,
   $sambaloglevel        = 1,
+  $sambaclassloglevel   = undef,
   $logtosyslog          = false,
   $globaloptions        = [],
 ) inherits ::samba::params{
@@ -143,10 +144,11 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   ::samba::log { 'syslog':
-      sambaloglevel => $sambaloglevel,
-      logtosyslog   => $logtosyslog,
-      require       => Package['SambaClassic'],
-      notify        => Service['SambaClassic'],
+      sambaloglevel      => $sambaloglevel,
+      logtosyslog        => $logtosyslog,
+      sambaclassloglevel => $sambaclassloglevel,
+      require            => Package['SambaClassic'],
+      notify             => Service['SambaClassic'],
   }
 
 

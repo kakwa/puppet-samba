@@ -1,6 +1,7 @@
 define samba::log(
   $sambaloglevel,
   $logtosyslog,
+  $sambaclassloglevel = undef,
 ) {
 
   unless is_integer($sambaloglevel)
@@ -9,6 +10,19 @@ define samba::log(
     fail('loglevel must be an integer between 0 and 10')
   }
 
+  $classlist = $::samba::params::logclasslist
+  $classliststr = join($classlist, ', ')
+
+
+  if $sambaclassloglevel != undef {
+    unless is_hash($sambaclassloglevel)
+    and difference(keys($sambaclassloglevel), $classlist) == [] {
+      fail("sambaclassloglevel must be a hash with keys in [${classliststr}]")
+    }
+    $logadditional = template("${module_name}/log.erb")
+  }else {
+    $logadditional = ''
+  }
   unless is_bool($logtosyslog){
     fail('logtosyslog must be a boolean')
   }
@@ -19,7 +33,7 @@ define samba::log(
     path    => $::samba::params::smbConfFile,
     section => 'global',
     setting => 'log level',
-    value   => $sambaloglevel,
+    value   => "${sambaloglevel}${logadditional}",
   }
 
   # If specify, configure syslog
@@ -29,7 +43,7 @@ define samba::log(
       path    => $::samba::params::smbConfFile,
       section => 'global',
       setting => 'syslog',
-      value   => $sambaloglevel,
+      value   => "${sambaloglevel}${logadditional}",
     }
 
     smb_setting { 'global/syslog only':

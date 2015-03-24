@@ -32,6 +32,14 @@ class samba::params(
       }
     }
   }
+
+  $logclasslist =  [
+    'all',     'tdb',     'printdrivers', 'lanman',   'smb',
+    'rpc_srv', 'rpc_cli', 'passdb',       'sam',      'auth',
+    'winbind', 'vfs',     'idmap',        'quota',    'acls',
+    'locking', 'msdfs',   'dmapi',        'registry', 'rpc_parse',
+    ]
+
 }
 
 # vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2

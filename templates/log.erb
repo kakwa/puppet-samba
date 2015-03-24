@@ -1,0 +1,6 @@
+<% @sambaclassloglevel.each do |logclass, level| -%>
+<% if not level.to_i.between?(0, 10) -%>
+<%   raise(Puppet::Error, "wrong log level for #{logclass}, must be between 0 and 10") -%>
+<% end -%>
+ <%= logclass %>:<%= level -%>
+<% end -%>

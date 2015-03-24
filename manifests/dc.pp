@@ -55,6 +55,7 @@ class samba::dc(
   $logonscripts         = [],
   $sambaloglevel        = 1,
   $logtosyslog          = false,
+  $sambaclassloglevel   = undef,
   $globaloptions        = [],
   $netlogonoptions      = [],
   $sysvoloptions        = [],
@@ -190,10 +191,11 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
 
   # Configure Loglevel
   ::samba::log { 'syslog':
-      sambaloglevel => $sambaloglevel,
-      logtosyslog   => $logtosyslog,
-      require       => Exec['provisionAD'],
-      notify        => Service['SambaDC'],
+      sambaloglevel      => $sambaloglevel,
+      logtosyslog        => $logtosyslog,
+      sambaclassloglevel => $sambaclassloglevel,
+      require            => Exec['provisionAD'],
+      notify             => Service['SambaDC'],
   }
 
   # Configure dns forwarder
