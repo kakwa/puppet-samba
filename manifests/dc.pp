@@ -281,7 +281,8 @@ level raise --forest-level='${domainLevel}'",
   # Iteration on netlogon options
   $netlogonoptionsSize  = size($::samba::dc::netlogonoptions) - 1
   #$netlogonoptionsIndex = range(0, $netlogonoptionsSize)
-  $netlogonoptionsIndex = prefix(range(0, $netlogonoptionsSize), 'netlogoncust:')
+  $netlogonoptionsIndex = prefix(range(0, $netlogonoptionsSize),
+    'netlogoncust:')
   ::samba::option{ $netlogonoptionsIndex:
     options => $netlogonoptions,
     section => 'netlogon',

@@ -127,7 +127,8 @@ ex: domain="ad" and realm="ad.example.com"')
   ]
 
   $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
-  $mandatoryGlobalOptionsIndex = prefix(range(0, $mandatoryGlobalOptionsSize), 'global:')
+  $mandatoryGlobalOptionsIndex = prefix(range(0,
+    $mandatoryGlobalOptionsSize), 'global:')
   ::samba::option{ $mandatoryGlobalOptionsIndex:
     options => $mandatoryGlobalOptions,
     section => 'global',
@@ -136,9 +137,9 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   exec{ 'Join Domain':
-   path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
-   unless  => 'net ads testjoin',
-   command => "echo '${adminpassword}'| net ads join -U administrator",
+    path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
+    unless  => 'net ads testjoin',
+    command => "echo '${adminpassword}'| net ads join -U administrator",
   }
 
   ::samba::log { 'syslog':

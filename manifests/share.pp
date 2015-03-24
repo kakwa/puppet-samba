@@ -57,8 +57,8 @@ define samba::share(
     $require = Exec['provisionAD']
     $notify  = Service['SambaDC']
   }else{
-    fail('No mode matched, aborting')
-  } 
+    fail('No mode matched, Missing class samba::classic or samba::dc?')
+  }
 
   file {$rootpath:
     ensure  => directory,
