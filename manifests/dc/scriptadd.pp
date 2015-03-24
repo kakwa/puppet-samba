@@ -2,7 +2,7 @@ define samba::dc::scriptadd{
   $scriptName       = $::samba::dc::logonscripts[$title]['name']
   $scriptContent    = $::samba::dc::logonscripts[$title]['content']
 
-  $scriptPath = "${scriptDir}/${scriptName}"
+  $scriptPath = "${::samba::dc::scriptDir}/${scriptName}"
   validate_absolute_path($scriptPath)
 
   file { $scriptPath:

@@ -150,7 +150,7 @@ ex: domain="ad" and realm="ad.example.com"')
 
   $realmDowncase = downcase($realm)
 
-  $scriptDir = "${targetdir}/state/sysvol/${realmDowncase}/scripts/"
+  $scriptDir = smb_clean_path("${targetdir}/state/sysvol/${realmDowncase}/scripts/")
   validate_absolute_path($scriptDir)
 
   package{ 'SambaDC':
@@ -315,10 +315,10 @@ level raise --forest-level='${domainLevel}'",
     {setting => 'realm',                  value => $realm},
     {setting => 'netbios name',           value => 'AD'},
     {setting => 'server role',            value => 'active directory domain controller'},
-    {setting => 'private dir',            value => "${targetdir}/private/"},
-    {setting => 'cache directory',        value => "${targetdir}/cache/"},
-    {setting => 'state directory',        value => "${targetdir}/state/"},
-    {setting => 'lock directory',         value => "${targetdir}/"},
+    {setting => 'private dir',            value => smb_clean_path("${targetdir}/private/")},
+    {setting => 'cache directory',        value => smb_clean_path("${targetdir}/cache/")},
+    {setting => 'state directory',        value => smb_clean_path("${targetdir}/state/")},
+    {setting => 'lock directory',         value => smb_clean_path("${targetdir}/")},
     {setting => 'idmap_ldb:use rfc2307',  value => 'Yes'},
   ]
 
@@ -333,7 +333,7 @@ level raise --forest-level='${domainLevel}'",
   }
 
   $mandatorySysvolOptions = [
-    {setting => 'path',              value => "${targetdir}/state/sysvol"},
+    {setting => 'path',              value => smb_clean_path("${targetdir}/state/sysvol")},
     {setting => 'read only',         value => 'No'},
   ]
 
