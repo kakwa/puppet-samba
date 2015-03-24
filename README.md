@@ -36,7 +36,7 @@ This module requires puppetlabs-stdlib and puppetlabs-inifile modules.
 
 ## Usage
 
-### Samba 4 AD DC
+### Samba 4 AD Domain Controler
 
 ```puppet
 class { ::samba::dc:
@@ -96,6 +96,38 @@ ping -n 11 127.0.0.1 > nul
 ',
     },
   ],
+}
+```
+
+### Samba Classic (shares)
+
+```puppet
+class { '::samba::classic':
+  # Mandatory parameters
+  domain          => 'DC',          # * Domain to authentify against
+  realm           => 'dc.kakwa.fr', # * Realm to authentify agains
+  smbname         => 'SMB',         # * Share name
+  adminpassword   => 'qwertyP455',  # * Domain Administrator 
+                                    #   password (for joining)
+  sambaloglevel   => 3,             # * Samba log level
+  logtosyslog     => true,          # * Log to Syslog
+  idrangemin      => 10000,         # * min uid for Domain users
+  idrangemax      => 19999,         # * max uid for Domain users
+
+  # Optionnal parameters
+  globaloptions   => [],            # * Custom options in section [global] 
+}
+```
+
+### Samba Shares
+
+Not Implemented Yet!
+
+```puppet
+::samba::share { 'Test Share':
+  path            => '/var/lib/samba/shares/test',
+  # Optionnal parameters
+  customoptions   => [],            # * Custom options in section [global] 
 }
 ```
 
