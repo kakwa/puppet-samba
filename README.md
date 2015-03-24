@@ -121,8 +121,6 @@ class { '::samba::classic':
 
 ### Samba Shares
 
-Not Implemented Yet!
-
 ```puppet
 ::samba::share { 'Test Share':
   # Mandatory parameters
