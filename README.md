@@ -125,9 +125,10 @@ Not Implemented Yet!
 
 ```puppet
 ::samba::share { 'Test Share':
-  path            => '/var/lib/samba/shares/test',
+  # Mandatory parameters
+  path            => '/srv/test/',
   # Optionnal parameters
-  customoptions   => [],            # * Custom options in section [global] 
+  options         => [],            # * Custom options in section [global] 
 }
 ```
 

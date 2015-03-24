@@ -37,10 +37,49 @@
 #
 
 define samba::share(
-  $sharename,
   $path,
-  $description,
-  $customoptions,
+  $options = [],
 ) {
-  fail('not implemented')
+
+  $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
+  validate_absolute_path($rootpath)
+
+  exec {"Create path ${rootpath}":
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    unless  => "test -e '${rootpath}'",
+    command => "mkdir -p '${rootpath}'",
+  }
+
+  if defined(Package['SambaClassic']){
+    $require = Package['SambaClassic']
+    $notify  = Service['SambaClassic']
+  }elsif defined(Package['SambaDC']){
+    $require = Exec['provisionAD']
+    $notify  = Service['SambaDC']
+  }else{
+    fail('No mode matched, aborting')
+  } 
+
+  file {$rootpath:
+    ensure  => directory,
+    require => Exec["Create path ${rootpath}"],
+  }
+
+  smb_setting { "${name}/path":
+    path    => $::samba::params::smbConfFile,
+    section => $name,
+    setting => 'path',
+    value   => $path,
+    require => $require,
+    notify  => $notify,
+  }
+
+  $optionsSize  = size($options) - 1
+  $optionsIndex = prefix(range(0, $optionsSize), "${name}:")
+  ::samba::option{ $optionsIndex:
+    options => $options,
+    section => $name,
+    require => $require,
+    notify  => $notify,
+  }
 }

@@ -142,6 +142,10 @@ ex: domain="ad" and realm="ad.example.com"')
     fail('dns forwarder must be a valid IP address')
   }
 
+  if defined(Service['SambaClassic']){
+    fail('Can\'t use samba::dc and samba::classic on the same node')
+  }
+
   validate_absolute_path($targetdir)
 
   $realmDowncase = downcase($realm)
@@ -266,7 +270,7 @@ level raise --forest-level='${domainLevel}'",
 
   # Iteration on global options
   $globaloptionsSize  = size($::samba::dc::globaloptions) - 1
-  $globaloptionsIndex = range(0, $globaloptionsSize)
+  $globaloptionsIndex = prefix(range(0, $globaloptionsSize), 'globalcut:')
   ::samba::option{ $globaloptionsIndex:
     options => $globaloptions,
     section => 'global',
@@ -276,7 +280,8 @@ level raise --forest-level='${domainLevel}'",
 
   # Iteration on netlogon options
   $netlogonoptionsSize  = size($::samba::dc::netlogonoptions) - 1
-  $netlogonoptionsIndex = range(0, $netlogonoptionsSize)
+  #$netlogonoptionsIndex = range(0, $netlogonoptionsSize)
+  $netlogonoptionsIndex = prefix(range(0, $netlogonoptionsSize), 'netlogoncust:')
   ::samba::option{ $netlogonoptionsIndex:
     options => $netlogonoptions,
     section => 'netlogon',
@@ -286,7 +291,7 @@ level raise --forest-level='${domainLevel}'",
 
   # Iteration on sysvol options
   $sysvoloptionsSize  = size($::samba::dc::sysvoloptions) - 1
-  $sysvoloptionsIndex = range(0, $sysvoloptionsSize)
+  $sysvoloptionsIndex = prefix(range(0, $sysvoloptionsSize), 'sysvolcust:')
   ::samba::option{ $sysvoloptionsIndex:
     options => $sysvoloptions,
     section => 'sysvol',

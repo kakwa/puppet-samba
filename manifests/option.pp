@@ -2,8 +2,9 @@ define samba::option(
       $options,
       $section,
 ){
-  $optionsSetting    = $options[$title]['setting']
-  $optionsValue      = $options[$title]['value']
+  $index = regsubst($title, '^.*:([0-9]+)$', '\1')
+  $optionsSetting    = $options[$index]['setting']
+  $optionsValue      = $options[$index]['value']
 
   smb_setting { "${section}/${optionsSetting}":
     ensure            => present,

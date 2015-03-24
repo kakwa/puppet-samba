@@ -127,7 +127,7 @@ ex: domain="ad" and realm="ad.example.com"')
   ]
 
   $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
-  $mandatoryGlobalOptionsIndex = range(0, $mandatoryGlobalOptionsSize)
+  $mandatoryGlobalOptionsIndex = prefix(range(0, $mandatoryGlobalOptionsSize), 'global:')
   ::samba::option{ $mandatoryGlobalOptionsIndex:
     options => $mandatoryGlobalOptions,
     section => 'global',
@@ -145,7 +145,7 @@ ex: domain="ad" and realm="ad.example.com"')
 
   # Iteration on global options
   $globaloptionsSize  = size($::samba::classic::globaloptions) - 1
-  $globaloptionsIndex = range(0, $globaloptionsSize)
+  $globaloptionsIndex = prefix(range(0, $globaloptionsSize), 'globalcustom:')
   ::samba::option{ $globaloptionsIndex:
     options => $globaloptions,
     section => 'global',
