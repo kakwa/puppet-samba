@@ -48,11 +48,6 @@ class samba::classic(
   $globaloptions        = [],
 ) inherits ::samba::params{
 
-  unless is_integer($sambaloglevel)
-    and $sambaloglevel >= 0
-    and $sambaloglevel <= 10{
-    fail('loglevel must be an integer between 0 and 10')
-  }
 
   unless is_integer($idrangemin)
     and is_integer($idrangemax)
@@ -60,10 +55,6 @@ class samba::classic(
     and $idrangemax >= $idrangemin {
     fail('idrangemin and idrangemax must be integers \
 and idrangemin <= idrangemax')
-  }
-
-  unless is_bool($logtosyslog){
-    fail('logtosyslog must be a boolean')
   }
 
   unless is_domain_name($realm){
@@ -144,60 +135,13 @@ ex: domain="ad" and realm="ad.example.com"')
     notify  => Service['SambaClassic'],
   }
 
-  # Configure Loglevel
-  smb_setting { 'global/log level':
-    ensure  => present,
-    path    => $::samba::params::smbConfFile,
-    section => 'global',
-    setting => 'log level',
-    value   => $sambaloglevel,
-    require => Package['SambaClassic'],
-    notify  => Service['SambaClassic'],
+  ::samba::log { 'syslog':
+      sambaloglevel => $sambaloglevel,
+      logtosyslog   => $logtosyslog,
+      require       => Package['SambaClassic'],
+      notify        => Service['SambaClassic'],
   }
 
-  # If specify, configure syslog
-  if $logtosyslog {
-    smb_setting { 'global/syslog':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog',
-      value   => $sambaloglevel,
-      require => Package['SambaClassic'],
-      notify  => Service['SambaClassic'],
-    }
-
-    smb_setting { 'global/syslog only':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog only',
-      value   => 'yes',
-      require => Package['SambaClassic'],
-      notify  => Service['SambaClassic'],
-    }
-  }
-  # If not, keep login ing file, and disable syslog
-  else {
-    smb_setting { 'global/syslog only':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog only',
-      value   => 'no',
-      require => Package['SambaClassic'],
-      notify  => Service['SambaClassic'],
-    }
-
-    smb_setting { 'global/syslog':
-      ensure  => absent,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog',
-      require => Package['SambaClassic'],
-      notify  => Service['SambaClassic'],
-    }
-  }
 
   # Iteration on global options
   $globaloptionsSize  = size($::samba::classic::globaloptions) - 1

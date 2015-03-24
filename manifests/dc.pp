@@ -120,16 +120,6 @@ must be in ["2003", "2008", "2008 R2"]')
     fail('ppolicyminpwdlength must be an integer')
   }
 
-  unless is_integer($sambaloglevel)
-    and $sambaloglevel >= 0
-    and $sambaloglevel <= 10{
-    fail('loglevel must be an integer between 0 and 10')
-  }
-
-  unless is_bool($logtosyslog){
-    fail('logtosyslog must be a boolean')
-  }
-
   unless is_integer($ppolicyminpwdage){
     fail('ppolicyminpwdage must be an integer')
   }
@@ -192,58 +182,11 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   }
 
   # Configure Loglevel
-  smb_setting { 'LogLevel':
-    ensure  => present,
-    path    => $::samba::params::smbConfFile,
-    section => 'global',
-    setting => 'log level',
-    value   => $sambaloglevel,
-    require => Exec['provisionAD'],
-    notify  => Service['SambaDC'],
-  }
-
-  # If specify, configure syslog
-  if $logtosyslog {
-    smb_setting { 'SyslogLogLevel':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog',
-      value   => $sambaloglevel,
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
-
-    smb_setting { 'LogToSyslog':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog only',
-      value   => 'yes',
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
-  }
-  # If not, keep login ing file, and disable syslog
-  else {
-    smb_setting { 'DontLogToSyslog':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog only',
-      value   => 'no',
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
-
-    smb_setting { 'SyslogLogLevel':
-      ensure  => absent,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'syslog',
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
+  ::samba::log { 'syslog':
+      sambaloglevel => $sambaloglevel,
+      logtosyslog   => $logtosyslog,
+      require       => Exec['provisionAD'],
+      notify        => Service['SambaDC'],
   }
 
   # Configure dns forwarder
