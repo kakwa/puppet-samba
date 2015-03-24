@@ -150,6 +150,9 @@ ex: domain="ad" and realm="ad.example.com"')
 
   $realmDowncase = downcase($realm)
 
+  $scriptDir = "${targetdir}/state/sysvol/${realmDowncase}/scripts/"
+  validate_absolute_path($scriptDir)
+
   package{ 'SambaDC':
     ensure        => 'installed',
     allow_virtual => true,
@@ -196,7 +199,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   # Configure dns forwarder
   # (if not specify, keep the default from provisioning)
   if $dnsforwarder != undef {
-    smb_setting { 'DnsForwareder':
+    smb_setting { 'global/dns forwarder':
       ensure  => present,
       path    => $::samba::params::smbConfFile,
       section => 'global',
@@ -205,6 +208,13 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
       require => Exec['provisionAD'],
       notify  => Service['SambaDC'],
     }
+  } else{
+    smb_setting { 'global/dns forwarder':
+      ensure  => present,
+      section => 'global',
+      setting => 'dns forwarder',
+    }
+
   }
 
   # Check and set administrator password
@@ -299,6 +309,63 @@ level raise --forest-level='${domainLevel}'",
     require => Exec['provisionAD'],
     notify  => Service['SambaDC'],
   }
+
+  $mandatoryGlobalOptions = [
+    {setting => 'workgroup',              value => $domain},
+    {setting => 'realm',                  value => $realm},
+    {setting => 'netbios name',           value => 'AD'},
+    {setting => 'server role',            value => 'active directory domain controller'},
+    {setting => 'private dir',            value => "${targetdir}/private/"},
+    {setting => 'cache directory',        value => "${targetdir}/cache/"},
+    {setting => 'state directory',        value => "${targetdir}/state/"},
+    {setting => 'lock directory',         value => "${targetdir}/"},
+    {setting => 'idmap_ldb:use rfc2307',  value => 'Yes'},
+  ]
+
+  $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
+  $mandatoryGlobalOptionsIndex = prefix(range(0,
+    $mandatoryGlobalOptionsSize), 'global:')
+  ::samba::option{ $mandatoryGlobalOptionsIndex:
+    options => $mandatoryGlobalOptions,
+    section => 'global',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
+  }
+
+  $mandatorySysvolOptions = [
+    {setting => 'path',              value => "${targetdir}/state/sysvol"},
+    {setting => 'read only',         value => 'No'},
+  ]
+
+  $mandatorySysvolOptionsSize  = size($mandatorySysvolOptions) - 1
+  $mandatorySysvolOptionsIndex = prefix(range(0,
+  $mandatorySysvolOptionsSize), 'sysvol:')
+  ::samba::option{ $mandatorySysvolOptionsIndex:
+    options => $mandatorySysvolOptions,
+    section => 'sysvol',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
+  }
+
+  $mandatoryNetlogonOptions = [
+    {setting => 'path',              value => $scriptDir},
+    {setting => 'read only',         value => 'No'},
+  ]
+
+  $mandatoryNetlogonOptionsSize  = size($mandatoryNetlogonOptions) - 1
+  $mandatoryNetlogonOptionsIndex = prefix(range(0,
+  $mandatoryNetlogonOptionsSize), 'netlogon:')
+  ::samba::option{ $mandatoryNetlogonOptionsIndex:
+    options => $mandatoryNetlogonOptions,
+    section => 'netlogon',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
+  }
+
+  resources { 'smb_setting':
+    purge => true,
+  }
+
 }
 
 # vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2
