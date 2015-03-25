@@ -144,11 +144,12 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   ::samba::log { 'syslog':
-      sambaloglevel      => $sambaloglevel,
-      logtosyslog        => $logtosyslog,
-      sambaclassloglevel => $sambaclassloglevel,
-      require            => Package['SambaClassic'],
-      notify             => Service['SambaClassic'],
+    sambaloglevel      => $sambaloglevel,
+    logtosyslog        => $logtosyslog,
+    sambaclassloglevel => $sambaclassloglevel,
+    settingsignored    => keys($globaloptions),
+    require            => Package['SambaClassic'],
+    notify             => Service['SambaClassic'],
   }
 
   # Iteration on global options

@@ -193,11 +193,12 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
 
   # Configure Loglevel
   ::samba::log { 'syslog':
-      sambaloglevel      => $sambaloglevel,
-      logtosyslog        => $logtosyslog,
-      sambaclassloglevel => $sambaclassloglevel,
-      require            => Exec['provisionAD'],
-      notify             => Service['SambaDC'],
+    sambaloglevel      => $sambaloglevel,
+    logtosyslog        => $logtosyslog,
+    sambaclassloglevel => $sambaclassloglevel,
+    settingsignored    => keys($globaloptions),
+    require            => Exec['provisionAD'],
+    notify             => Service['SambaDC'],
   }
 
   # Configure dns forwarder
