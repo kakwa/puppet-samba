@@ -83,7 +83,8 @@ class { ::samba::dc:
   sysvolabsentoptions   => [],                # * remove default settings put 
                                               #   by this class in [sysvol] (default: [])
   netlogonabsentoptions => [],                # * Remove default settings put 
-                                              #   by this class in [netlogon] (default: [])
+                                              #   by this class in [netlogon] 
+                                                  (default: [])
   groups                => [                  # * List of groups (default: [])
     { name        => 'group1',                # * group name
       description => 'Group 1',               # * group description
