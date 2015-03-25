@@ -38,7 +38,7 @@
 
 define samba::share(
   $path,
-  $options = [],
+  $options = {},
 ) {
 
   $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
@@ -74,8 +74,7 @@ define samba::share(
     notify  => $notify,
   }
 
-  $optionsSize  = size($options) - 1
-  $optionsIndex = prefix(range(0, $optionsSize), "${name}:")
+  $optionsIndex = prefix(keys($options), "[${name}]")
   ::samba::option{ $optionsIndex:
     options => $options,
     section => $name,

@@ -69,11 +69,12 @@ class { ::samba::dc:
     'winbind'      => 3,
   },
 
-  globaloptions         => [                  # * Custom options in section [global] 
-                                              #   (default: [])
-    { 'setting' => 'custom setting 1', 'value'   => 'custom value 1',},
-    { 'setting' => 'custom setting 2', 'value'   => 'custom value 2',},
-  ],
+  globaloptions         => {                  # * Custom options in section [global] 
+                                              #   (default: {})
+    'custom setting 1'   => 'custom value 1',
+    'custom setting 2'   => 'custom value 2',
+  },
+
   netlogonoptions       => [],                # * Custom options in section [netlogon]
   sysvoloptions         => [],                # * Custom options in section [sysvol]
   groups                => [                  # * List of groups (default: [])
@@ -126,7 +127,7 @@ class { '::samba::classic':
     'idmap'        => 5,
     'winbind'      => 3,
   },
-  globaloptions   => [],            # * Custom options in section [global] 
+  globaloptions   => {},            # * Custom options in section [global] 
 
 }
 ```
@@ -138,7 +139,10 @@ class { '::samba::classic':
   # Mandatory parameters
   path            => '/srv/test/',
   # Optionnal parameters
-  options         => [],            # * Custom options in section [Test Share] 
+  options         => {            # * Custom options in section [Test Share] 
+      'browsable'     => 'Yes',
+      'root preexec'  => 'mkdir -p \'/home/home_%U\'',
+  },
 }
 ```
 

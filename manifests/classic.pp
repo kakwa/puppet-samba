@@ -46,7 +46,7 @@ class samba::classic(
   $sambaloglevel        = 1,
   $sambaclassloglevel   = undef,
   $logtosyslog          = false,
-  $globaloptions        = [],
+  $globaloptions        = {},
 ) inherits ::samba::params{
 
 
@@ -109,27 +109,26 @@ ex: domain="ad" and realm="ad.example.com"')
     require => Package['SambaClassic'],
   }
 
-  $mandatoryGlobalOptions = [
-    {setting => 'workgroup',                          value => $domain},
-    {setting => 'realm',                              value => $realm},
-    {setting => 'netbios name',                       value => "${smbname}.${realm}"},
-    {setting => 'security',                           value => 'ADS'},
-    {setting => 'dedicated keytab file',              value => '/etc/krb5.keytab'},
-    {setting => 'winbind nss info',                   value => 'rfc2307'},
-    {setting => 'map untrusted to domain',            value => 'Yes'},
-    {setting => 'winbind trusted domains only',       value => 'No'},
-    {setting => 'winbind use default domain',         value => 'Yes'},
-    {setting => 'winbind enum users',                 value => 'Yes'},
-    {setting => 'winbind enum groups',                value => 'Yes'},
-    {setting => 'winbind refresh tickets',            value => 'Yes'},
-    {setting => "idmap config ${domain}:backend",     value => 'ad'},
-    {setting => "idmap config ${domain}:schema_mode", value => 'rfc2307'},
-    {setting => "idmap config ${domain}:range",       value => "${idrangemin}-${idrangemax}"},
-  ]
+  $mandatoryGlobalOptions = {
+    'workgroup'                          => $domain,
+    'realm'                              => $realm,
+    'netbios name'                       => "${smbname}.${realm}",
+    'security'                           => 'ADS',
+    'dedicated keytab file'              => '/etc/krb5.keytab',
+    'winbind nss info'                   => 'rfc2307',
+    'map untrusted to domain'            => 'Yes',
+    'winbind trusted domains only'       => 'No',
+    'winbind use default domain'         => 'Yes',
+    'winbind enum users'                 => 'Yes',
+    'winbind enum groups'                => 'Yes',
+    'winbind refresh tickets'            => 'Yes',
+    "idmap config ${domain}:backend"     => 'ad',
+    "idmap config ${domain}:schema_mode" => 'rfc2307',
+    "idmap config ${domain}:range"       => "${idrangemin}-${idrangemax}",
+  }
 
-  $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
-  $mandatoryGlobalOptionsIndex = prefix(range(0,
-    $mandatoryGlobalOptionsSize), 'global:')
+  $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
+    '[global]')
   ::samba::option{ $mandatoryGlobalOptionsIndex:
     options => $mandatoryGlobalOptions,
     section => 'global',
@@ -151,10 +150,8 @@ ex: domain="ad" and realm="ad.example.com"')
       notify             => Service['SambaClassic'],
   }
 
-
   # Iteration on global options
-  $globaloptionsSize  = size($::samba::classic::globaloptions) - 1
-  $globaloptionsIndex = prefix(range(0, $globaloptionsSize), 'globalcustom:')
+  $globaloptionsIndex = prefix(keys($globaloptions), '[globalcustom]')
   ::samba::option{ $globaloptionsIndex:
     options => $globaloptions,
     section => 'global',

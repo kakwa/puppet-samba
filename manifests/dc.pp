@@ -56,9 +56,9 @@ class samba::dc(
   $sambaloglevel        = 1,
   $logtosyslog          = false,
   $sambaclassloglevel   = undef,
-  $globaloptions        = [],
-  $netlogonoptions      = [],
-  $sysvoloptions        = [],
+  $globaloptions        = {},
+  $netlogonoptions      = {},
+  $sysvoloptions        = {},
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -151,7 +151,9 @@ ex: domain="ad" and realm="ad.example.com"')
 
   $realmDowncase = downcase($realm)
 
-  $scriptDir = smb_clean_path("${targetdir}/state/sysvol/${realmDowncase}/scripts/")
+  $scriptDir = smb_clean_path(
+    "${targetdir}/state/sysvol/${realmDowncase}/scripts/"
+  )
   validate_absolute_path($scriptDir)
 
   package{ 'SambaDC':
@@ -281,8 +283,7 @@ level raise --forest-level='${domainLevel}'",
   ::samba::dc::scriptadd{ $scriptIndex: }
 
   # Iteration on global options
-  $globaloptionsSize  = size($::samba::dc::globaloptions) - 1
-  $globaloptionsIndex = prefix(range(0, $globaloptionsSize), 'globalcut:')
+  $globaloptionsIndex = prefix(keys($globaloptions), '[globalcust]')
   ::samba::option{ $globaloptionsIndex:
     options => $globaloptions,
     section => 'global',
@@ -291,10 +292,7 @@ level raise --forest-level='${domainLevel}'",
   }
 
   # Iteration on netlogon options
-  $netlogonoptionsSize  = size($::samba::dc::netlogonoptions) - 1
-  #$netlogonoptionsIndex = range(0, $netlogonoptionsSize)
-  $netlogonoptionsIndex = prefix(range(0, $netlogonoptionsSize),
-    'netlogoncust:')
+  $netlogonoptionsIndex = prefix(keys($netlogonoptions), '[netlogoncust]')
   ::samba::option{ $netlogonoptionsIndex:
     options => $netlogonoptions,
     section => 'netlogon',
@@ -303,8 +301,7 @@ level raise --forest-level='${domainLevel}'",
   }
 
   # Iteration on sysvol options
-  $sysvoloptionsSize  = size($::samba::dc::sysvoloptions) - 1
-  $sysvoloptionsIndex = prefix(range(0, $sysvoloptionsSize), 'sysvolcust:')
+  $sysvoloptionsIndex = prefix(keys($sysvoloptions), '[sysvolcust]')
   ::samba::option{ $sysvoloptionsIndex:
     options => $sysvoloptions,
     section => 'sysvol',
@@ -312,21 +309,20 @@ level raise --forest-level='${domainLevel}'",
     notify  => Service['SambaDC'],
   }
 
-  $mandatoryGlobalOptions = [
-    {setting => 'workgroup',              value => $domain},
-    {setting => 'realm',                  value => $realm},
-    {setting => 'netbios name',           value => 'AD'},
-    {setting => 'server role',            value => 'active directory domain controller'},
-    {setting => 'private dir',            value => smb_clean_path("${targetdir}/private/")},
-    {setting => 'cache directory',        value => smb_clean_path("${targetdir}/cache/")},
-    {setting => 'state directory',        value => smb_clean_path("${targetdir}/state/")},
-    {setting => 'lock directory',         value => smb_clean_path("${targetdir}/")},
-    {setting => 'idmap_ldb:use rfc2307',  value => 'Yes'},
-  ]
+  $mandatoryGlobalOptions = {
+    'workgroup'             => $domain,
+    'realm'                 => $realm,
+    'netbios name'          => 'AD',
+    'server role'           => 'active directory domain controller',
+    'private dir'           => smb_clean_path("${targetdir}/private/"),
+    'cache directory'       => smb_clean_path("${targetdir}/cache/"),
+    'state directory'       => smb_clean_path("${targetdir}/state/"),
+    'lock directory'        => smb_clean_path("${targetdir}/"),
+    'idmap_ldb:use rfc2307' => 'Yes',
+  }
 
-  $mandatoryGlobalOptionsSize  = size($mandatoryGlobalOptions) - 1
-  $mandatoryGlobalOptionsIndex = prefix(range(0,
-    $mandatoryGlobalOptionsSize), 'global:')
+  $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
+    '[global]')
   ::samba::option{ $mandatoryGlobalOptionsIndex:
     options => $mandatoryGlobalOptions,
     section => 'global',
@@ -334,14 +330,13 @@ level raise --forest-level='${domainLevel}'",
     notify  => Service['SambaDC'],
   }
 
-  $mandatorySysvolOptions = [
-    {setting => 'path',              value => smb_clean_path("${targetdir}/state/sysvol")},
-    {setting => 'read only',         value => 'No'},
-  ]
+  $mandatorySysvolOptions = {
+    'path'      => smb_clean_path("${targetdir}/state/sysvol"),
+    'read only' => 'No',
+  }
 
-  $mandatorySysvolOptionsSize  = size($mandatorySysvolOptions) - 1
-  $mandatorySysvolOptionsIndex = prefix(range(0,
-  $mandatorySysvolOptionsSize), 'sysvol:')
+  $mandatorySysvolOptionsIndex = prefix(keys($mandatorySysvolOptions),
+    '[sysvol]')
   ::samba::option{ $mandatorySysvolOptionsIndex:
     options => $mandatorySysvolOptions,
     section => 'sysvol',
@@ -349,14 +344,13 @@ level raise --forest-level='${domainLevel}'",
     notify  => Service['SambaDC'],
   }
 
-  $mandatoryNetlogonOptions = [
-    {setting => 'path',              value => $scriptDir},
-    {setting => 'read only',         value => 'No'},
-  ]
+  $mandatoryNetlogonOptions = {
+    'path'      => $scriptDir,
+    'read only' => 'No',
+  }
 
-  $mandatoryNetlogonOptionsSize  = size($mandatoryNetlogonOptions) - 1
-  $mandatoryNetlogonOptionsIndex = prefix(range(0,
-  $mandatoryNetlogonOptionsSize), 'netlogon:')
+  $mandatoryNetlogonOptionsIndex = prefix(keys(
+  $mandatoryNetlogonOptions), '[netlogon]')
   ::samba::option{ $mandatoryNetlogonOptionsIndex:
     options => $mandatoryNetlogonOptions,
     section => 'netlogon',
