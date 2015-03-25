@@ -231,12 +231,14 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   }
 
   # Check and set administrator password
-  exec{ 'setAdminPassword':
-    unless  => "${::samba::params::sambaClientCmd} \
+  unless $adminpassword == undef {
+    exec{ 'setAdminPassword':
+      unless  => "${::samba::params::sambaClientCmd} \
 //localhost/netlogon ${adminpassword} -UAdministrator  -c 'ls'",
-    command => "${::samba::params::sambaCmd} user setpassword \
+      command => "${::samba::params::sambaCmd} user setpassword \
 Administrator --newpassword=${adminpassword}",
-    require => Service['SambaDC'],
+      require => Service['SambaDC'],
+    }
   }
 
   # Configure Domain function level

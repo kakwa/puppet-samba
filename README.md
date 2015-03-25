@@ -45,9 +45,10 @@ class { ::samba::dc:
   realm                 => 'ad.example.org',  # * Realm name (must match domain)
   dnsbackend            => 'internal',        # * DNS backend ('internal', 
                                               #   'bindFlat' or 'bindDLZ')
-  adminpassword         => 'P455WordS',       # * Administrator password
 
   # Optionnal parameters
+  adminpassword         => 'P455WordS',       # * Administrator password 
+                                              #   (default: undef)
   dnsforwarder          => 8.8.8.8,           # * Dns forwarder IP (default: undef)
   ppolicycomplexity     => 'on',              # * Enable password policy (default: on)
   ppolicyplaintext      => 'off',             # * Store password in plain text 
@@ -124,22 +125,23 @@ class { '::samba::classic':
   domain                => 'DC',          # * Domain to authentify against
   realm                 => 'dc.kakwa.fr', # * Realm to authentify agains
   smbname               => 'SMB',         # * Share name
-  adminpassword         => 'qwertyP455',  # * Domain Administrator 
-                                          #   password (for joining)
   sambaloglevel         => 3,             # * Samba log level
   logtosyslog           => true,          # * Log to Syslog
   idrangemin            => 10000,         # * min uid for Domain users
   idrangemax            => 19999,         # * max uid for Domain users
 
   # Optionnal parameters
-  sambaclassloglevel    => {        # * Set log level by log classes
-    'printdrivers' => 1,            #   (default: undef)
+  adminpassword         => 'P455WordS',   # * Domain Administrator 
+                                          #   password (for joining)
+                                          #   (default: undef, no join)
+  sambaclassloglevel    => {              # * Set log level by log classes
+    'printdrivers' => 1,                  #   (default: undef)
     'idmap'        => 5,
     'winbind'      => 3,
   },
-  globaloptions       => {},        # * Custom options in section [global] 
-  globalabsentoptions => [],        # * Remove default settings put 
-                                    #   by this class in [global]
+  globaloptions       => {},              # * Custom options in section [global] 
+  globalabsentoptions => [],              # * Remove default settings put 
+                                          #   by this class in [global]
 
 }
 ```
