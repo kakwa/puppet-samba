@@ -14,7 +14,11 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
     # the catalog.
 
     def self.file_path
-      File.open('/etc/samba/smb_path', &:readline).strip
+      if File.exist?('/etc/samba/smb_path')
+         File.open('/etc/samba/smb_path', &:readline).strip
+      else
+         '/etc/samba/smb.conf'
+      end
     end
 
     def section
@@ -27,8 +31,11 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
 
     if self.respond_to?(:file_path)
       # figure out what to do about the seperator
-      ini_file  = Puppet::Util::IniFile.new(file_path, '=')
       resources = []
+      if file_path.nil?
+        return resources
+      end
+      ini_file  = Puppet::Util::IniFile.new(file_path, '=')
       ini_file.section_names.each do |section_name|
         settings = ini_file.get_settings(section_name)
         if settings.length == 0 and section_name != ''
