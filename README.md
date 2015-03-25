@@ -164,6 +164,28 @@ class { '::samba::classic':
 
 For now, this module only works on RedHat/CentOS, with Sernet packages.
 
+To access Sernet Repositories, you must register on [Sernet Portal](https://portal.enterprisesamba.com/users/sign_up).
+Once it's done, you should have access to your *ACCESSKEY*. Use it and your USERNAME to configure the repo:
+
+sernet-samba-4.1.repo:
+```ini
+[sernet-samba-4.1]
+name=SerNet Samba 4.1 Packages (centos-7)
+type=rpm-md
+baseurl=https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/centos/7/
+gpgcheck=1
+gpgkey=https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/centos/7/repodata/repomd.xml.key
+enabled=1
+```
+
+sernet-samba-4.1.list:
+```yml
+deb https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/debian wheezy main
+deb-src https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/debian wheezy main
+```
+
+This module will not configure the repo, you have to do it otherwise.
+
 ## Development
 
 Pull requests are welcomed ^^
