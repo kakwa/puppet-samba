@@ -163,10 +163,21 @@ ex: domain="ad" and realm="ad.example.com"')
   $netlogonoptsexclude = concat(keys($netlogonoptions), $netlogonabsentoptions)
   $sysvoloptsexclude   = concat(keys($sysvoloptions), $sysvolabsentoptions)
 
+  file { '/etc/samba/':
+    ensure  => 'directory',
+  }
+
+  file { '/etc/samba/smb_path':
+    ensure  => 'present',
+    content => $::samba::params::smbConfFile,
+    require => File['/etc/samba/'],
+  }
+
   package{ 'SambaDC':
     ensure        => 'installed',
     allow_virtual => true,
     name          => $::samba::params::packageSambaDC,
+    require       => File['/etc/samba/smb_path'],
   }
 
   # Provision the Domain Controler
@@ -376,6 +387,9 @@ level raise --forest-level='${domainLevel}'",
   smb_setting { $gabsoptlist :
     ensure  => absent,
     section => 'global',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
+
   }
 
   $sabsoptlist = prefix($sysvolabsentoptions, 'sysvol/')
@@ -388,12 +402,15 @@ level raise --forest-level='${domainLevel}'",
   smb_setting { $nabsoptlist :
     ensure  => absent,
     section => 'netlogon',
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
   }
 
   resources { 'smb_setting':
-    purge => true,
+    purge   => true,
+    require => Exec['provisionAD'],
+    notify  => Service['SambaDC'],
   }
-
 }
 
 # vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2

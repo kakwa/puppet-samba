@@ -67,6 +67,7 @@ and idrangemin <= idrangemax')
     fail('realm must be a valid domain')
   }
 
+  validate_slength($smbname, 15)
   unless is_domain_name("${smbname}.${realm}"){
     fail('smbname must be a valid domain')
   }
@@ -90,11 +91,18 @@ ex: domain="ad" and realm="ad.example.com"')
     require => File['/etc/samba/'],
   }
 
+  package{ 'SambaClassicWinBind':
+    ensure        => 'installed',
+    allow_virtual => true,
+    name          => $::samba::params::packageSambaWinBind,
+    require       => File['/etc/samba/smb_path'],
+  }
+
   package{ 'SambaClassic':
     ensure        => 'installed',
     allow_virtual => true,
     name          => $::samba::params::packageSambaClassic,
-    require       => File['/etc/samba/smb_path'],
+    require       => Package['SambaClassicWinBind'],
   }
 
   service{ 'SambaClassic':
@@ -114,7 +122,7 @@ ex: domain="ad" and realm="ad.example.com"')
   $mandatoryGlobalOptions = {
     'workgroup'                          => $domain,
     'realm'                              => $realm,
-    'netbios name'                       => "${smbname}.${realm}",
+    'netbios name'                       => $smbname,
     'security'                           => 'ADS',
     'dedicated keytab file'              => '/etc/krb5.keytab',
     'winbind nss info'                   => 'rfc2307',
@@ -137,14 +145,6 @@ ex: domain="ad" and realm="ad.example.com"')
     settingsignored => $globaloptsexclude,
     require         => Package['SambaClassic'],
     notify          => Service['SambaClassic'],
-  }
-
-  unless $adminpassword == undef {
-    exec{ 'Join Domain':
-      path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
-      unless  => 'net ads testjoin',
-      command => "echo '${adminpassword}'| net ads join -U administrator",
-    }
   }
 
   ::samba::log { 'syslog':
@@ -173,8 +173,18 @@ ex: domain="ad" and realm="ad.example.com"')
   smb_setting { $gabsoptlist :
     ensure  => absent,
     section => 'global',
+    require => Package['SambaClassic'],
+    notify  => Service['SambaClassic'],
   }
 
+  unless $adminpassword == undef {
+    exec{ 'Join Domain':
+      path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
+      unless  => 'net ads testjoin',
+      command => "echo '${adminpassword}'| net ads join -U administrator",
+      require => Service['SambaClassic'],
+    }
+  }
 }
 
 # vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2

@@ -9,6 +9,7 @@ class samba::params(
       'redhat': {
           $packageSambaDC      = 'sernet-samba-ad'
           $packageSambaClassic = 'sernet-samba'
+          $packageSambaWinBind = 'sernet-samba-winbind'
           $serviveSambaDC      = 'sernet-samba-ad'
           $serviveSambaClassic = [ 'sernet-samba-smbd',
             'sernet-samba-winbindd' ]
