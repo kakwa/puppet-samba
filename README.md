@@ -79,12 +79,14 @@ class { ::samba::dc:
   netlogonoptions       => [],                # * Custom options in section [netlogon]
   sysvoloptions         => [],                # * Custom options in section [sysvol]
   globalabsentoptions   => ['idmap_ldb:use'], # * Remove default settings put 
-                                              #   by this class in [global] (default: [])
+                                              #   by this class in [global] 
+                                              #   (default: [])
   sysvolabsentoptions   => [],                # * remove default settings put 
-                                              #   by this class in [sysvol] (default: [])
+                                              #   by this class in [sysvol] 
+                                              #   (default: [])
   netlogonabsentoptions => [],                # * Remove default settings put 
                                               #   by this class in [netlogon] 
-                                                  (default: [])
+                                              #   (default: [])
   groups                => [                  # * List of groups (default: [])
     { name        => 'group1',                # * group name
       description => 'Group 1',               # * group description
