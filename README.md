@@ -155,7 +155,7 @@ class { '::samba::classic':
       'browsable'     => 'Yes',
       'root preexec'  => 'mkdir -p \'/home/home_%U\'',
   },
-  absentoptions   => ['path']     # * Remove default settings put by this resource
+  absentoptions   => ['path'],    # * Remove default settings put by this resource
                                   #   default?: []
 }
 ```
