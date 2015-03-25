@@ -69,14 +69,12 @@ class { ::samba::dc:
     'idmap'        => 5,
     'winbind'      => 3,
   },
-
   globaloptions         => {                  # * Custom options in section [global] 
                                               #   Takes precedence.
                                               #   (default: {})
     'custom setting 1'   => 'custom value 1',
     'custom setting 2'   => 'custom value 2',
   },
-
   netlogonoptions       => [],                # * Custom options in section [netlogon]
   sysvoloptions         => [],                # * Custom options in section [sysvol]
   globalabsentoptions   => ['idmap_ldb:use'], # * Remove default settings put 
@@ -142,7 +140,6 @@ class { '::samba::classic':
   globaloptions       => {},              # * Custom options in section [global] 
   globalabsentoptions => [],              # * Remove default settings put 
                                           #   by this class in [global]
-
 }
 ```
 
@@ -152,12 +149,13 @@ class { '::samba::classic':
 ::samba::share { 'Test Share':
   # Mandatory parameters
   path            => '/srv/test/',
+  
   # Optionnal parameters
   options         => {            # * Custom options in section [Test Share] 
       'browsable'     => 'Yes',
       'root preexec'  => 'mkdir -p \'/home/home_%U\'',
   },
-  absentoptions   => ['path']     # * Remove default settings put by this resource
+  absentoptions   => ['path'],    # * Remove default settings put by this resource
                                   #   default?: []
 }
 ```
