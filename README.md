@@ -70,6 +70,7 @@ class { ::samba::dc:
   },
 
   globaloptions         => {                  # * Custom options in section [global] 
+                                              #   Takes precedence.
                                               #   (default: {})
     'custom setting 1'   => 'custom value 1',
     'custom setting 2'   => 'custom value 2',
