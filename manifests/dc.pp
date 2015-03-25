@@ -203,21 +203,23 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
 
   # Configure dns forwarder
   # (if not specify, keep the default from provisioning)
-  if $dnsforwarder != undef {
-    smb_setting { 'global/dns forwarder':
-      ensure  => present,
-      path    => $::samba::params::smbConfFile,
-      section => 'global',
-      setting => 'dns forwarder',
-      value   => $dnsforwarder,
-      require => Exec['provisionAD'],
-      notify  => Service['SambaDC'],
-    }
-  } else{
-    smb_setting { 'global/dns forwarder':
-      ensure  => present,
-      section => 'global',
-      setting => 'dns forwarder',
+  unless member(keys($globaloptions) , 'dns forwarder'){
+    if $dnsforwarder != undef {
+      smb_setting { 'global/dns forwarder':
+        ensure  => present,
+        path    => $::samba::params::smbConfFile,
+        section => 'global',
+        setting => 'dns forwarder',
+        value   => $dnsforwarder,
+        require => Exec['provisionAD'],
+        notify  => Service['SambaDC'],
+      }
+    } else{
+      smb_setting { 'global/dns forwarder':
+        ensure  => present,
+        section => 'global',
+        setting => 'dns forwarder',
+      }
     }
   }
 
