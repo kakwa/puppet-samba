@@ -19,7 +19,9 @@ A module managing Samba 4 deployment, including Samba Domain Controler.
 
 ## Module Description
 
-This module manage Samba 4 installation.
+This module manage Samba 4 installation. It's mainly meant to deploy Samba 4 as a domain controler
+and it's associated shares, but as it's possible to remove/modify/add any samba parameters this
+module can be used for any samba setup.
 
 For now it only support Samba AD DC deployment (work in progress).
 
