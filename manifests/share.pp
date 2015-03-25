@@ -51,7 +51,7 @@ define samba::share(
     fail('No mode matched, Missing class samba::classic or samba::dc?')
   }
 
-  unless is_member(keys($options), path){
+  unless member(keys($options), 'path'){
     $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
     validate_absolute_path($rootpath)
 
