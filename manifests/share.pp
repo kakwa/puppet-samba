@@ -37,8 +37,8 @@
 #
 
 define samba::share(
-  $path,
   $options = {},
+  $path,
 ) {
 
   $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')

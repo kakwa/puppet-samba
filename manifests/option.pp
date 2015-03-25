@@ -3,10 +3,9 @@ define samba::option(
       $section,
       $settingsignored = [],
 ){
-  $index = regsubst($title, '^\[.*\](.*)$', '\1')
-  $optionsSetting    = $index
-  $optionsValue      = $options[$index]
-  
+  $optionsSetting = regsubst($title, '^\[.*\](.*)$', '\1')
+  $optionsValue   = $options[$optionsSetting]
+
   unless member($settingsignored, $optionsSetting){
     smb_setting { "${section}/${optionsSetting}":
       ensure            => present,
