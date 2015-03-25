@@ -38,6 +38,7 @@
 
 define samba::share(
   $options = {},
+  $absentoptions = [],
   $path,
 ) {
 
@@ -51,7 +52,7 @@ define samba::share(
     fail('No mode matched, Missing class samba::classic or samba::dc?')
   }
 
-  unless member(keys($options), 'path'){
+  unless member(concat(keys($options), $absentoptions), 'path'){
     $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
     validate_absolute_path($rootpath)
 
@@ -82,5 +83,11 @@ define samba::share(
     section => $name,
     require => $require,
     notify  => $notify,
+  }
+
+  $absoptlist = prefix($absentoptions, $name)
+  smb_setting { $absoptlist :
+    ensure  => absent,
+    section => 'netlogon',
   }
 }

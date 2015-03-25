@@ -78,6 +78,12 @@ class { ::samba::dc:
 
   netlogonoptions       => [],                # * Custom options in section [netlogon]
   sysvoloptions         => [],                # * Custom options in section [sysvol]
+  globalabsentoptions   => ['idmap_ldb:use'], # * Remove default settings put 
+                                              #   by this class in [global] (default: [])
+  sysvolabsentoptions   => [],                # * remove default settings put 
+                                              #   by this class in [sysvol] (default: [])
+  netlogonabsentoptions => [],                # * Remove default settings put 
+                                              #   by this class in [netlogon] (default: [])
   groups                => [                  # * List of groups (default: [])
     { name        => 'group1',                # * group name
       description => 'Group 1',               # * group description
@@ -112,15 +118,15 @@ ping -n 11 127.0.0.1 > nul
 ```puppet
 class { '::samba::classic':
   # Mandatory parameters
-  domain          => 'DC',          # * Domain to authentify against
-  realm           => 'dc.kakwa.fr', # * Realm to authentify agains
-  smbname         => 'SMB',         # * Share name
-  adminpassword   => 'qwertyP455',  # * Domain Administrator 
-                                    #   password (for joining)
-  sambaloglevel   => 3,             # * Samba log level
-  logtosyslog     => true,          # * Log to Syslog
-  idrangemin      => 10000,         # * min uid for Domain users
-  idrangemax      => 19999,         # * max uid for Domain users
+  domain                => 'DC',          # * Domain to authentify against
+  realm                 => 'dc.kakwa.fr', # * Realm to authentify agains
+  smbname               => 'SMB',         # * Share name
+  adminpassword         => 'qwertyP455',  # * Domain Administrator 
+                                          #   password (for joining)
+  sambaloglevel         => 3,             # * Samba log level
+  logtosyslog           => true,          # * Log to Syslog
+  idrangemin            => 10000,         # * min uid for Domain users
+  idrangemax            => 19999,         # * max uid for Domain users
 
   # Optionnal parameters
   sambaclassloglevel    => {        # * Set log level by log classes
@@ -128,7 +134,9 @@ class { '::samba::classic':
     'idmap'        => 5,
     'winbind'      => 3,
   },
-  globaloptions   => {},            # * Custom options in section [global] 
+  globaloptions       => {},        # * Custom options in section [global] 
+  globalabsentoptions => [],        # * Remove default settings put 
+                                    #   by this class in [global]
 
 }
 ```
@@ -144,6 +152,8 @@ class { '::samba::classic':
       'browsable'     => 'Yes',
       'root preexec'  => 'mkdir -p \'/home/home_%U\'',
   },
+  absentoptions   => ['path']     # * Remove default settings put by this resource
+                                  #   default?: []
 }
 ```
 

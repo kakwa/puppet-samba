@@ -1,8 +1,8 @@
 define samba::log(
   $sambaloglevel,
   $logtosyslog,
-  $sambaclassloglevel = undef,
   $settingsignored,
+  $sambaclassloglevel = undef,
 ) {
 
   unless is_integer($sambaloglevel)

@@ -37,28 +37,31 @@
 #
 
 class samba::dc(
-  $domain               = undef,
-  $realm                = undef,
-  $dnsbackend           = undef,
-  $dnsforwarder         = undef,
-  $adminpassword        = undef,
-  $role                 = 'dc',
-  $ppolicycomplexity    = 'on',
-  $ppolicyplaintext     = 'off',
-  $ppolicyhistorylength = 24,
-  $ppolicyminpwdlength  = 7,
-  $ppolicyminpwdage     = 1,
-  $ppolicymaxpwdage     = 42,
-  $targetdir            = '/var/lib/samba/',
-  $domainlevel          = '2003',
-  $groups               = [],
-  $logonscripts         = [],
-  $sambaloglevel        = 1,
-  $logtosyslog          = false,
-  $sambaclassloglevel   = undef,
-  $globaloptions        = {},
-  $netlogonoptions      = {},
-  $sysvoloptions        = {},
+  $domain                = undef,
+  $realm                 = undef,
+  $dnsbackend            = undef,
+  $dnsforwarder          = undef,
+  $adminpassword         = undef,
+  $role                  = 'dc',
+  $ppolicycomplexity     = 'on',
+  $ppolicyplaintext      = 'off',
+  $ppolicyhistorylength  = 24,
+  $ppolicyminpwdlength   = 7,
+  $ppolicyminpwdage      = 1,
+  $ppolicymaxpwdage      = 42,
+  $targetdir             = '/var/lib/samba/',
+  $domainlevel           = '2003',
+  $groups                = [],
+  $logonscripts          = [],
+  $sambaloglevel         = 1,
+  $logtosyslog           = false,
+  $sambaclassloglevel    = undef,
+  $globaloptions         = {},
+  $netlogonoptions       = {},
+  $sysvoloptions         = {},
+  $globalabsentoptions   = [],
+  $netlogonabsentoptions = [],
+  $sysvolabsentoptions   = [],
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -156,6 +159,10 @@ ex: domain="ad" and realm="ad.example.com"')
   )
   validate_absolute_path($scriptDir)
 
+  $globaloptsexclude   = concat(keys($globaloptions), $globalabsentoptions)
+  $netlogonoptsexclude = concat(keys($netlogonoptions), $netlogonabsentoptions)
+  $sysvoloptsexclude   = concat(keys($sysvoloptions), $sysvolabsentoptions)
+
   package{ 'SambaDC':
     ensure        => 'installed',
     allow_virtual => true,
@@ -196,14 +203,14 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     sambaloglevel      => $sambaloglevel,
     logtosyslog        => $logtosyslog,
     sambaclassloglevel => $sambaclassloglevel,
-    settingsignored    => keys($globaloptions),
+    settingsignored    => $globaloptsexclude,
     require            => Exec['provisionAD'],
     notify             => Service['SambaDC'],
   }
 
   # Configure dns forwarder
   # (if not specify, keep the default from provisioning)
-  unless member(keys($globaloptions) , 'dns forwarder'){
+  unless member($globaloptsexclude , 'dns forwarder'){
     if $dnsforwarder != undef {
       smb_setting { 'global/dns forwarder':
         ensure  => present,
@@ -328,7 +335,7 @@ level raise --forest-level='${domainLevel}'",
   ::samba::option{ $mandatoryGlobalOptionsIndex:
     options         => $mandatoryGlobalOptions,
     section         => 'global',
-    settingsignored => keys($globaloptions),
+    settingsignored => $globaloptsexclude,
     require         => Exec['provisionAD'],
     notify          => Service['SambaDC'],
   }
@@ -343,7 +350,7 @@ level raise --forest-level='${domainLevel}'",
   ::samba::option{ $mandatorySysvolOptionsIndex:
     options         => $mandatorySysvolOptions,
     section         => 'sysvol',
-    settingsignored => keys($sysvoloptions),
+    settingsignored => $sysvoloptsexclude,
     require         => Exec['provisionAD'],
     notify          => Service['SambaDC'],
   }
@@ -358,9 +365,27 @@ level raise --forest-level='${domainLevel}'",
   ::samba::option{ $mandatoryNetlogonOptionsIndex:
     options         => $mandatoryNetlogonOptions,
     section         => 'netlogon',
-    settingsignored => keys($netlogonoptions),
+    settingsignored => $netlogonoptsexclude,
     require         => Exec['provisionAD'],
     notify          => Service['SambaDC'],
+  }
+
+  $gabsoptlist = prefix($globalabsentoptions, 'global/')
+  smb_setting { $gabsoptlist :
+    ensure  => absent,
+    section => 'global',
+  }
+
+  $sabsoptlist = prefix($sysvolabsentoptions, 'sysvol/')
+  smb_setting { $sabsoptlist :
+    ensure  => absent,
+    section => 'sysvol',
+  }
+
+  $nabsoptlist = prefix($netlogonabsentoptions, 'netlogon/')
+  smb_setting { $nabsoptlist :
+    ensure  => absent,
+    section => 'netlogon',
   }
 
   resources { 'smb_setting':

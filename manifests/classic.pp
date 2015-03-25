@@ -47,6 +47,7 @@ class samba::classic(
   $sambaclassloglevel   = undef,
   $logtosyslog          = false,
   $globaloptions        = {},
+  $globalabsentoptions  = [],
 ) inherits ::samba::params{
 
 
@@ -77,6 +78,7 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   $realmDowncase = downcase($realm)
+  $globaloptsexclude = concat(keys($globaloptions), $globalabsentoptions)
 
   file { '/etc/samba/':
     ensure  => 'directory',
@@ -132,7 +134,7 @@ ex: domain="ad" and realm="ad.example.com"')
   ::samba::option{ $mandatoryGlobalOptionsIndex:
     options         => $mandatoryGlobalOptions,
     section         => 'global',
-    settingsignored => keys($globaloptions),
+    settingsignored => $globaloptsexclude,
     require         => Package['SambaClassic'],
     notify          => Service['SambaClassic'],
   }
@@ -147,7 +149,7 @@ ex: domain="ad" and realm="ad.example.com"')
     sambaloglevel      => $sambaloglevel,
     logtosyslog        => $logtosyslog,
     sambaclassloglevel => $sambaclassloglevel,
-    settingsignored    => keys($globaloptions),
+    settingsignored    => $globaloptsexclude,
     require            => Package['SambaClassic'],
     notify             => Service['SambaClassic'],
   }
@@ -163,6 +165,12 @@ ex: domain="ad" and realm="ad.example.com"')
 
   resources { 'smb_setting':
     purge => true,
+  }
+
+  $gabsoptlist = prefix($globalabsentoptions, 'global/')
+  smb_setting { $gabsoptlist :
+    ensure  => absent,
+    section => 'global',
   }
 
 }
