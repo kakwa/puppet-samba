@@ -130,10 +130,11 @@ ex: domain="ad" and realm="ad.example.com"')
   $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
     '[global]')
   ::samba::option{ $mandatoryGlobalOptionsIndex:
-    options => $mandatoryGlobalOptions,
-    section => 'global',
-    require => Package['SambaClassic'],
-    notify  => Service['SambaClassic'],
+    options         => $mandatoryGlobalOptions,
+    section         => 'global',
+    settingsignored => keys($globaloptions),
+    require         => Package['SambaClassic'],
+    notify          => Service['SambaClassic'],
   }
 
   exec{ 'Join Domain':

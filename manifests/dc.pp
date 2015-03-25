@@ -218,7 +218,6 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
       section => 'global',
       setting => 'dns forwarder',
     }
-
   }
 
   # Check and set administrator password
@@ -324,10 +323,11 @@ level raise --forest-level='${domainLevel}'",
   $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
     '[global]')
   ::samba::option{ $mandatoryGlobalOptionsIndex:
-    options => $mandatoryGlobalOptions,
-    section => 'global',
-    require => Exec['provisionAD'],
-    notify  => Service['SambaDC'],
+    options         => $mandatoryGlobalOptions,
+    section         => 'global',
+    settingsignored => keys($globaloptions),
+    require         => Exec['provisionAD'],
+    notify          => Service['SambaDC'],
   }
 
   $mandatorySysvolOptions = {
@@ -338,10 +338,11 @@ level raise --forest-level='${domainLevel}'",
   $mandatorySysvolOptionsIndex = prefix(keys($mandatorySysvolOptions),
     '[sysvol]')
   ::samba::option{ $mandatorySysvolOptionsIndex:
-    options => $mandatorySysvolOptions,
-    section => 'sysvol',
-    require => Exec['provisionAD'],
-    notify  => Service['SambaDC'],
+    options         => $mandatorySysvolOptions,
+    section         => 'sysvol',
+    settingsignored => keys($sysvoloptions),
+    require         => Exec['provisionAD'],
+    notify          => Service['SambaDC'],
   }
 
   $mandatoryNetlogonOptions = {
@@ -352,10 +353,11 @@ level raise --forest-level='${domainLevel}'",
   $mandatoryNetlogonOptionsIndex = prefix(keys(
   $mandatoryNetlogonOptions), '[netlogon]')
   ::samba::option{ $mandatoryNetlogonOptionsIndex:
-    options => $mandatoryNetlogonOptions,
-    section => 'netlogon',
-    require => Exec['provisionAD'],
-    notify  => Service['SambaDC'],
+    options         => $mandatoryNetlogonOptions,
+    section         => 'netlogon',
+    settingsignored => keys($netlogonoptions),
+    require         => Exec['provisionAD'],
+    notify          => Service['SambaDC'],
   }
 
   resources { 'smb_setting':
