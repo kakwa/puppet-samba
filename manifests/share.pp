@@ -41,15 +41,6 @@ define samba::share(
   $path,
 ) {
 
-  $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
-  validate_absolute_path($rootpath)
-
-  exec {"Create path ${rootpath}":
-    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "test -e '${rootpath}'",
-    command => "mkdir -p '${rootpath}'",
-  }
-
   if defined(Package['SambaClassic']){
     $require = Package['SambaClassic']
     $notify  = Service['SambaClassic']
@@ -60,18 +51,29 @@ define samba::share(
     fail('No mode matched, Missing class samba::classic or samba::dc?')
   }
 
-  file {$rootpath:
-    ensure  => directory,
-    require => Exec["Create path ${rootpath}"],
-  }
+  unless is_member(keys($options), path){
+    $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
+    validate_absolute_path($rootpath)
 
-  smb_setting { "${name}/path":
-    path    => $::samba::params::smbConfFile,
-    section => $name,
-    setting => 'path',
-    value   => $path,
-    require => $require,
-    notify  => $notify,
+    exec {"Create path ${rootpath}":
+      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+      unless  => "test -e '${rootpath}'",
+      command => "mkdir -p '${rootpath}'",
+    }
+
+    file {$rootpath:
+      ensure  => directory,
+      require => Exec["Create path ${rootpath}"],
+    }
+
+    smb_setting { "${name}/path":
+      path    => $::samba::params::smbConfFile,
+      section => $name,
+      setting => 'path',
+      value   => $path,
+      require => $require,
+      notify  => $notify,
+    }
   }
 
   $optionsIndex = prefix(keys($options), "[${name}]")
