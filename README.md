@@ -75,8 +75,8 @@ class { ::samba::dc:
     'custom setting 1'   => 'custom value 1',
     'custom setting 2'   => 'custom value 2',
   },
-  netlogonoptions       => [],                # * Custom options in section [netlogon]
-  sysvoloptions         => [],                # * Custom options in section [sysvol]
+  netlogonoptions       => {},                # * Custom options in section [netlogon]
+  sysvoloptions         => {},                # * Custom options in section [sysvol]
   globalabsentoptions   => ['idmap_ldb:use'], # * Remove default settings put 
                                               #   by this class in [global] 
                                               #   (default: [])
@@ -94,22 +94,12 @@ class { ::samba::dc:
       type        => 'Security',              # * group type 
                                               #   ('Security' or 'Distribution')
     },
-    { name        => 'group2',
-      description => 'Group 2',
-      scope       => 'Global',
-      type        => 'Distribution',
-    },
   ],
-  logonscripts          => [                  # * Logon scripts (default: [])
+  logonscripts          => [                  # * List of logon scripts (default: [])
     { name          => 'login1.cmd',          # * Logon script name
       content       => 'echo login script 1 
 ping -n 11 127.0.0.1 > nul
 ',                                            # * Logon script content
-    },
-    { name          => 'login2.cmd',
-      content       => 'echo login script 2
-ping -n 11 127.0.0.1 > nul
-',
     },
   ],
 }
@@ -191,7 +181,7 @@ This module will not configure the repo, you have to do it otherwise.
 
 ## Development
 
-Pull requests are welcomed ^^
+Pull requests are welcomed ^^.
 
 ## Release Notes
 
