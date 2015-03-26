@@ -44,6 +44,7 @@ class samba::classic(
   $idrangemin           = undef,
   $idrangemax           = undef,
   $sambaloglevel        = 1,
+  $krbconf              = true,
   $sambaclassloglevel   = undef,
   $logtosyslog          = false,
   $globaloptions        = {},
@@ -78,7 +79,8 @@ and idrangemin <= idrangemax')
 ex: domain="ad" and realm="ad.example.com"')
   }
 
-  $realmDowncase = downcase($realm)
+  $realmLowerCase = downcase($realm)
+  $realmUpperCase = upcase($realm)
   $globaloptsexclude = concat(keys($globaloptions), $globalabsentoptions)
 
   file { '/etc/samba/':
@@ -89,6 +91,15 @@ ex: domain="ad" and realm="ad.example.com"')
     ensure  => 'present',
     content => $::samba::params::smbConfFile,
     require => File['/etc/samba/'],
+  }
+
+  if $krbconf {
+    file {$::samba::params::krbConfFile:
+      ensure  => present,
+      mode    => '0644',
+      content => template("${module_name}/krb5.conf.erb"),
+      notify  => Service['SambaClassic'],
+    }
   }
 
   package{ 'SambaClassicWinBind':

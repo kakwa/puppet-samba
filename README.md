@@ -129,6 +129,7 @@ class { '::samba::classic':
   idrangemax            => 19999,         # * max uid for Domain users
 
   # Optionnal parameters
+  krbconf               => true,          # * deploy krb5.conf file (default: true)
   adminpassword         => 'P455WordS',   # * Domain Administrator 
                                           #   password (for joining)
                                           #   (default: undef, no join)
