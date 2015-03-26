@@ -121,7 +121,7 @@ ping -n 11 127.0.0.1 > nul
 class { '::samba::classic':
   # Mandatory parameters
   domain                => 'DC',          # * Domain to authentify against
-  realm                 => 'dc.kakwa.fr', # * Realm to authentify agains
+  realm                 => 'dc.kakwa.fr', # * Realm to authentify against
   smbname               => 'SMB',         # * Share name
   sambaloglevel         => 3,             # * Samba log level
   logtosyslog           => true,          # * Log to Syslog
