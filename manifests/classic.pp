@@ -45,6 +45,7 @@ class samba::classic(
   $idrangemax           = undef,
   $sambaloglevel        = 1,
   $krbconf              = true,
+  $nsswitch             = true,
   $sambaclassloglevel   = undef,
   $logtosyslog          = false,
   $globaloptions        = {},
@@ -99,6 +100,29 @@ ex: domain="ad" and realm="ad.example.com"')
       mode    => '0644',
       content => template("${module_name}/krb5.conf.erb"),
       notify  => Service['SambaClassic'],
+    }
+  }
+
+  if $nsswitch {
+    augeas{'samba nsswitch group':
+      context => "/files/${::samba::params::nsswitchConfFile}/",
+      changes => [
+        'ins service after "*[self::database = \'group\']/service[1]/"',
+        'set "*[self::database = \'group\']/service[2]" winbind',
+      ],
+      onlyif  => 'get "*[self::database = \'group\']/service[2]" != winbind',
+      lens    => 'Nsswitch.lns',
+      incl    => $::samba::params::nsswitchConfFile,
+    }
+    augeas{'samba nsswitch passwd':
+      context => "/files/${::samba::params::nsswitchConfFile}/",
+      changes => [
+        'ins service after "*[self::database = \'passwd\']/service[1]/"',
+        'set "*[self::database = \'passwd\']/service[2]" winbind',
+      ],
+      onlyif  => 'get "*[self::database = \'passwd\']/service[2]" != winbind',
+      lens    => 'Nsswitch.lns',
+      incl    => $::samba::params::nsswitchConfFile,
     }
   }
 

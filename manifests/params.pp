@@ -35,6 +35,8 @@ class samba::params(
     }
   }
 
+  $nsswitchConfFile = '/etc/nsswitch.conf'
+
   $logclasslist =  [
     'all',     'tdb',     'printdrivers', 'lanman',   'smb',
     'rpc_srv', 'rpc_cli', 'passdb',       'sam',      'auth',

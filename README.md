@@ -125,11 +125,13 @@ class { '::samba::classic':
   smbname               => 'SMB',         # * Share name
   sambaloglevel         => 3,             # * Samba log level
   logtosyslog           => true,          # * Log to Syslog
-  idrangemin            => 10000,         # * min uid for Domain users
-  idrangemax            => 19999,         # * max uid for Domain users
+  idrangemin            => 10000,         # * Min uid for Domain users
+  idrangemax            => 19999,         # * Max uid for Domain users
 
   # Optionnal parameters
-  krbconf               => true,          # * deploy krb5.conf file (default: true)
+  krbconf               => true,          # * Deploy krb5.conf file (default: true)
+  nsswitch              => true,          # * Add winbind to nsswitch,
+                                          #   (default: true)
   adminpassword         => 'P455WordS',   # * Domain Administrator 
                                           #   password (for joining)
                                           #   (default: undef, no join)
