@@ -6,7 +6,7 @@ define samba::dc::scriptadd{
   validate_absolute_path($scriptPath)
 
   file { $scriptPath:
-    content => $scriptContent,
+    content => regsubst($scriptContent, '(?<!\r)\n', "\r\n", 'EMG'),
     mode    => '0755',
     require => Exec['provisionAD'],
   }
