@@ -3,11 +3,13 @@ require 'yaml'
 Puppet::Type.type(:smb_user).provide(:ruby) do
 
   commands :sambatool => "/usr/bin/samba-tool"
+  commands :sambaclient => "/usr/bin/smbclient"
   commands :sambatooladd => "/usr/local/bin/additional-samba-tool"
   add_entry = false
+  modify_password = false
+  modify_attr = false
 
   def exists?
-     ret = true
      begin
       command = [command(:sambatooladd), '--user', '--list', '--name',resource[:name]]
       output = execute(command)
@@ -23,66 +25,92 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
           Puppet.debug("#{attr} is a mono-valued attribute")
           if not @attr_values.has_key?(attr) or @attr_values[attr] != value
               Puppet.debug("#{attr} is not set or has a different value")
-              ret = false
+              @modify_attr = true
           end
         else
           Puppet.debug("#{attr} is a multi-valued attribute")
           if @attr_values[attr].is_a? Array
             Puppet.debug("#{attr} is an array")
-            exattrl = attr
+            exattrl = @attr_values[attr]
           else
             Puppet.debug("#{attr} is something else")
-            exattrl = [attr]
+            exattrl = [@attr_values[attr]]
           end
-          if not @attr_values.has_key?(attr) or exattrl.all? { |i| exattrl.include?(i) }
+          if not @attr_values.has_key?(attr) or not value.all? { |i| exattrl.include?(i) }
               Puppet.debug("#{attr} is not set or has a different value")
-              ret = false
+              @modify_attr = true
           end
         end
       end
-      ret
     else
       @add_entry = true
-      false
+      @modify_attr = true
     end
+    begin
+      command = [command(:sambaclient), '//localhost/netlogon', resource[:password], "-U#{resource[:name]}", '-c', 'ls']
+      output  = execute(command)
+      Puppet.debug(output)
+    rescue Puppet::ExecutionFailure => ex
+      @modify_password = true
+    end
+    not @modify_password and not @add_entry and not @modify_attr
   end
 
   def create
     if @add_entry
       begin
-        #command = [command(:sambatool), 'user', 'create', resource[:name], resource[:password]]
-        command = [command(:sambatool), 'user', 'create', resource[:name]]
+        command = [command(:sambatool), 'user', 'create', resource[:name], resource[:password]]
         output = execute(command)
         Puppet.debug(output)
       rescue Puppet::ExecutionFailure => ex
         raise Puppet::Error, "Failed to create user '#{resource[:name]}'"
       end
+      begin
+        command = [command(:sambatooladd), '--user', '--list', '--name',resource[:name]]
+        output = execute(command)
+        Puppet.debug(output)
+      rescue Puppet::ExecutionFailure => ex
+        raise Puppet::Error, "Failed determine if user '#{resource[:name]}' exists"
+      end
+      @attr_values = YAML.load(output)
     end
-    resource[:attributes].each do |attr, value|
-      if value.is_a? String
-        if not @attr_values.has_key?(attr) or @attr_values[attr] != value
-            command = [command(:sambatooladd), '--user', '--set', '--name', 
-		resource[:name], '--attribute', attr, '--value', value]
-            output = execute(command)
-            Puppet.debug(output)
-        end
-      else
-        Puppet.debug("#{attr} is a multi-valued attribute")
-        if @attr_values[attr].is_a? Array
-          Puppet.debug("#{attr} is an array")
-          exattrl = attr
+    if @modify_attr
+      Puppet.notice("Changing attribute(s) of user '#{resource[:name]}'")
+      resource[:attributes].each do |attr, value|
+        if value.is_a? String
+          if not @attr_values.has_key?(attr) or @attr_values[attr] != value
+              command = [command(:sambatooladd), '--user', '--set', '--name', 
+          	resource[:name], '--attribute', attr, '--value', value]
+              output = execute(command)
+              Puppet.debug(output)
+          end
         else
-          exattrl = [attr]
-        end
-        if not @attr_values.has_key?(attr) or exattrl.all? { |i| exattrl.include?(i) }
-          value.each do |subvalue|
-            command = [command(:sambatooladd), '--user', '--set', '--multi', '--name',
-		resource[:name], '--attribute', attr, '--value', subvalue]
-            output = execute(command)
-            Puppet.debug(output)
+          Puppet.debug("#{attr} is a multi-valued attribute")
+          if @attr_values[attr].is_a? Array
+            Puppet.debug("#{attr} is an array")
+            exattrl = @attr_values[attr]
+          else
+            exattrl = [@attr_values[attr]]
+          end
+          if not @attr_values.has_key?(attr) or not value.all? { |i| exattrl.include?(i) }
+            value.each do |subvalue|
+              if not exattrl.include?(subvalue)
+                Puppet.debug("#{exattrl} #{subvalue}")
+                command = [command(:sambatooladd), '--user', '--set', '--multi', '--name',
+                    resource[:name], '--attribute', attr, '--value', subvalue]
+                output = execute(command)
+                Puppet.debug(output)
+              end
+            end
           end
         end
       end
+    end
+    if @modify_password
+      Puppet.notice("Changing password of user '#{resource[:name]}'")
+      command = [command(:sambatool), 'user', 'setpassword', resource[:name], '--newpassword', resource[:password]]
+      output  = execute(command)
+      Puppet.debug(output)
     end
   end
 
@@ -95,19 +123,4 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       raise Puppet::Error, "Failed to remove user '#{resource[:name]}'"
     end
   end
-
-  def attributes
-  end
-
-  def attributes=(value)
-      resource[:attributes].keys do |attr|
-        if resource[:attributes][attr].is_array?
-          Puppet.debug("#{attr} is a multi-valued attribute")
-        else
-          Puppet.debug("#{attr} is a mono-valued attribute")
-        end
-      end
-	
-  end
-
 end
