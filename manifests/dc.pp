@@ -209,6 +209,19 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     notify  => Service['SambaDC'],
   }
 
+  package{ 'PyYaml':
+    ensure        => 'installed',
+    allow_virtual => true,
+    name          => $::samba::params::packagePyYaml,
+  }
+
+  file{ 'SambaOptsAdditionnalTool':
+    path    => $sambaAddTool,
+    source  => "puppet:///modules/${module_name}/additional-samba-tool",
+    mode    => "0755",
+    require => Package['PyYaml'],
+  }
+
   # Configure Loglevel
   ::samba::log { 'syslog':
     sambaloglevel      => $sambaloglevel,

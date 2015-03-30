@@ -19,6 +19,7 @@ class samba::params(
           $sambaOptsTmpl       = "${module_name}/sernet-samba.erb"
           $smbConfFile         = '/etc/samba/smb.conf'
           $krbConfFile         = '/etc/krb5.conf'
+          $packagePyYaml       = 'PyYAML'
       }
       default: {
           fail('unsupported os')
@@ -35,6 +36,7 @@ class samba::params(
     }
   }
 
+  $sambaAddTool     = '/usr/local/bin/additional-samba-tool'
   $nsswitchConfFile = '/etc/nsswitch.conf'
 
   $logclasslist =  [
