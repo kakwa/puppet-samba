@@ -17,4 +17,8 @@ Puppet::Type.newtype(:smb_user) do
     desc 'password of the user'
   end
 
+  newparam(:groups) do
+    desc 'list of groups'
+  end
+
 end

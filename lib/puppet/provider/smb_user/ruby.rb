@@ -8,8 +8,10 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
   add_entry = false
   modify_password = false
   modify_attr = false
+  modify_group = false
 
   def exists?
+     @add_entry = true
      begin
       command = [command(:sambatooladd), '--user', '--list', '--name',resource[:name]]
       output = execute(command)
@@ -17,8 +19,8 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
     rescue Puppet::ExecutionFailure => ex
       raise Puppet::Error, "Failed determine if user '#{resource[:name]}' exists"
     end
-    @attr_values = YAML.load(output)
-    if @attr_values
+    if output
+      @attr_values = YAML.load(output)
       @add_entry = false
       resource[:attributes].each do |attr, value|
         if value.is_a? String
@@ -53,7 +55,16 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
     rescue Puppet::ExecutionFailure => ex
       @modify_password = true
     end
-    not @modify_password and not @add_entry and not @modify_attr
+    resource[:groups].each do |group|
+      command = [command(:sambatool), 'group', 'listmembers', group]
+      output = execute(command)
+      Puppet.debug(output)
+      users_list = output.split(/\n/).map(&:downcase)
+      if not users_list.include?(resource[:name].downcase)
+        @modify_group = true
+      end
+    end
+    return not(@modify_password or @add_entry or @modify_attr or @modify_group)
   end
 
   def create
@@ -111,6 +122,19 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       command = [command(:sambatool), 'user', 'setpassword', resource[:name], '--newpassword', resource[:password]]
       output  = execute(command)
       Puppet.debug(output)
+    end
+    if @modify_group
+      Puppet.notice("Changing group(s) of user '#{resource[:name]}'")
+      resource[:groups].each do |group|
+        command = [command(:sambatool), 'group', 'listmembers', group]
+        output = execute(command)
+        users_list = output.split(/\n/).map(&:downcase)
+        if not users_list.include?(resource[:name].downcase)
+          command = [command(:sambatool), 'group', 'addmembers', group, resource[:name]]
+          output = execute(command)
+          Puppet.debug(output)
+        end
+      end
     end
   end
 
