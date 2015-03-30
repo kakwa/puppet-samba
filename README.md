@@ -32,7 +32,7 @@ For now it only works under CentOS/RedHat.
 Under RedHat/CentOS, this module requires the Sernet repos to be configured.
 As of  march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choice in kerberos implementations.
 
-This module requires puppetlabs-stdlib and puppetlabs-inifile modules.
+This module requires puppetlabs-stdlib module.
 
 ## Usage
 
