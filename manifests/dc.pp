@@ -218,7 +218,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   file{ 'SambaOptsAdditionnalTool':
     path    => $sambaAddTool,
     source  => "puppet:///modules/${module_name}/additional-samba-tool",
-    mode    => "0755",
+    mode    => '0755',
     require => Package['PyYaml'],
   }
 
