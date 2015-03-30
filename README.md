@@ -105,6 +105,21 @@ ping -n 11 127.0.0.1 > nul
 }
 ```
 
+Adding users:
+
+```puppet
+smb_user { 'test user':                       # * user name
+  ensure   => present,                        # * absent | present
+  password => 'QwertyP455aaa',                # * user password
+  attributes => {                             # * hash of attributes
+     uidNumber   => '15222',                  #   use list for multivalued attributes
+     gidNumber   => '10001',
+     msSFU30NisDomain => 'dc',
+     mail => ['test@toto.fr'],
+  },
+}
+```
+
 ### Samba Classic (shares)
 
 ```puppet
