@@ -13,4 +13,8 @@ Puppet::Type.newtype(:smb_user) do
     desc 'hash of attributes'
   end
 
+  newparam(:password) do
+    desc 'password of the user'
+  end
+
 end
