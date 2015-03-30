@@ -19,8 +19,8 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
     rescue Puppet::ExecutionFailure => ex
       raise Puppet::Error, "Failed determine if user '#{resource[:name]}' exists"
     end
-    if output
-      @attr_values = YAML.load(output)
+    @attr_values = YAML.load(output)
+    if @attr_values
       @add_entry = false
       resource[:attributes].each do |attr, value|
         if value.is_a? String
