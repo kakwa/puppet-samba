@@ -10,6 +10,14 @@
     * [What samba affects](#what-samba-affects)
     * [Setup requirements](#setup-requirements)
 4. [Usage](#usage)
+    * [Samba Domain Controller](#samba-4-ad-domain-controler)
+          * [Domain Controller]()
+          * [Password Policy]()
+          * [Logon Script]()
+          * [User]()
+          * [Group]()
+    * [Samba Classic](#samba-classic-shares)
+    * [Shares](#samba-shares)
 5. [Limitations](#limitations)
 6. [Development](#development)
 
@@ -37,6 +45,10 @@ This module requires puppetlabs-stdlib module.
 ## Usage
 
 ### Samba 4 AD Domain Controler
+
+#### Domain Controller
+
+To provision the domain controller use the *samba::dc* class:
 
 ```puppet
 class { ::samba::dc:
@@ -78,6 +90,8 @@ class { ::samba::dc:
 }
 ```
 
+#### Password Policy
+
 Configuring password Policy:
 
 ```puppet
@@ -92,6 +106,8 @@ class { ::samba::dc::ppolicy:
 }
 ```
 
+#### Logon Scripts
+
 Adding logon scripts:
 
 ```puppet
@@ -101,6 +117,8 @@ ping -n 11 127.0.0.1 > nul                    #   will automaticaly be converted
 ',                                            #   to CRLF End of Line.
 }
 ```
+
+#### User
 
 Adding users:
 
@@ -118,6 +136,8 @@ smb_user { 'test user':                       # * user name
   },
 }
 ```
+
+#### Group
 
 Adding groups:
 
