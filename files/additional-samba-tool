@@ -219,6 +219,9 @@ if __name__ == '__main__':
     parser.add_option("-l", "--list",
             action="store_true", dest="listat", default=False,
             help="List mode")
+    parser.add_option("-d", "--debug",
+            action="store_true", dest="debug", default=False,
+            help="Debug flag")
     parser.add_option("-u", "--user",
             action="store_true", dest="user", default=False,
             help="Work on users")
@@ -230,7 +233,7 @@ if __name__ == '__main__':
             help="Multi-valued flag")
     parser.add_option("-n", "--name", dest="name",
             help="Name of the entry",
-            metavar="ATTR")
+            metavar="ENTRY NAME")
     parser.add_option("-a", "--attribute", dest="attr",
             help="attr name",
             metavar="ATTR")
@@ -244,6 +247,10 @@ if __name__ == '__main__':
     creds=None
     lp = None
     lp = param.LoadParm()
+    if options.debug:
+        lp.set('log level', '10')
+    else:
+        lp.set('log level', '1')
     samdb = SamDBOverride(url=H, session_info=system_session(),
         credentials=creds, lp=lp)
 
