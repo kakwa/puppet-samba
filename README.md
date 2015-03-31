@@ -134,7 +134,7 @@ smb_group { 'mygroup':
   groups     => ['domain users',              # * list of groups
     'administrators'], 
 }
-
+```
 
 ### Samba Classic (shares)
 
