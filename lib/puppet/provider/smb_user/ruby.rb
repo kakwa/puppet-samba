@@ -55,7 +55,12 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
     rescue Puppet::ExecutionFailure => ex
       @modify_password = true
     end
-    resource[:groups].each do |group|
+    if resource[:groups].is_a? String
+      groups = [resource[:groups]]
+    else
+      groups = resource[:groups]
+    end
+    groups.each do |group|
       command = [command(:sambatool), 'group', 'listmembers', group]
       output = execute(command)
       Puppet.debug(output)
@@ -125,7 +130,13 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
     end
     if @modify_group
       Puppet.notice("Changing group(s) of user '#{resource[:name]}'")
-      resource[:groups].each do |group|
+      if resource[:groups].is_a? String
+        groups = [resource[:groups]]
+      else
+        groups = resource[:groups]
+      end
+
+      groups.each do |group|
         command = [command(:sambatool), 'group', 'listmembers', group]
         output = execute(command)
         users_list = output.split(/\n/).map(&:downcase)
