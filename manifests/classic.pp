@@ -221,7 +221,7 @@ ex: domain="ad" and realm="ad.example.com"')
       path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
       unless  => 'net ads testjoin',
       command => "echo '${adminpassword}'| net ads join -U administrator",
-      require => Service['SambaClassic'],
+      notify  => Service['SambaClassic'],
     }
   }
 }
