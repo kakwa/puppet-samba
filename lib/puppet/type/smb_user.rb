@@ -23,4 +23,8 @@ Puppet::Type.newtype(:smb_user) do
     defaultto []
   end
 
+  autorequire(:service) do
+    ['SambaDC',]
+  end
+
 end
