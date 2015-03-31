@@ -43,12 +43,6 @@ class samba::dc(
   $dnsforwarder          = undef,
   $adminpassword         = undef,
   $role                  = 'dc',
-  $ppolicycomplexity     = 'on',
-  $ppolicyplaintext      = 'off',
-  $ppolicyhistorylength  = 24,
-  $ppolicyminpwdlength   = 7,
-  $ppolicyminpwdage      = 1,
-  $ppolicymaxpwdage      = 42,
   $targetdir             = '/var/lib/samba/',
   $domainlevel           = '2003',
   $logonscripts          = [],
@@ -102,33 +96,6 @@ must be in ["2003", "2008", "2008 R2"]')
 
   unless member($checkrole, $role){
     fail("role must be in [${checkrolestr}]")
-  }
-
-  $checkpp = ['on', 'off', 'default']
-  $checkppstr = join($checkpp, ', ')
-
-  unless member($checkpp, $ppolicycomplexity){
-    fail("ppolicycomplexity must be in [${checkppstr}]")
-  }
-
-  unless member($checkpp, $ppolicyplaintext){
-    fail("ppolicyplaintext must be in [${checkppstr}]")
-  }
-
-  unless is_integer($ppolicyhistorylength){
-    fail('ppolicyhistorylength must be an integer')
-  }
-
-  unless is_integer($ppolicyminpwdlength){
-    fail('ppolicyminpwdlength must be an integer')
-  }
-
-  unless is_integer($ppolicyminpwdage){
-    fail('ppolicyminpwdage must be an integer')
-  }
-
-  unless is_integer($ppolicymaxpwdage){
-    fail('ppolicymaxpwdage must be an integer')
   }
 
   unless is_domain_name($realm){
@@ -282,28 +249,6 @@ level raise --domain-level='${domainLevel}' -d 1",
     command => "${::samba::params::sambaCmd} domain \
 level raise --forest-level='${domainLevel}' -d 1",
     require => Exec['setDomainFunctionLevel'],
-  }
-
-  # Configure Password Policy
-  exec{ 'setPPolicy':
-    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    require => Service['SambaDC'],
-
-    unless  => "\
-[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show -d 1\
-|sed 's/^.*:\\ *\\([0-9]\\+\\|on\\|off\\).*$/\\1/gp;d' | md5sum )\" = \
-\"\$(printf \
-'${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
-\\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' \
-| md5sum )\" ]",
-
-    command => "${::samba::params::sambaCmd} domain passwordsettings set -d 1\
---complexity='${ppolicycomplexity}' \
---store-plaintext='${ppolicyplaintext}' \
---history-length='${ppolicyhistorylength}' \
---min-pwd-length='${ppolicyminpwdlength}' \
---min-pwd-age='${ppolicyminpwdage}' \
---max-pwd-age='${ppolicymaxpwdage}'",
   }
 
   # Iteration to add logon scripts

@@ -50,13 +50,6 @@ class { ::samba::dc:
   adminpassword         => 'P455WordS',       # * Administrator password 
                                               #   (default: undef)
   dnsforwarder          => 8.8.8.8,           # * Dns forwarder IP (default: undef)
-  ppolicycomplexity     => 'on',              # * Enable password policy (default: on)
-  ppolicyplaintext      => 'off',             # * Store password in plain text 
-                                              #   (default: off)
-  ppolicyhistorylength  => 24,                # * Password history length (default: 24)
-  ppolicyminpwdlength   => 7,                 # * Minimum password length (default: 7)
-  ppolicyminpwdage      => 1,                 # * Minimum password age (default: 1)
-  ppolicymaxpwdage      => 42,                # * Maximum password age (default: 42)
   targetdir             => '/var/lib/samba/', # * Deployment directory 
                                               #   (default: '/var/lib/samba/')
   domainlevel           => '2003',            # * Functionnality level ('2003',
@@ -93,6 +86,20 @@ ping -n 11 127.0.0.1 > nul
 ',                                            # * Logon script content
     },
   ],
+}
+```
+
+Password Policy:
+
+```puppet
+class { ::samba::dc::ppolicy:
+  ppolicycomplexity     => 'on',              # * Enable password policy (default: on)
+  ppolicyplaintext      => 'off',             # * Store password in plain text 
+                                              #   (default: off)
+  ppolicyhistorylength  => 24,                # * Password history length (default: 24)
+  ppolicyminpwdlength   => 7,                 # * Minimum password length (default: 7)
+  ppolicyminpwdage      => 1,                 # * Minimum password age (default: 1)
+  ppolicymaxpwdage      => 42,                # * Maximum password age (default: 42)
 }
 ```
 
