@@ -113,6 +113,22 @@ smb_user { 'test user':                       # * user name
 }
 ```
 
+Adding groups:
+
+```puppet
+smb_group { 'mygroup':
+  ensure     => present,                      # * group name
+  scope      => 'Domain',                     # * group scope
+  type       => 'Security',                   # * group type
+  attributes => {                             # * attributes
+    gidNumber        => '15220',              #   use list for multivalued attributes
+    msSFU30NisDomain => 'dc',
+  },
+  groups     => ['domain users',              # * list of groups
+    'administrators'], 
+}
+
+
 ### Samba Classic (shares)
 
 ```puppet

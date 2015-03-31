@@ -270,8 +270,11 @@ if __name__ == '__main__':
 
     elif options.group:
         if options.listat:
-            data = samdb.getgroupattr(options.name)
-            print(dump(ldb2hash(data), default_flow_style=False))
+            try:
+                data = samdb.getgroupattr(options.name)
+                print(dump(ldb2hash(data), default_flow_style=False))
+            except:
+                exit(0)
 
         elif options.setat:
             samdb.setgroupattr(options.name, options.attr, options.value, options.multi)
