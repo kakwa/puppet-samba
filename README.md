@@ -11,11 +11,11 @@
     * [Setup requirements](#setup-requirements)
 4. [Usage](#usage)
     * [Samba Domain Controller](#samba-4-ad-domain-controler)
-          * [Domain Controller]()
-          * [Password Policy]()
-          * [Logon Script]()
-          * [User]()
-          * [Group]()
+          * [Domain Controller](#domain-controller)
+          * [Password Policy](#password-policy)
+          * [Logon Script](#logon-scripts)
+          * [User](#users)
+          * [Group](#groups)
     * [Samba Classic](#samba-classic-shares)
     * [Shares](#samba-shares)
 5. [Limitations](#limitations)
@@ -118,7 +118,7 @@ ping -n 11 127.0.0.1 > nul                    #   will automaticaly be converted
 }
 ```
 
-#### User
+#### Users
 
 Adding users:
 
@@ -137,7 +137,7 @@ smb_user { 'test user':                       # * user name
 }
 ```
 
-#### Group
+#### Groups
 
 Adding groups:
 
