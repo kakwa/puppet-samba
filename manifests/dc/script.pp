@@ -1,6 +1,8 @@
-define samba::dc::scriptadd{
-  $scriptName       = $::samba::dc::logonscripts[$title]['name']
-  $scriptContent    = $::samba::dc::logonscripts[$title]['content']
+define samba::dc::script(
+   $content,
+){
+  $scriptName       = $name 
+  $scriptContent    = $content 
 
   $scriptPath = "${::samba::dc::scriptDir}/${scriptName}"
   validate_absolute_path($scriptPath)

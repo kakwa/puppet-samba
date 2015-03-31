@@ -45,7 +45,6 @@ class samba::dc(
   $role                  = 'dc',
   $targetdir             = '/var/lib/samba/',
   $domainlevel           = '2003',
-  $logonscripts          = [],
   $sambaloglevel         = 1,
   $logtosyslog           = false,
   $sambaclassloglevel    = undef,
@@ -250,11 +249,6 @@ level raise --domain-level='${domainLevel}' -d 1",
 level raise --forest-level='${domainLevel}' -d 1",
     require => Exec['setDomainFunctionLevel'],
   }
-
-  # Iteration to add logon scripts
-  $scriptSize  = size($::samba::dc::logonscripts) - 1
-  $scriptIndex = range(0, $scriptSize)
-  ::samba::dc::scriptadd{ $scriptIndex: }
 
   # Iteration on global options
   $globaloptionsIndex = prefix(keys($globaloptions), '[globalcust]')

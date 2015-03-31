@@ -73,23 +73,12 @@ class { ::samba::dc:
   globalabsentoptions   => ['idmap_ldb:use'], # * Remove default settings put 
                                               #   by this class in [global] 
                                               #   (default: [])
-  sysvolabsentoptions   => [],                # * remove default settings put 
-                                              #   by this class in [sysvol] 
-                                              #   (default: [])
-  netlogonabsentoptions => [],                # * Remove default settings put 
-                                              #   by this class in [netlogon] 
-                                              #   (default: [])
-  logonscripts          => [                  # * List of logon scripts (default: [])
-    { name          => 'login1.cmd',          # * Logon script name
-      content       => 'echo login script 1 
-ping -n 11 127.0.0.1 > nul
-',                                            # * Logon script content
-    },
-  ],
+  sysvolabsentoptions   => [],                # * remove default settings in [sysvol]
+  netlogonabsentoptions => [],                # * Remove default settings in [netlogon] 
 }
 ```
 
-Password Policy:
+Configuring password Policy:
 
 ```puppet
 class { ::samba::dc::ppolicy:
@@ -100,6 +89,16 @@ class { ::samba::dc::ppolicy:
   ppolicyminpwdlength   => 7,                 # * Minimum password length (default: 7)
   ppolicyminpwdage      => 1,                 # * Minimum password age (default: 1)
   ppolicymaxpwdage      => 42,                # * Maximum password age (default: 42)
+}
+```
+
+Adding logon scripts:
+
+```puppet
+::samba::dc::script { 'login1.cmd':           # * name of the script
+  content => 'echo login script 1             # * content of the script
+ping -n 11 127.0.0.1 > nul                    #   will automaticaly be converted
+',                                            #   to CRLF End of Line.
 }
 ```
 
