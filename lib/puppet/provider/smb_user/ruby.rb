@@ -20,9 +20,14 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       raise Puppet::Error, "Failed determine if user '#{resource[:name]}' exists"
     end
     @attr_values = YAML.load(output)
+    if not resource[:attributes]
+      attrs = []
+    else
+      attrs = resource[:attributes]
+    end
     if @attr_values
       @add_entry = false
-      resource[:attributes].each do |attr, value|
+      attrs.each do |attr, value|
         if value.is_a? String
           Puppet.debug("#{attr} is a mono-valued attribute")
           if not @attr_values.has_key?(attr) or @attr_values[attr] != value
@@ -61,7 +66,7 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       groups = resource[:groups]
     end
     groups.each do |group|
-      command = [command(:sambatool), 'group', 'listmembers', group]
+      command = [command(:sambatool), 'group', 'listmembers', group, '-d', '1']
       output = execute(command)
       Puppet.debug(output)
       users_list = output.split(/\n/).map(&:downcase)
@@ -75,7 +80,7 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
   def create
     if @add_entry
       begin
-        command = [command(:sambatool), 'user', 'create', resource[:name], resource[:password]]
+        command = [command(:sambatool), 'user', 'create', resource[:name], resource[:password], '-d', '1']
         output = execute(command)
         Puppet.debug(output)
       rescue Puppet::ExecutionFailure => ex
@@ -90,9 +95,14 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       end
       @attr_values = YAML.load(output)
     end
+    if not resource[:attributes]
+      attrs = []
+    else
+      attrs = resource[:attributes]
+    end
     if @modify_attr
       Puppet.notice("Changing attribute(s) of user '#{resource[:name]}'")
-      resource[:attributes].each do |attr, value|
+      attrs.each do |attr, value|
         if value.is_a? String
           if not @attr_values.has_key?(attr) or @attr_values[attr] != value
               command = [command(:sambatooladd), '--user', '--set', '--name', 
@@ -124,7 +134,7 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
     end
     if @modify_password
       Puppet.notice("Changing password of user '#{resource[:name]}'")
-      command = [command(:sambatool), 'user', 'setpassword', resource[:name], '--newpassword', resource[:password]]
+      command = [command(:sambatool), 'user', 'setpassword', resource[:name], '--newpassword', resource[:password], '-d', '1']
       output  = execute(command)
       Puppet.debug(output)
     end
@@ -137,11 +147,11 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       end
 
       groups.each do |group|
-        command = [command(:sambatool), 'group', 'listmembers', group]
+        command = [command(:sambatool), 'group', 'listmembers', group, '-d', '1']
         output = execute(command)
         users_list = output.split(/\n/).map(&:downcase)
         if not users_list.include?(resource[:name].downcase)
-          command = [command(:sambatool), 'group', 'addmembers', group, resource[:name]]
+          command = [command(:sambatool), 'group', 'addmembers', group, resource[:name], '-d', '1']
           output = execute(command)
           Puppet.debug(output)
         end
@@ -151,7 +161,7 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
 
   def destroy
     begin
-      command = [command(:sambatool), 'user', 'delete', resource[:name]]
+      command = [command(:sambatool), 'user', 'delete', resource[:name], '-d', '1']
       output = execute(command)
       Puppet.debug(output)
     rescue Puppet::ExecutionFailure => ex

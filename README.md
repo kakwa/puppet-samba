@@ -86,15 +86,6 @@ class { ::samba::dc:
   netlogonabsentoptions => [],                # * Remove default settings put 
                                               #   by this class in [netlogon] 
                                               #   (default: [])
-  groups                => [                  # * List of groups (default: [])
-    { name        => 'group1',                # * group name
-      description => 'Group 1',               # * group description
-      scope       => 'Domain',                # * group scope 
-                                              #   ('Domain', 'Global' or 'Universal')
-      type        => 'Security',              # * group type 
-                                              #   ('Security' or 'Distribution')
-    },
-  ],
   logonscripts          => [                  # * List of logon scripts (default: [])
     { name          => 'login1.cmd',          # * Logon script name
       content       => 'echo login script 1 
@@ -109,8 +100,10 @@ Adding users:
 
 ```puppet
 smb_user { 'test user':                       # * user name
-  ensure   => present,                        # * absent | present
-  password => 'QwertyP455aaa',                # * user password
+  ensure     => present,                      # * absent | present
+  password   => 'QwertyP455aaa',              # * user password
+  groups     => ['domain users',              # * list of groups
+     'administrators'],
   attributes => {                             # * hash of attributes
      uidNumber   => '15222',                  #   use list for multivalued attributes
      gidNumber   => '10001',

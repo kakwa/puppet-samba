@@ -51,7 +51,6 @@ class samba::dc(
   $ppolicymaxpwdage      = 42,
   $targetdir             = '/var/lib/samba/',
   $domainlevel           = '2003',
-  $groups                = [],
   $logonscripts          = [],
   $sambaloglevel         = 1,
   $logtosyslog           = false,
@@ -188,7 +187,7 @@ ex: domain="ad" and realm="ad.example.com"')
 ${::samba::params::sambaCmd} domain provision \
 --domain='${domain}' --realm='${realm}' --dns-backend='$SamaDNS' \
 --targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
---configfile='${::samba::params::smbConfFile}' --server-role='$role' && \
+--configfile='${::samba::params::smbConfFile}' --server-role='$role' -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
@@ -260,7 +259,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
       unless  => "${::samba::params::sambaClientCmd} \
 //localhost/netlogon ${adminpassword} -UAdministrator  -c 'ls'",
       command => "${::samba::params::sambaCmd} user setpassword \
-Administrator --newpassword=${adminpassword}",
+Administrator --newpassword=${adminpassword} -d 1",
       require => Service['SambaDC'],
     }
   }
@@ -268,20 +267,20 @@ Administrator --newpassword=${adminpassword}",
   # Configure Domain function level
   exec{ 'setDomainFunctionLevel':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "${::samba::params::sambaCmd} domain level show \
+    unless  => "${::samba::params::sambaCmd} domain level show  -d 1\
 | grep 'Domain function level' | grep -q \"${domainlevel}$\"",
     command => "${::samba::params::sambaCmd} domain \
-level raise --domain-level='${domainLevel}'",
+level raise --domain-level='${domainLevel}' -d 1",
     require => Service['SambaDC'],
   }
 
   # Configure Forest function level
   exec{ 'setForestFunctionLevel':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "${::samba::params::sambaCmd} domain level show \
+    unless  => "${::samba::params::sambaCmd} domain level show -d 1\
 | grep 'Forest function level' | grep -q '${domainlevel}$'",
     command => "${::samba::params::sambaCmd} domain \
-level raise --forest-level='${domainLevel}'",
+level raise --forest-level='${domainLevel}' -d 1",
     require => Exec['setDomainFunctionLevel'],
   }
 
@@ -291,14 +290,14 @@ level raise --forest-level='${domainLevel}'",
     require => Service['SambaDC'],
 
     unless  => "\
-[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show\
+[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show -d 1\
 |sed 's/^.*:\\ *\\([0-9]\\+\\|on\\|off\\).*$/\\1/gp;d' | md5sum )\" = \
 \"\$(printf \
 '${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
 \\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' \
 | md5sum )\" ]",
 
-    command => "${::samba::params::sambaCmd} domain passwordsettings set \
+    command => "${::samba::params::sambaCmd} domain passwordsettings set -d 1\
 --complexity='${ppolicycomplexity}' \
 --store-plaintext='${ppolicyplaintext}' \
 --history-length='${ppolicyhistorylength}' \
@@ -306,11 +305,6 @@ level raise --forest-level='${domainLevel}'",
 --min-pwd-age='${ppolicyminpwdage}' \
 --max-pwd-age='${ppolicymaxpwdage}'",
   }
-
-  # Iteration to add groups
-  $groupSize  = size($::samba::dc::groups) - 1
-  $groupIndex = range(0, $groupSize)
-  ::samba::dc::groupadd{ $groupIndex: }
 
   # Iteration to add logon scripts
   $scriptSize  = size($::samba::dc::logonscripts) - 1

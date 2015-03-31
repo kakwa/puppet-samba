@@ -11,6 +11,7 @@ Puppet::Type.newtype(:smb_user) do
 
   newparam(:attributes) do
     desc 'hash of attributes'
+    defaultto {}
   end
 
   newparam(:password) do
@@ -19,6 +20,7 @@ Puppet::Type.newtype(:smb_user) do
 
   newparam(:groups) do
     desc 'list of groups'
+    defaultto []
   end
 
 end
