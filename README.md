@@ -23,11 +23,13 @@
 
 ## Module Description
 
-This module manage Samba 4 installation. It's mainly meant to deploy Samba 4 as a domain controler
-and it's associated shares, but as it's possible to remove/modify/add any samba parameters this
-module can be used for any samba setup.
+This module manage Samba 4 installation. 
 
-For now it only works under CentOS/RedHat.
+It's mainly meant to deploy Samba 4 as an **Active Directory Domain Controler** 
+and deploy **Classic** Samba shares bound to it.
+
+However, as it's possible to remove/modify/add any parameters this
+module can be used for virtually any Samba setup.
 
 ## Setup
 
