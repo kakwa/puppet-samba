@@ -4,12 +4,11 @@
 
 #### Table of Contents
 
-1. [Overview](#overview)
-2. [Module Description](#module-description)
-3. [Setup](#setup)
+1. [Module Description](#module-description)
+2. [Setup](#setup)
     * [What samba affects](#what-samba-affects)
     * [Setup requirements](#setup-requirements)
-4. [Usage](#usage)
+3. [Usage](#usage)
     * [Samba Domain Controller](#samba-4-ad-domain-controler)
           * [Domain Controller](#domain-controller)
           * [Password Policy](#password-policy)
@@ -18,12 +17,8 @@
           * [Group](#groups)
     * [Samba Classic](#samba-classic-shares)
     * [Shares](#samba-shares)
-5. [Limitations](#limitations)
-6. [Development](#development)
-
-## Overview
-
-A module managing Samba 4 deployment, including Samba Domain Controler.
+4. [Limitations](#limitations)
+5. [Development](#development)
 
 ## Module Description
 
