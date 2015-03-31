@@ -1,8 +1,8 @@
 define samba::dc::script(
-   $content,
+  $content,
 ){
-  $scriptName       = $name 
-  $scriptContent    = $content 
+  $scriptName       = $name
+  $scriptContent    = $content
 
   $scriptPath = "${::samba::dc::scriptDir}/${scriptName}"
   validate_absolute_path($scriptPath)
