@@ -19,6 +19,7 @@
     * [Shares](#samba-shares)
 4. [Limitations](#limitations)
 5. [Development](#development)
+6. [Release Notes](#release-notes)
 
 ## Module Description
 
