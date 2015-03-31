@@ -27,4 +27,8 @@ Puppet::Type.newtype(:smb_user) do
     ['SambaDC',]
   end
 
+  autorequire(:file) do
+    ['SambaOptsAdditionnalTool',]
+  end
+
 end
