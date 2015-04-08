@@ -46,6 +46,7 @@ class samba::dc(
   $targetdir             = '/var/lib/samba/',
   $domainlevel           = '2003',
   $sambaloglevel         = 1,
+  $ip                    = undef,
   $logtosyslog           = false,
   $sambaclassloglevel    = undef,
   $globaloptions         = {},
@@ -115,6 +116,21 @@ ex: domain="ad" and realm="ad.example.com"')
     fail('Can\'t use samba::dc and samba::classic on the same node')
   }
 
+  if $ip {
+    if is_ipv4($ip){
+      $hostip="--host-ip='${ip}'"
+    }
+    elsif is_ipv6($ip){
+      $hostip="--host-ip6='${ip}'"
+    }
+    else{
+      fail('ip must be a valid IP v4/v6 address, or kept undef')
+    }
+  }
+  else{
+    $hostip=''
+  }
+
   validate_absolute_path($targetdir)
 
   $realmDowncase = downcase($realm)
@@ -150,7 +166,7 @@ ex: domain="ad" and realm="ad.example.com"')
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "test -d '${targetdir}/state/sysvol/$realmDowncase/'",
     command => "printf '' > '${::samba::params::smbConfFile}' && \
-${::samba::params::sambaCmd} domain provision \
+${::samba::params::sambaCmd} domain provision ${hostip} \
 --domain='${domain}' --realm='${realm}' --dns-backend='$SamaDNS' \
 --targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
 --configfile='${::samba::params::smbConfFile}' --server-role='$role' -d 1 && \

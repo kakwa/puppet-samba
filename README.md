@@ -59,7 +59,8 @@ class { ::samba::dc:
   # Optionnal parameters
   adminpassword         => 'P455WordS',       # * Administrator password 
                                               #   (default: undef)
-  dnsforwarder          => 8.8.8.8,           # * Dns forwarder IP (default: undef)
+  dnsforwarder          => '8.8.8.8',         # * Dns forwarder IP (default: undef)
+  ip                    => '192.168.1.1'      # * DC listening IP (default undef)
   targetdir             => '/var/lib/samba/', # * Deployment directory 
                                               #   (default: '/var/lib/samba/')
   domainlevel           => '2003',            # * Functionnality level ('2003',
