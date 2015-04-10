@@ -41,8 +41,6 @@ class samba::classic(
   $domain               = undef,
   $realm                = undef,
   $adminpassword        = undef,
-  $idrangemin           = undef,
-  $idrangemax           = undef,
   $security             = 'ADS',
   $sambaloglevel        = 1,
   $krbconf              = true,
@@ -53,14 +51,6 @@ class samba::classic(
   $globalabsentoptions  = [],
 ) inherits ::samba::params{
 
-
-  unless is_integer($idrangemin)
-    and is_integer($idrangemax)
-    and $idrangemin >= 0
-    and $idrangemax >= $idrangemin {
-    fail('idrangemin and idrangemax must be integers \
-and idrangemin <= idrangemax')
-  }
 
   unless is_domain_name($realm){
     fail('realm must be a valid domain')
@@ -179,9 +169,6 @@ ex: domain="ad" and realm="ad.example.com"')
     'winbind enum groups'                => 'Yes',
     'winbind refresh tickets'            => 'Yes',
     'winbind separator'                  => '+',
-    "idmap config ${domain}:backend"     => 'ad',
-    "idmap config ${domain}:schema_mode" => 'rfc2307',
-    "idmap config ${domain}:range"       => "${idrangemin}-${idrangemax}",
   }
 
   $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
