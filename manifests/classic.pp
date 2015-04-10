@@ -43,6 +43,7 @@ class samba::classic(
   $adminpassword        = undef,
   $idrangemin           = undef,
   $idrangemax           = undef,
+  $security             = 'ADS',
   $sambaloglevel        = 1,
   $krbconf              = true,
   $nsswitch             = true,
@@ -78,6 +79,13 @@ and idrangemin <= idrangemax')
   unless $domain == $tmparr[0] {
     fail('domain must be the fist part of realm, \
 ex: domain="ad" and realm="ad.example.com"')
+  }
+
+  $checksecurity = ['ADS', 'AUTO', 'USER', 'DOMAIN']
+  $checksecuritystr = join($checksecurity, ', ')
+
+  unless member($checksecurity, upcase($security)){
+    fail("role must be in [${checksecuritystr}]")
   }
 
   $realmLowerCase = downcase($realm)
@@ -158,13 +166,13 @@ ex: domain="ad" and realm="ad.example.com"')
     'workgroup'                          => $domain,
     'realm'                              => $realm,
     'netbios name'                       => $smbname,
-    'security'                           => 'ADS',
+    'security'                           => $security,
     'dedicated keytab file'              => '/etc/krb5.keytab',
     'vfs objects'                        => 'acl_xattr',
     'map acl inherit'                    => 'Yes',
     'store dos attributes'               => 'Yes',
-    'winbind nss info'                   => 'rfc2307',
     'map untrusted to domain'            => 'Yes',
+    'winbind nss info'                   => 'rfc2307',
     'winbind trusted domains only'       => 'No',
     'winbind use default domain'         => 'Yes',
     'winbind enum users'                 => 'Yes',

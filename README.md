@@ -154,7 +154,7 @@ smb_group { 'mygroup':
 }
 ```
 
-### Samba Classic (shares)
+### Samba Classic
 
 ```puppet
 class { '::samba::classic':
@@ -168,6 +168,9 @@ class { '::samba::classic':
   idrangemax            => 19999,         # * Max uid for Domain users
 
   # Optionnal parameters
+  security              => 'ADS',         # * security mode.
+                                          #   in ['ADS', 'AUTO', 'USER', 'DOMAIN']
+                                          #   default: 'ADS'
   krbconf               => true,          # * Deploy krb5.conf file (default: true)
   nsswitch              => true,          # * Add winbind to nsswitch,
                                           #   (default: true)
@@ -181,7 +184,6 @@ class { '::samba::classic':
   },
   globaloptions       => {},              # * Custom options in section [global] 
   globalabsentoptions => [],              # * Remove default settings put 
-                                          #   by this class in [global]
 }
 ```
 
