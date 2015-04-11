@@ -15,7 +15,14 @@
           * [Logon Script](#logon-scripts)
           * [User](#users)
           * [Group](#groups)
-    * [Samba Classic](#samba-classic-shares)
+    * [Samba Classic](#samba-classic)
+    * [Idmap](#idmap)
+          * [nss, tdb or rid](#idmap-nss-tdb-or-rid)
+          * [ad](#idmap-ad)
+          * [autorid](#idmap-autorid)
+          * [hash](#idmap-hash)
+          * [ldap](#idmap-ldap)
+          * [tdb2](#idmap-tdb2)
     * [Shares](#samba-shares)
 4. [Limitations](#limitations)
 5. [Development](#development)
@@ -189,9 +196,9 @@ class { '::samba::classic':
 
 #### Idmap nss, tdb or rid
 
-* [Iidmap nss](https://www.samba.org/samba/docs/man/manpages/idmap_nss.8.html)
-* [Iidmap rid](https://www.samba.org/samba/docs/man/manpages/idmap_rid.8.html)
-* [Iidmap tdb](https://www.samba.org/samba/docs/man/manpages/idmap_tdb.8.html)
+* [Idmap nss](https://www.samba.org/samba/docs/man/manpages/idmap_nss.8.html)
+* [Idmap rid](https://www.samba.org/samba/docs/man/manpages/idmap_rid.8.html)
+* [Idmap tdb](https://www.samba.org/samba/docs/man/manpages/idmap_tdb.8.html)
 
 ```puppet
 ::samba::idmap { 'Domain *':
@@ -205,7 +212,7 @@ class { '::samba::classic':
 
 #### Idmap ad
 
-* [Iidmap ad](https://www.samba.org/samba/docs/man/manpages/idmap_ad.8.html)
+* [Idmap ad](https://www.samba.org/samba/docs/man/manpages/idmap_ad.8.html)
 
 ```puppet
 ::samba::idmap { 'Domain DC':
@@ -220,7 +227,7 @@ class { '::samba::classic':
 
 #### Idmap autorid
 
-* [Iidmap autorid](https://www.samba.org/samba/docs/man/manpages/idmap_autorid.8.html)
+* [Idmap autorid](https://www.samba.org/samba/docs/man/manpages/idmap_autorid.8.html)
 
 ```puppet
 ::samba::idmap { 'Domain DC':
@@ -240,7 +247,7 @@ class { '::samba::classic':
 
 #### Idmap hash
 
-* [Iidmap hash](https://www.samba.org/samba/docs/man/manpages/idmap_hash.8.html)
+* [Idmap hash](https://www.samba.org/samba/docs/man/manpages/idmap_hash.8.html)
 
 ```puppet
 ::samba::idmap { 'Domain DC':
@@ -254,7 +261,7 @@ class { '::samba::classic':
 
 #### Idmap ldap
 
-* [Iidmap ldap](https://www.samba.org/samba/docs/man/manpages/idmap_ldap.8.html)
+* [Idmap ldap](https://www.samba.org/samba/docs/man/manpages/idmap_ldap.8.html)
 
 ```puppet
 ::samba::idmap { 'Domain DC':
@@ -270,7 +277,7 @@ class { '::samba::classic':
 
 #### Idmap tdb2
 
-* [Iidmap tdb2](https://www.samba.org/samba/docs/man/manpages/idmap_tdb2.8.html)
+* [Idmap tdb2](https://www.samba.org/samba/docs/man/manpages/idmap_tdb2.8.html)
 
 ```puppet
 ::samba::idmap { 'Domain DC':
