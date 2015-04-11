@@ -75,7 +75,7 @@ and idrangemin <= idrangemax')
   
   $cp = "idmap config ${domain} :"
 
-  case $backend {
+  case downcase($backend) {
    'ad': {
       unless $schema_mode {
         fail("missing parameter(s) for idmap_${backend}, need: schema_mode")
@@ -124,8 +124,10 @@ and idrangemin <= idrangemax')
       $idmap_specific = {}
    }
    'tdb2': {
-      $idmap_specific = {
-        "${cp} script" => $script,
+      if $script {
+        $idmap_specific = {
+          "${cp} script" => $script,
+        }
       }
    }
    'tdb': {
