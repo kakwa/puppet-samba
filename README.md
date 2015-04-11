@@ -23,7 +23,7 @@
 
 ## Module Description
 
-This module manage Samba 4 installation. 
+This module manage Samba installation.
 
 It's mainly meant to deploy Samba 4 as an **Active Directory Domain Controler** 
 and deploy **Classic** Samba shares bound to it.
@@ -164,8 +164,6 @@ class { '::samba::classic':
   smbname               => 'SMB',         # * Share name
   sambaloglevel         => 3,             # * Samba log level
   logtosyslog           => true,          # * Log to Syslog
-  idrangemin            => 10000,         # * Min uid for Domain users
-  idrangemax            => 19999,         # * Max uid for Domain users
 
   # Optionnal parameters
   security              => 'ADS',         # * security mode.
@@ -184,6 +182,103 @@ class { '::samba::classic':
   },
   globaloptions       => {},              # * Custom options in section [global] 
   globalabsentoptions => [],              # * Remove default settings put 
+}
+```
+
+### Idmap
+
+#### Idmap nss, tdb or rid
+
+* [Iidmap nss](https://www.samba.org/samba/docs/man/manpages/idmap_nss.8.html)
+* [Iidmap rid](https://www.samba.org/samba/docs/man/manpages/idmap_rid.8.html)
+* [Iidmap tdb](https://www.samba.org/samba/docs/man/manpages/idmap_tdb.8.html)
+
+```puppet
+::samba::idmap { 'Domain *':
+  domain      => '*',           # * name of the Domain or '*'
+  idrangemin  => 10000,         # * Min uid for Domain users
+  idrangemax  => 19999,         # * Max uid for Domain users
+  backend     => 'tdb',         # * idmap backend 
+                                          #   in [nss, tdb or rid]
+}
+```
+
+#### Idmap ad
+
+* [Iidmap ad](https://www.samba.org/samba/docs/man/manpages/idmap_ad.8.html)
+
+```puppet
+::samba::idmap { 'Domain DC':
+  domain      => 'DC',          # * name of the Domain or '*'
+  idrangemin  => 10000,         # * Min uid for Domain users
+  idrangemax  => 19999,         # * Max uid for Domain users
+  backend     => 'ad',          # * idmap backend 
+  schema_mode => 'rfc2307',     # * Schema mode
+                                #   in [rfc2307, sfu, sfu20]
+}
+```
+
+#### Idmap autorid
+
+* [Iidmap autorid](https://www.samba.org/samba/docs/man/manpages/idmap_autorid.8.html)
+
+```puppet
+::samba::idmap { 'Domain DC':
+  domain         => 'DC',          # * name of the Domain or '*'
+  idrangemin     => 10000,         # * Min uid for Domain users
+  idrangemax     => 19999,         # * Max uid for Domain users
+  backend        => 'autorid',     # * idmap backend 
+  # Optionnal parameters
+  rangesize      => 100000,        # * number of uid per domain
+                                   #   default: 100000
+  read_only      => 'yes',         # * Read only mappint 
+                                   #   Default no
+  ignore_builtin => 'yes',         # * Ignore any mapping requests 
+                                   #   for the BUILTIN domain
+}
+```
+
+#### Idmap hash
+
+* [Iidmap hash](https://www.samba.org/samba/docs/man/manpages/idmap_hash.8.html)
+
+```puppet
+::samba::idmap { 'Domain DC':
+  domain     => 'DC',                     # * name of the Domain or '*'
+  idrangemin => 10000,                    # * Min uid for Domain users
+  idrangemax => 19999,                    # * Max uid for Domain users
+  backend    => 'hash',                   # * idmap backend 
+  name_map   => '/etc/samba/name_map.cfg' # * mapping file
+}
+```
+
+#### Idmap ldap
+
+* [Iidmap ldap](https://www.samba.org/samba/docs/man/manpages/idmap_ldap.8.html)
+
+```puppet
+::samba::idmap { 'Domain DC':
+  domain       => 'DC',                         # * name of the Domain or '*'
+  idrangemin   => 10000,                        # * Min uid for Domain users
+  idrangemax   => 19999,                        # * Max uid for Domain users
+  backend      => 'ldap',                       # * idmap backend 
+  ldap_base_dn => 'ou=users,dc=example,dc=com', # * users mapping ou
+  ldap_user_dn => 'cn=smb,dc=example,dc=com',   # * bind account
+  ldap_passwd  => 'password',                   # * bind password
+}
+```
+
+#### Idmap tdb2
+
+* [Iidmap tdb2](https://www.samba.org/samba/docs/man/manpages/idmap_tdb2.8.html)
+
+```puppet
+::samba::idmap { 'Domain DC':
+  domain     => 'DC',                     # * name of the Domain or '*'
+  idrangemin => 10000,                    # * Min uid for Domain users
+  idrangemax => 19999,                    # * Max uid for Domain users
+  backend    => 'tdb2',                   # * idmap backend
+  script     => '/etc/samba/map.sh',      # * mapping sid/uid script
 }
 ```
 
