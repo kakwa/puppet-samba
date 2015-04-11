@@ -32,7 +32,7 @@
 
 This module manage Samba installation.
 
-It's mainly meant to deploy Samba 4 as an **Active Directory Domain Controler** 
+It's mainly meant to deploy Samba 4 as an **Active Directory Domain Controler**
 and deploy **Classic** Samba shares bound to it.
 
 However, as it's possible to remove/modify/add any parameters this
@@ -60,27 +60,27 @@ class { ::samba::dc:
   # Mandatory parameters
   domain                => 'ad',              # * AD domain name
   realm                 => 'ad.example.org',  # * Realm name (must match domain)
-  dnsbackend            => 'internal',        # * DNS backend ('internal', 
+  dnsbackend            => 'internal',        # * DNS backend ('internal',
                                               #   'bindFlat' or 'bindDLZ')
 
   # Optionnal parameters
-  adminpassword         => 'P455WordS',       # * Administrator password 
+  adminpassword         => 'P455WordS',       # * Administrator password
                                               #   (default: undef)
   dnsforwarder          => '8.8.8.8',         # * Dns forwarder IP (default: undef)
   ip                    => '192.168.1.1'      # * DC listening IP (default undef)
-  targetdir             => '/var/lib/samba/', # * Deployment directory 
+  targetdir             => '/var/lib/samba/', # * Deployment directory
                                               #   (default: '/var/lib/samba/')
   domainlevel           => '2003',            # * Functionnality level ('2003',
                                               #   '2008' or '2008 R2') (default 2003)
   sambaloglevel         => 3,                 # * Log level (from 1 to 10) (default: 1)
-  logtosyslog           => false,             # * Log not to file but to syslog 
+  logtosyslog           => false,             # * Log not to file but to syslog
                                               #   (default: false)
   sambaclassloglevel    => {                  # * Set log level by log classes
     'printdrivers' => 1,                      #   (default: undef)
     'idmap'        => 5,
     'winbind'      => 3,
   },
-  globaloptions         => {                  # * Custom options in section [global] 
+  globaloptions         => {                  # * Custom options in section [global]
                                               #   Takes precedence.
                                               #   (default: {})
     'custom setting 1'   => 'custom value 1',
@@ -88,11 +88,11 @@ class { ::samba::dc:
   },
   netlogonoptions       => {},                # * Custom options in section [netlogon]
   sysvoloptions         => {},                # * Custom options in section [sysvol]
-  globalabsentoptions   => ['idmap_ldb:use'], # * Remove default settings put 
-                                              #   by this class in [global] 
+  globalabsentoptions   => ['idmap_ldb:use'], # * Remove default settings put
+                                              #   by this class in [global]
                                               #   (default: [])
   sysvolabsentoptions   => [],                # * remove default settings in [sysvol]
-  netlogonabsentoptions => [],                # * Remove default settings in [netlogon] 
+  netlogonabsentoptions => [],                # * Remove default settings in [netlogon]
 }
 ```
 
@@ -103,7 +103,7 @@ Configuring password Policy:
 ```puppet
 class { ::samba::dc::ppolicy:
   ppolicycomplexity     => 'on',              # * Enable password policy (default: on)
-  ppolicyplaintext      => 'off',             # * Store password in plain text 
+  ppolicyplaintext      => 'off',             # * Store password in plain text
                                               #   (default: off)
   ppolicyhistorylength  => 24,                # * Password history length (default: 24)
   ppolicyminpwdlength   => 7,                 # * Minimum password length (default: 7)
@@ -157,7 +157,7 @@ smb_group { 'mygroup':
     msSFU30NisDomain => 'dc',
   },
   groups     => ['domain users',              # * list of groups
-    'administrators'], 
+    'administrators'],
 }
 ```
 
@@ -179,7 +179,7 @@ class { '::samba::classic':
   krbconf               => true,          # * Deploy krb5.conf file (default: true)
   nsswitch              => true,          # * Add winbind to nsswitch,
                                           #   (default: true)
-  adminpassword         => 'P455WordS',   # * Domain Administrator 
+  adminpassword         => 'P455WordS',   # * Domain Administrator
                                           #   password (for joining)
                                           #   (default: undef, no join)
   sambaclassloglevel    => {              # * Set log level by log classes
@@ -187,8 +187,8 @@ class { '::samba::classic':
     'idmap'        => 5,
     'winbind'      => 3,
   },
-  globaloptions       => {},              # * Custom options in section [global] 
-  globalabsentoptions => [],              # * Remove default settings put 
+  globaloptions       => {},              # * Custom options in section [global]
+  globalabsentoptions => [],              # * Remove default settings put
 }
 ```
 
@@ -205,8 +205,8 @@ class { '::samba::classic':
   domain      => '*',           # * name of the Domain or '*'
   idrangemin  => 10000,         # * Min uid for Domain users
   idrangemax  => 19999,         # * Max uid for Domain users
-  backend     => 'tdb',         # * idmap backend 
-                                          #   in [nss, tdb or rid]
+  backend     => 'tdb',         # * idmap backend
+                                #   in [nss, tdb or rid]
 }
 ```
 
@@ -219,7 +219,7 @@ class { '::samba::classic':
   domain      => 'DC',          # * name of the Domain or '*'
   idrangemin  => 10000,         # * Min uid for Domain users
   idrangemax  => 19999,         # * Max uid for Domain users
-  backend     => 'ad',          # * idmap backend 
+  backend     => 'ad',          # * idmap backend
   schema_mode => 'rfc2307',     # * Schema mode
                                 #   in [rfc2307, sfu, sfu20]
 }
@@ -234,13 +234,13 @@ class { '::samba::classic':
   domain         => 'DC',          # * name of the Domain or '*'
   idrangemin     => 10000,         # * Min uid for Domain users
   idrangemax     => 19999,         # * Max uid for Domain users
-  backend        => 'autorid',     # * idmap backend 
+  backend        => 'autorid',     # * idmap backend
   # Optionnal parameters
   rangesize      => 100000,        # * number of uid per domain
                                    #   default: 100000
-  read_only      => 'yes',         # * Read only mappint 
+  read_only      => 'yes',         # * Read only mappint
                                    #   Default no
-  ignore_builtin => 'yes',         # * Ignore any mapping requests 
+  ignore_builtin => 'yes',         # * Ignore any mapping requests
                                    #   for the BUILTIN domain
 }
 ```
@@ -254,7 +254,7 @@ class { '::samba::classic':
   domain     => 'DC',                     # * name of the Domain or '*'
   idrangemin => 10000,                    # * Min uid for Domain users
   idrangemax => 19999,                    # * Max uid for Domain users
-  backend    => 'hash',                   # * idmap backend 
+  backend    => 'hash',                   # * idmap backend
   name_map   => '/etc/samba/name_map.cfg' # * mapping file
 }
 ```
@@ -268,7 +268,7 @@ class { '::samba::classic':
   domain       => 'DC',                         # * name of the Domain or '*'
   idrangemin   => 10000,                        # * Min uid for Domain users
   idrangemax   => 19999,                        # * Max uid for Domain users
-  backend      => 'ldap',                       # * idmap backend 
+  backend      => 'ldap',                       # * idmap backend
   ldap_base_dn => 'ou=users,dc=example,dc=com', # * users mapping ou
   ldap_user_dn => 'cn=smb,dc=example,dc=com',   # * bind account
   ldap_passwd  => 'password',                   # * bind password
@@ -295,9 +295,9 @@ class { '::samba::classic':
 ::samba::share { 'Test Share':
   # Mandatory parameters
   path            => '/srv/test/',
-  
+
   # Optionnal parameters
-  options         => {            # * Custom options in section [Test Share] 
+  options         => {            # * Custom options in section [Test Share]
       'browsable'     => 'Yes',
       'root preexec'  => 'mkdir -p \'/home/home_%U\'',
   },
