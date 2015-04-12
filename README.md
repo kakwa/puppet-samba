@@ -36,6 +36,8 @@ This module manage Samba installation, including samba as an **Active Directory 
 It easily lets you add/modify/remove any parameters of smb.conf, letting you free to customize the installation
 to your specific needs. 
 
+This module is Licensed MIT.
+
 ## Setup
 
 ### What samba affects
