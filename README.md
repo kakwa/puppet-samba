@@ -38,6 +38,22 @@ to your specific needs.
 
 ## Setup
 
+### What samba affects
+
+This module will install the samba packages and setup smb.conf.
+
+In 'classic':
+
+* By default, it will enable winbind in nsswitch (through augeas, not modifying anything more than necessary).
+* By default, it will join the share the Domain Controler.
+* It will configure and enable the winbind service
+* It will deploy 'smb-create-home.sh', a small helper script to create user's home
+
+In 'dc':
+
+* It will deploy additionnal-samba-tool, a python script completing samba-tool
+This script handles users/groups and their attributes (list, add or remove attributes)
+
 ### Setup Requirements
 
 This module requires puppetlabs-stdlib module.
