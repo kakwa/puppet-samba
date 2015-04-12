@@ -175,6 +175,12 @@ ex: domain="ad" and realm="ad.example.com"')
     'winbind separator'                  => '+',
   }
 
+  file{ 'SambaCreateHome':
+    path    => $sambaCreateHome,
+    source  => "puppet:///modules/${module_name}/smb-create-home.sh",
+    mode    => '0755',
+  }
+
   $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
     '[global]')
   ::samba::option{ $mandatoryGlobalOptionsIndex:

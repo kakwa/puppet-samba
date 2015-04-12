@@ -79,9 +79,9 @@ class samba::params(
     }
   }
 
-  $sambaHome        = '/usr/local/bin/create-home'
   $sambaAddTool     = '/usr/local/bin/additional-samba-tool'
   $nsswitchConfFile = '/etc/nsswitch.conf'
+  $sambaCreateHome  = '/usr/local/bin/smb-create-home.sh'
 
   $logclasslist =  [
     'all',     'tdb',     'printdrivers', 'lanman',   'smb',

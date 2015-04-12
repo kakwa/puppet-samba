@@ -343,6 +343,12 @@ level raise --forest-level='${domainLevel}' -d 1",
     notify          => Service['SambaDC'],
   }
 
+  file{ 'SambaCreateHome':
+    path    => $sambaCreateHome,
+    source  => "puppet:///modules/${module_name}/smb-create-home.sh",
+    mode    => '0755',
+  }
+
   $gabsoptlist = prefix($globalabsentoptions, 'global/')
   smb_setting { $gabsoptlist :
     ensure  => absent,
