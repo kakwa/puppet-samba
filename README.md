@@ -272,6 +272,7 @@ class { '::samba::classic':
   ldap_base_dn => 'ou=users,dc=example,dc=com', # * users mapping ou
   ldap_user_dn => 'cn=smb,dc=example,dc=com',   # * bind account
   ldap_passwd  => 'password',                   # * bind password
+  ldap_url     => 'ldap://ldap.example.com',    # * ldap url
 }
 ```
 

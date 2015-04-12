@@ -51,8 +51,7 @@ define samba::idmap(
     $ldap_url             = undef,
     $ldap_passwd          = undef,
     $script               = undef,
-    ) inherits ::samba::params{
-
+    ) {
 
   unless is_integer($idrangemin)
     and is_integer($idrangemax)
@@ -113,11 +112,15 @@ define samba::idmap(
           "${cp} ldap_user_dn" => $ldap_user_dn,
           "${cp} ldap_url"     => $ldap_url,
         }
+        $hash_ldap = '/etc/samba/hash_ldap'
         exec { 'set ldap passwd':
-          cmd     => "/bin/false $ldap_passwd",
+          path    => '/usr/bin:/bin:/sbin:/usr/bin',
+          command => "net idmap secret $domain $ldap_passwd && \
+echo '$ldap_passwd' | sha1sum >$hash_ldap",
           require => Service['SambaClassic'],
+          unless  => "test \"`echo 'password' \
+| sha1sum`\" = \"`cat $hash_ldap`\"",
         }
-#'ldap_passwd' => $ignore_builtin,
       }
       'nss': {
         $idmap_specific = {}
