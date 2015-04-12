@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# licensed under GPLv3
+
 from samba.samdb import SamDB
 from samba.auth import system_session
 from samba import param

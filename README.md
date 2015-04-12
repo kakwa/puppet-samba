@@ -366,3 +366,10 @@ Pull requests are welcomed ^^.
 ## Release Notes
 
 No Release yet.
+
+## External licenses
+
+This module includes portions of code derived from:
+
+* [puppetlabs/inifile](https://forge.puppetlabs.com/puppetlabs/inifile) licensed under APL
+* [python-samba](https://www.samba.org/) licensed under GPLv3
