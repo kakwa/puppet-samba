@@ -74,74 +74,74 @@ define samba::idmap(
 
   $cp = "idmap config ${domain} :"
 
-    case downcase($backend) {
-      'ad': {
-        unless $schema_mode {
-          fail("missing parameter(s) for idmap_${backend}, need: schema_mode")
-        }
-        $idmap_specific = {
-          "${cp} schema_mode" => $schema_mode,
-        }
+  case downcase($backend) {
+    'ad': {
+      unless $schema_mode {
+        fail("missing parameter(s) for idmap_${backend}, need: schema_mode")
       }
-      'autorid': {
-        unless $rangesize and $read_only and $ignore_builtin {
-          fail("missing parameter(s) for idmap_${backend} need: \
-                  rangesize, read_only, ignore_builtin")
-        }
-        $idmap_specific = {
-          "${cp} rangesize"      => $rangesize,
-          "${cp} read only"      => $read_only,
-          "${cp} ignore builtin" => $ignore_builtin,
-        }
-      }
-      'hash': {
-        unless $name_map{
-          fail("missing parameter(s) for idmap_${backend} need: name_map")
-        }
-        $idmap_specific = {
-          'idmap_hash:name_map' => $name_map,
-        }
-      }
-      'ldap': {
-        unless $ldap_base_dn and $ldap_user_dn and $ldap_url and $ldap_passwd {
-          fail("missing parameter(s) for idmap_${backend} need: \
-                  ldap_base_dn, ldap_user_dn, ldap_url, ldap_passwd")
-        }
-        $idmap_specific = {
-          "${cp} ldap_base_dn" => $ldap_base_dn,
-          "${cp} ldap_user_dn" => $ldap_user_dn,
-          "${cp} ldap_url"     => $ldap_url,
-        }
-        $hash_ldap = '/etc/samba/hash_ldap'
-        exec { 'set ldap passwd':
-          path    => '/usr/bin:/bin:/sbin:/usr/bin',
-          command => "net idmap secret $domain $ldap_passwd && \
-echo '$ldap_passwd' | sha1sum >$hash_ldap",
-          require => Service['SambaClassic'],
-          unless  => "test \"`echo 'password' \
-| sha1sum`\" = \"`cat $hash_ldap`\"",
-        }
-      }
-      'nss': {
-        $idmap_specific = {}
-      }
-      'rid': {
-        $idmap_specific = {}
-      }
-      'tdb2': {
-        if $script {
-          $idmap_specific = {
-            "${cp} script" => $script,
-          }
-        }
-      }
-      'tdb': {
-        $idmap_specific = {}
-      }
-      default: {
-        fail('unsupported idmap backend')
+      $idmap_specific = {
+        "${cp} schema_mode" => $schema_mode,
       }
     }
+    'autorid': {
+      unless $rangesize and $read_only and $ignore_builtin {
+        fail("missing parameter(s) for idmap_${backend} need: \
+                rangesize, read_only, ignore_builtin")
+      }
+      $idmap_specific = {
+        "${cp} rangesize"      => $rangesize,
+        "${cp} read only"      => $read_only,
+        "${cp} ignore builtin" => $ignore_builtin,
+      }
+    }
+    'hash': {
+      unless $name_map{
+        fail("missing parameter(s) for idmap_${backend} need: name_map")
+      }
+      $idmap_specific = {
+        'idmap_hash:name_map' => $name_map,
+      }
+    }
+    'ldap': {
+      unless $ldap_base_dn and $ldap_user_dn and $ldap_url and $ldap_passwd {
+        fail("missing parameter(s) for idmap_${backend} need: \
+                ldap_base_dn, ldap_user_dn, ldap_url, ldap_passwd")
+      }
+      $idmap_specific = {
+        "${cp} ldap_base_dn" => $ldap_base_dn,
+        "${cp} ldap_user_dn" => $ldap_user_dn,
+        "${cp} ldap_url"     => $ldap_url,
+      }
+      $hash_ldap = '/etc/samba/hash_ldap'
+      exec { 'set ldap passwd':
+        path    => '/usr/bin:/bin:/sbin:/usr/bin',
+        command => "net idmap secret $domain $ldap_passwd && \
+echo '$ldap_passwd' | sha1sum >$hash_ldap",
+        require => Service['SambaClassic'],
+        unless  => "test \"`echo 'password' \
+| sha1sum`\" = \"`cat $hash_ldap`\"",
+      }
+    }
+    'nss': {
+      $idmap_specific = {}
+    }
+    'rid': {
+      $idmap_specific = {}
+    }
+    'tdb2': {
+      if $script {
+        $idmap_specific = {
+          "${cp} script" => $script,
+        }
+      }
+    }
+    'tdb': {
+      $idmap_specific = {}
+    }
+    default: {
+      fail('unsupported idmap backend')
+    }
+  }
 
   $idmap_base = {
     "${cp} backend"     => $backend,
@@ -150,14 +150,14 @@ echo '$ldap_passwd' | sha1sum >$hash_ldap",
 
   $idmapOptions = merge($idmap_base, $idmap_specific)
 
-    $idmapOptionsIndex = prefix(keys($idmapOptions),
-        '[global]')
-    ::samba::option{ $idmapOptionsIndex:
-      options         => $idmapOptions,
-      section         => 'global',
-      require         => Package['SambaClassic'],
-      notify          => Service['SambaClassic'],
-    }
+  $idmapOptionsIndex = prefix(keys($idmapOptions),
+      '[global]')
+  ::samba::option{ $idmapOptionsIndex:
+    options         => $idmapOptions,
+    section         => 'global',
+    require         => Package['SambaClassic'],
+    notify          => Service['SambaClassic'],
+  }
 }
 
 # vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2
