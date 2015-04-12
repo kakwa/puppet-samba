@@ -117,7 +117,7 @@ define samba::idmap(
         path    => '/usr/bin:/bin:/sbin:/usr/bin',
         command => "net idmap secret $domain $ldap_passwd && \
 echo '$ldap_passwd' | sha1sum >$hash_ldap",
-        require => Service['SambaClassic'],
+        require => Service['SambaSmb', 'SambaWinBind'],
         unless  => "test \"`echo 'password' \
 | sha1sum`\" = \"`cat $hash_ldap`\"",
       }
@@ -156,7 +156,7 @@ echo '$ldap_passwd' | sha1sum >$hash_ldap",
     options         => $idmapOptions,
     section         => 'global',
     require         => Package['SambaClassic'],
-    notify          => Service['SambaClassic'],
+    notify          => Service['SambaSmb', 'SambaWinBind'],
   }
 }
 

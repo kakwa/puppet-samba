@@ -112,7 +112,7 @@ ex: domain="ad" and realm="ad.example.com"')
     fail('dns forwarder must be a valid IP address')
   }
 
-  if defined(Service['SambaClassic']){
+  if defined(Service['SambaSmb']) or defined(Service['SambaWinBind']){
     fail('Can\'t use samba::dc and samba::classic on the same node')
   }
 
@@ -156,7 +156,6 @@ ex: domain="ad" and realm="ad.example.com"')
 
   package{ 'SambaDC':
     ensure        => 'installed',
-    allow_virtual => true,
     name          => $::samba::params::packageSambaDC,
     require       => File['/etc/samba/smb_path'],
   }
@@ -192,7 +191,6 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
 
   package{ 'PyYaml':
     ensure        => 'installed',
-    allow_virtual => true,
     name          => $::samba::params::packagePyYaml,
   }
 

@@ -97,7 +97,7 @@ ex: domain="ad" and realm="ad.example.com"')
       ensure  => present,
       mode    => '0644',
       content => template("${module_name}/krb5.conf.erb"),
-      notify  => Service['SambaClassic'],
+      notify  => Service['SambaSmb', 'SambaWinBind'],
     }
   }
 
@@ -126,21 +126,25 @@ ex: domain="ad" and realm="ad.example.com"')
 
   package{ 'SambaClassicWinBind':
     ensure        => 'installed',
-    allow_virtual => true,
     name          => $::samba::params::packageSambaWinBind,
     require       => File['/etc/samba/smb_path'],
   }
 
   package{ 'SambaClassic':
     ensure        => 'installed',
-    allow_virtual => true,
     name          => $::samba::params::packageSambaClassic,
     require       => Package['SambaClassicWinBind'],
   }
 
-  service{ 'SambaClassic':
+  service{ 'SambaSmb':
     ensure  => 'running',
-    name    => $::samba::params::serviveSambaClassic,
+    name    => $::samba::params::serviveSmb,
+    require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
+  }
+
+  service{ 'SambaWinBind':
+    ensure  => 'running',
+    name    => $::samba::params::serviveWinBind,
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
   }
 
@@ -178,7 +182,7 @@ ex: domain="ad" and realm="ad.example.com"')
     section         => 'global',
     settingsignored => $globaloptsexclude,
     require         => Package['SambaClassic'],
-    notify          => Service['SambaClassic'],
+    notify          => Service['SambaSmb', 'SambaWinBind'],
   }
 
   ::samba::log { 'syslog':
@@ -187,7 +191,7 @@ ex: domain="ad" and realm="ad.example.com"')
     sambaclassloglevel => $sambaclassloglevel,
     settingsignored    => $globaloptsexclude,
     require            => Package['SambaClassic'],
-    notify             => Service['SambaClassic'],
+    notify             => Service['SambaSmb', 'SambaWinBind'],
   }
 
   # Iteration on global options
@@ -196,7 +200,7 @@ ex: domain="ad" and realm="ad.example.com"')
     options => $globaloptions,
     section => 'global',
     require => Package['SambaClassic'],
-    notify  => Service['SambaClassic'],
+    notify  => Service['SambaSmb', 'SambaWinBind'],
   }
 
   resources { 'smb_setting':
@@ -208,7 +212,7 @@ ex: domain="ad" and realm="ad.example.com"')
     ensure  => absent,
     section => 'global',
     require => Package['SambaClassic'],
-    notify  => Service['SambaClassic'],
+    notify  => Service['SambaSmb', 'SambaWinBind'],
   }
 
   unless $adminpassword == undef {
@@ -216,7 +220,8 @@ ex: domain="ad" and realm="ad.example.com"')
       path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
       unless  => 'net ads testjoin',
       command => "echo '${adminpassword}'| net ads join -U administrator",
-      notify  => Service['SambaClassic'],
+      notify  => Service['SambaWinBind'],
+      require => [ Package['SambaClassic'], Service['SambaSmb'] ],
     }
   }
 }

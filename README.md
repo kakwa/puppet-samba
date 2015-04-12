@@ -9,6 +9,7 @@
     * [What samba affects](#what-samba-affects)
     * [Setup requirements](#setup-requirements)
 3. [Usage](#usage)
+    * [Packages](#packages)
     * [Samba Domain Controller](#samba-4-ad-domain-controler)
           * [Domain Controller](#domain-controller)
           * [Password Policy](#password-policy)
@@ -30,24 +31,35 @@
 
 ## Module Description
 
-This module manage Samba installation.
+This module manage Samba installation, including samba as an **Active Directory Domain Controler**.
 
-It's mainly meant to deploy Samba 4 as an **Active Directory Domain Controler**
-and deploy **Classic** Samba shares bound to it.
-
-However, as it's possible to remove/modify/add any parameters this
-module can be used for virtually any Samba setup.
+It easily lets you add/modify/remove any parameters of smb.conf, letting you free to customize the installation
+to your specific needs. 
 
 ## Setup
 
 ### Setup Requirements
 
-Under RedHat/CentOS, this module requires the Sernet repos to be configured.
-As of  march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choice in kerberos implementations.
-
 This module requires puppetlabs-stdlib module.
 
 ## Usage
+
+### Packages
+
+This module permits to choose between native distribtion packages or Sernet (samba developpers) packages:
+
+```puppet
+class { 'samba::params':
+  sernetRepo => true, # enable sernet packages (default: false)
+}
+```
+
+If this class is undeclared, the default behavior is to use native distribution packages.
+
+As of march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choice in kerberos implementations.
+Use the Sernet Packages.
+
+If the Sernet packages are used, please configure Sernet/Custom repositories containing these packages.
 
 ### Samba 4 AD Domain Controler
 
@@ -308,8 +320,6 @@ class { '::samba::classic':
 ```
 
 ## Limitations
-
-For now, this module only works on RedHat/CentOS, with Sernet packages.
 
 To access Sernet Repositories, you must register on [Sernet Portal](https://portal.enterprisesamba.com/users/sign_up).
 Once it's done, you should have access to your *ACCESSKEY*. Use it and your USERNAME to configure the repo:
