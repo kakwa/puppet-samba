@@ -59,13 +59,13 @@ class samba::dc(
 
   case $dnsbackend {
     'internal': {
-      $SamaDNS   = 'SAMBA_INTERNAL'
+      $SambaDNS   = 'SAMBA_INTERNAL'
     }
     'bindFlat': {
-      $SamaDNS   = 'BIND9_FLATFILE'
+      $SambaDNS   = 'BIND9_FLATFILE'
     }
     'bindDLZ': {
-      $SamaDNS   = 'BIND9_FLATFILE'
+      $SambaDNS   = 'BIND9_FLATFILE'
     }
     default: {
       fail('unsupported dns backend, \
@@ -166,7 +166,7 @@ ex: domain="ad" and realm="ad.example.com"')
     unless  => "test -d '${targetdir}/state/sysvol/${realmDowncase}/'",
     command => "printf '' > '${::samba::params::smbConfFile}' && \
 ${::samba::params::sambaCmd} domain provision ${hostip} \
---domain='${domain}' --realm='${realm}' --dns-backend='${SamaDNS}' \
+--domain='${domain}' --realm='${realm}' --dns-backend='${SambaDNS}' \
 --targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
 --configfile='${::samba::params::smbConfFile}' --server-role='${role}' -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
