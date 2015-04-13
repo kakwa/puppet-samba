@@ -337,7 +337,7 @@ class { '::samba::classic':
   group           => 'root',      # * group of the share directory 
                                   #   (default: root)
   mode            => '0775',      # * mode of the share directory
-                                  #   (default: 770)
+                                  #   (default: 0777)
   acl             => [],          # * list of posix acls (default: undef)
   options         => {            # * Custom options in section [Test Share]
       'browsable'     => 'Yes',

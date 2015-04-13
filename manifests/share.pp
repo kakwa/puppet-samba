@@ -42,7 +42,7 @@ define samba::share(
   $path,
   $owner = 'root',
   $group = 'root',
-  $mode  = '1770',
+  $mode  = '0777',
   $acl   = undef,
 ) {
 
