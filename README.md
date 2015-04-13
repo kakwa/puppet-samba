@@ -24,7 +24,9 @@
           * [hash](#idmap-hash)
           * [ldap](#idmap-ldap)
           * [tdb2](#idmap-tdb2)
-    * [Shares](#samba-shares)
+    * [Samba Shares](#samba-shares)
+          * [Shares](#shares)
+          * [Directories](#directories)
 4. [Limitations](#limitations)
 5. [Development](#development)
 6. [Release Notes](#release-notes)
@@ -322,12 +324,21 @@ class { '::samba::classic':
 
 ### Samba Shares
 
+#### Shares
+
 ```puppet
 ::samba::share { 'Test Share':
   # Mandatory parameters
   path            => '/srv/test/',
 
   # Optionnal parameters
+  owner           => 'root',      # * owner of the share directory
+                                  #   (default: root)
+  group           => 'root',      # * group of the share directory 
+                                  #   (default: root)
+  mode            => '0775',      # * mode of the share directory
+                                  #   (default: 770)
+  acl             => [],          # * list of posix acls (default: undef)
   options         => {            # * Custom options in section [Test Share]
       'browsable'     => 'Yes',
       'root preexec'  => 'mkdir -p \'/home/home_%U\'',
@@ -336,6 +347,29 @@ class { '::samba::classic':
                                   #   default?: []
 }
 ```
+
+#### Directories
+
+If you want to create subdirectory in a share whil specific permision/acls:
+
+
+```puppet
+::samba::share { 'Sub Dir':
+  # Mandatory parameters
+  path            => '/srv/test/sub',
+
+  # Optionnal parameters
+  owner           => 'root',      # * owner of the directory
+                                  #   (default: root)
+  group           => 'root',      # * group of the directory 
+                                  #   (default: root)
+  mode            => '0775',      # * mode of the directory
+                                  #   (default: 770)
+  acl             => [],          # * list of posix acls (default: undef)
+}
+```
+
+
 
 ## Limitations
 

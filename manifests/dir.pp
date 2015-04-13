@@ -45,28 +45,31 @@ define samba::dir(
 ) {
 
   unless $path{
-    $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
-    validate_absolute_path($rootpath)
+    fail('missing paramter path')
+  }
 
-    exec {"Create path ${rootpath}":
-      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-      unless  => "test -e '${rootpath}'",
-      command => "mkdir -p '${rootpath}'",
-    }
+  $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
+  validate_absolute_path($rootpath)
 
-    file {$rootpath:
-      ensure  => directory,
-      require => Exec["Create path ${rootpath}"],
-      owner   => $owner,
-      group   => $group,
-      mode    => $mode,
-    }
+  exec {"Create path ${rootpath}":
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    unless  => "test -e '${rootpath}'",
+    command => "mkdir -p '${rootpath}'",
+  }
 
-    if $acl {
-      smb_acl { $rootpath:
-        action     => exact,
-        permission => $acl,
-        require    => File[$rootpath],
-      }
+  file {$rootpath:
+    ensure  => directory,
+    require => Exec["Create path ${rootpath}"],
+    owner   => $owner,
+    group   => $group,
+    mode    => $mode,
+  }
+
+  if $acl {
+    smb_acl { $rootpath:
+      action     => exact,
+      permission => $acl,
+      require    => File[$rootpath],
     }
+  }
 }

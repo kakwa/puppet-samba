@@ -40,6 +40,10 @@ define samba::share(
   $options = {},
   $absentoptions = [],
   $path,
+  $owner = 'root',
+  $group = 'root',
+  $mode  = '1770',
+  $acl   = undef,
 ) {
 
   if defined(Package['SambaClassic']){
@@ -56,15 +60,12 @@ define samba::share(
     $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
     validate_absolute_path($rootpath)
 
-    exec {"Create path ${rootpath}":
-      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-      unless  => "test -e '${rootpath}'",
-      command => "mkdir -p '${rootpath}'",
-    }
-
-    file {$rootpath:
-      ensure  => directory,
-      require => Exec["Create path ${rootpath}"],
+    ::samba::dir {$rootpath:
+      path    => $rootpath,
+      owner   => $owner,
+      group   => $group,
+      mode    => $mode,
+      acl     => $acl,
     }
 
     smb_setting { "${name}/path":
