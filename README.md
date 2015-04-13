@@ -1,5 +1,5 @@
 # puppet-samba
-
+[![Build Status](https://travis-ci.org/kakwa/puppet-samba.svg)](https://travis-ci.org/kakwa/puppet-samba)
 ## WORK IN PROGRESS ##
 
 #### Table of Contents
