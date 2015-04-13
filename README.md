@@ -375,3 +375,4 @@ This module includes portions of code derived from:
 
 * [puppetlabs/inifile](https://forge.puppetlabs.com/puppetlabs/inifile) licensed under APL
 * [python-samba](https://www.samba.org/) licensed under GPLv3
+* [puppet-acl](https://github.com/dobbymoodge/puppet-acl) licensed under APL
