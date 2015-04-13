@@ -1,3 +1,5 @@
+# Logon script resource
+
 define samba::dc::script(
   $content,
 ){

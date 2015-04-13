@@ -1,3 +1,5 @@
+# generic option resource
+
 define samba::option(
       $options,
       $section,

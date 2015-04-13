@@ -1,3 +1,5 @@
+# log resource 
+
 define samba::log(
   $sambaloglevel,
   $logtosyslog,

@@ -15,50 +15,48 @@ class { 'samba::params':
 }
 
 class { '::samba::classic':
-  domain          => 'DC',
-  realm           => 'dc.kakwa.fr',
-  smbname         => 'SMB',
-  adminpassword   => 'qwertyP455',
-  sambaloglevel   => 3,
-  logtosyslog     => true,
-  sambaclassloglevel => {
-    'smb' => 2,
-    'idmap' => 10,
+  domain              => 'DC',
+  realm               => 'dc.kakwa.fr',
+  smbname             => 'SMB',
+  adminpassword       => 'qwertyP455',
+  sambaloglevel       => 3,
+  logtosyslog         => true,
+  sambaclassloglevel  => {
+    'smb'     => 2,
+    'idmap'   => 10,
     'winbind' => 10,
   },
-  globaloptions   => {
-          'winbind cache time' => 10,
+  globaloptions       => {
+    'server string'      => 'Domain Controler',
+    'winbind cache time' => 10,
   },
-  globaloptions           => {
-    'server string' => 'Domain Controler',
-  },
-      globalabsentoptions => [
+  globalabsentoptions => [
     'idmap_ldb:use rfc2307',
   ],
 }
 
 ::samba::idmap { 'Domain DC':
-  domain       => 'DC',
-  idrangemin   => 10000,
-  idrangemax   => 19999,
-  backend      => 'ad',
-  schema_mode  => 'rfc2307',
+  domain      => 'DC',
+  idrangemin  => 10000,
+  idrangemax  => 19999,
+  backend     => 'ad',
+  schema_mode => 'rfc2307',
 }
 
 ::samba::idmap { 'Domain *':
-  domain       => '*',
-  idrangemin   => 100000,
-  idrangemax   => 199999,
-  backend      => 'tdb',
+  domain     => '*',
+  idrangemin => 100000,
+  idrangemax => 199999,
+  backend    => 'tdb',
 }
 
 ::samba::share { 'Test Share':
   # Mandatory parameters
-  path            => '/srv/test/',
+  path    => '/srv/test/',
   # Optionnal parameters
-  options         => {             # * Custom options in section [global]
+  options => {             # * Custom options in section [global]
     'comment'   => 'My test share that I want',
-    'browsable'     => 'Yes',
-    'read only'     => 'No',
+    'browsable' => 'Yes',
+    'read only' => 'No',
   },
 }

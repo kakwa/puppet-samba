@@ -155,20 +155,20 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   package{ 'SambaDC':
-    ensure        => 'installed',
-    name          => $::samba::params::packageSambaDC,
-    require       => File['/etc/samba/smb_path'],
+    ensure  => 'installed',
+    name    => $::samba::params::packageSambaDC,
+    require => File['/etc/samba/smb_path'],
   }
 
   # Provision the Domain Controler
   exec{ 'provisionAD':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "test -d '${targetdir}/state/sysvol/$realmDowncase/'",
+    unless  => "test -d '${targetdir}/state/sysvol/${realmDowncase}/'",
     command => "printf '' > '${::samba::params::smbConfFile}' && \
 ${::samba::params::sambaCmd} domain provision ${hostip} \
---domain='${domain}' --realm='${realm}' --dns-backend='$SamaDNS' \
+--domain='${domain}' --realm='${realm}' --dns-backend='${SamaDNS}' \
 --targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
---configfile='${::samba::params::smbConfFile}' --server-role='$role' -d 1 && \
+--configfile='${::samba::params::smbConfFile}' --server-role='${role}' -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
@@ -190,8 +190,8 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   }
 
   package{ 'PyYaml':
-    ensure        => 'installed',
-    name          => $::samba::params::packagePyYaml,
+    ensure => 'installed',
+    name   => $::samba::params::packagePyYaml,
   }
 
   file{ 'SambaOptsAdditionnalTool':
@@ -344,9 +344,9 @@ level raise --forest-level='${domainLevel}' -d 1",
   }
 
   file{ 'SambaCreateHome':
-    path    => $sambaCreateHome,
-    source  => "puppet:///modules/${module_name}/smb-create-home.sh",
-    mode    => '0755',
+    path   => $sambaCreateHome,
+    source => "puppet:///modules/${module_name}/smb-create-home.sh",
+    mode   => '0755',
   }
 
   $gabsoptlist = prefix($globalabsentoptions, 'global/')

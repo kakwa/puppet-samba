@@ -37,9 +37,9 @@
 #
 
 define samba::share(
+  $path,
   $options = {},
   $absentoptions = [],
-  $path,
   $owner = 'root',
   $group = 'root',
   $mode  = '0777',
@@ -61,11 +61,11 @@ define samba::share(
     validate_absolute_path($rootpath)
 
     ::samba::dir {$rootpath:
-      path    => $rootpath,
-      owner   => $owner,
-      group   => $group,
-      mode    => $mode,
-      acl     => $acl,
+      path  => $rootpath,
+      owner => $owner,
+      group => $group,
+      mode  => $mode,
+      acl   => $acl,
     }
 
     smb_setting { "${name}/path":

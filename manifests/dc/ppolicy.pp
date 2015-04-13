@@ -1,3 +1,5 @@
+# Ppolicy class
+
 class samba::dc::ppolicy (
   $ppolicycomplexity     = 'on',
   $ppolicyplaintext      = 'off',

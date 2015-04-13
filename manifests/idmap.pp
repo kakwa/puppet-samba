@@ -115,11 +115,11 @@ define samba::idmap(
       $hash_ldap = '/etc/samba/hash_ldap'
       exec { 'set ldap passwd':
         path    => '/usr/bin:/bin:/sbin:/usr/bin',
-        command => "net idmap secret $domain $ldap_passwd && \
-echo '$ldap_passwd' | sha1sum >$hash_ldap",
+        command => "net idmap secret ${domain} ${ldap_passwd} && \
+echo '${ldap_passwd}' | sha1sum >${hash_ldap}",
         require => Service['SambaSmb', 'SambaWinBind'],
         unless  => "test \"`echo 'password' \
-| sha1sum`\" = \"`cat $hash_ldap`\"",
+| sha1sum`\" = \"`cat ${hash_ldap}`\"",
       }
     }
     'nss': {
@@ -144,8 +144,8 @@ echo '$ldap_passwd' | sha1sum >$hash_ldap",
   }
 
   $idmap_base = {
-    "${cp} backend"     => $backend,
-    "${cp} range"       => "${idrangemin}-${idrangemax}",
+    "${cp} backend" => $backend,
+    "${cp} range"   => "${idrangemin}-${idrangemax}",
   }
 
   $idmapOptions = merge($idmap_base, $idmap_specific)
@@ -153,10 +153,10 @@ echo '$ldap_passwd' | sha1sum >$hash_ldap",
   $idmapOptionsIndex = prefix(keys($idmapOptions),
       '[global]')
   ::samba::option{ $idmapOptionsIndex:
-    options         => $idmapOptions,
-    section         => 'global',
-    require         => Package['SambaClassic'],
-    notify          => Service['SambaSmb', 'SambaWinBind'],
+    options => $idmapOptions,
+    section => 'global',
+    require => Package['SambaClassic'],
+    notify  => Service['SambaSmb', 'SambaWinBind'],
   }
 }
 

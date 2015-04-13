@@ -125,15 +125,15 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   package{ 'SambaClassicWinBind':
-    ensure        => 'installed',
-    name          => $::samba::params::packageSambaWinBind,
-    require       => File['/etc/samba/smb_path'],
+    ensure  => 'installed',
+    name    => $::samba::params::packageSambaWinBind,
+    require => File['/etc/samba/smb_path'],
   }
 
   package{ 'SambaClassic':
-    ensure        => 'installed',
-    name          => $::samba::params::packageSambaClassic,
-    require       => Package['SambaClassicWinBind'],
+    ensure  => 'installed',
+    name    => $::samba::params::packageSambaClassic,
+    require => Package['SambaClassicWinBind'],
   }
 
   service{ 'SambaSmb':
@@ -176,9 +176,9 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   file{ 'SambaCreateHome':
-    path    => $sambaCreateHome,
-    source  => "puppet:///modules/${module_name}/smb-create-home.sh",
-    mode    => '0755',
+    path   => $::samba::sambaCreateHome,
+    source => "puppet:///modules/${module_name}/smb-create-home.sh",
+    mode   => '0755',
   }
 
   $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),

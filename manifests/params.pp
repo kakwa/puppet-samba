@@ -1,3 +1,5 @@
+# default parameters
+
 class samba::params(
   $sernetRepo = false,
 ){
