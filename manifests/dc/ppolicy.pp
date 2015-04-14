@@ -40,14 +40,14 @@ class samba::dc::ppolicy (
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     require => Service['SambaDC'],
     unless  => "\
-[ \"\$( ${::samba::params::sambaCmd} domain passwordsettings show -d 1\
+[ \"\$( ${::samba::params::sambacmd} domain passwordsettings show -d 1\
 |sed 's/^.*:\\ *\\([0-9]\\+\\|on\\|off\\).*$/\\1/gp;d' | md5sum )\" = \
 \"\$(printf \
 '${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
 \\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' \
 | md5sum )\" ]",
 
-    command => "${::samba::params::sambaCmd} domain passwordsettings set -d 1\
+    command => "${::samba::params::sambacmd} domain passwordsettings set -d 1\
 --complexity='${ppolicycomplexity}' \
 --store-plaintext='${ppolicyplaintext}' \
 --history-length='${ppolicyhistorylength}' \

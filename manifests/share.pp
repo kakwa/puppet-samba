@@ -47,11 +47,11 @@ define samba::share(
 ) {
 
   if defined(Package['SambaClassic']){
-    $require = Package['SambaClassic']
-    $notify  = Service['SambaSmb', 'SambaWinBind']
+    $require = package['sambaclassic']
+    $notify  = service['sambasmb', 'sambawinbind']
   }elsif defined(Package['SambaDC']){
-    $require = Exec['provisionAD']
-    $notify  = Service['SambaDC']
+    $require = exec['provisionad']
+    $notify  = service['sambadc']
   }else{
     fail('No mode matched, Missing class samba::classic or samba::dc?')
   }
@@ -69,7 +69,7 @@ define samba::share(
     }
 
     smb_setting { "${name}/path":
-      path    => $::samba::params::smbConfFile,
+      path    => $::samba::params::smbconffile,
       section => $name,
       setting => 'path',
       value   => $path,
@@ -78,8 +78,8 @@ define samba::share(
     }
   }
 
-  $optionsIndex = prefix(keys($options), "[${name}]")
-  ::samba::option{ $optionsIndex:
+  $optionsindex = prefix(keys($options), "[${name}]")
+  ::samba::option{ $optionsindex:
     options => $options,
     section => $name,
     require => $require,

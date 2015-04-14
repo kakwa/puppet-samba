@@ -148,12 +148,12 @@ echo '${ldap_passwd}' | sha1sum >${hash_ldap}",
     "${cp} range"   => "${idrangemin}-${idrangemax}",
   }
 
-  $idmapOptions = merge($idmap_base, $idmap_specific)
+  $idmapoptions = merge($idmap_base, $idmap_specific)
 
-  $idmapOptionsIndex = prefix(keys($idmapOptions),
+  $idmapoptionsindex = prefix(keys($idmapoptions),
       '[global]')
-  ::samba::option{ $idmapOptionsIndex:
-    options => $idmapOptions,
+  ::samba::option{ $idmapoptionsindex:
+    options => $idmapoptions,
     section => 'global',
     require => Package['SambaClassic'],
     notify  => Service['SambaSmb', 'SambaWinBind'],

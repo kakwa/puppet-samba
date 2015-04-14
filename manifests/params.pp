@@ -1,42 +1,42 @@
 # default parameters
 
 class samba::params(
-  $sernetRepo = false,
+  $sernetrepo = false,
 ){
-  unless is_bool($sernetRepo){
+  unless is_bool($sernetrepo){
     fail('sernetRepo variable must be a boolean')
   }
-  if $sernetRepo {
+  if $sernetrepo {
     case $::osfamily {
       'redhat': {
-          $packageSambaDC      = 'sernet-samba-ad'
-          $packageSambaClassic = 'sernet-samba'
-          $packageSambaWinBind = 'sernet-samba-winbind'
-          $serviveSambaDC      = 'sernet-samba-ad'
-          $serviveSmb          = 'sernet-samba-smbd'
-          $serviveWinBind      = 'sernet-samba-winbindd'
-          $sambaCmd            = '/usr/bin/samba-tool'
-          $sambaClientCmd      = '/usr/bin/smbclient'
-          $sambaOptsFile       = '/etc/default/sernet-samba'
-          $sambaOptsTmpl       = "${module_name}/sernet-samba.erb"
-          $smbConfFile         = '/etc/samba/smb.conf'
-          $krbConfFile         = '/etc/krb5.conf'
-          $packagePyYaml       = 'PyYAML'
+          $packagesambadc      = 'sernet-samba-ad'
+          $packagesambaclassic = 'sernet-samba'
+          $packagesambawinbind = 'sernet-samba-winbind'
+          $servivesambadc      = 'sernet-samba-ad'
+          $servivesmb          = 'sernet-samba-smbd'
+          $servivewinbind      = 'sernet-samba-winbindd'
+          $sambacmd            = '/usr/bin/samba-tool'
+          $sambaclientcmd      = '/usr/bin/smbclient'
+          $sambaoptsfile       = '/etc/default/sernet-samba'
+          $sambaoptstmpl       = "${module_name}/sernet-samba.erb"
+          $smbconffile         = '/etc/samba/smb.conf'
+          $krbconffile         = '/etc/krb5.conf'
+          $packagepyyaml       = 'pyyaml'
       }
       'Debian': {
-          $packageSambaDC      = 'sernet-samba-ad'
-          $packageSambaClassic = 'sernet-samba'
-          $packageSambaWinBind = 'sernet-samba-winbind'
-          $serviveSambaDC      = 'sernet-samba-ad'
-          $serviveSmb          = 'sernet-samba-smbd'
-          $serviveWinBind      = 'sernet-samba-winbindd'
-          $sambaCmd            = '/usr/bin/samba-tool'
-          $sambaClientCmd      = '/usr/bin/smbclient'
-          $sambaOptsFile       = '/etc/default/sernet-samba'
-          $sambaOptsTmpl       = "${module_name}/sernet-samba.erb"
-          $smbConfFile         = '/etc/samba/smb.conf'
-          $krbConfFile         = '/etc/krb5.conf'
-          $packagePyYaml       = 'python-yaml'
+          $packagesambadc      = 'sernet-samba-ad'
+          $packagesambaclassic = 'sernet-samba'
+          $packagesambawinbind = 'sernet-samba-winbind'
+          $servivesambadc      = 'sernet-samba-ad'
+          $servivesmb          = 'sernet-samba-smbd'
+          $servivewinbind      = 'sernet-samba-winbindd'
+          $sambacmd            = '/usr/bin/samba-tool'
+          $sambaclientcmd      = '/usr/bin/smbclient'
+          $sambaoptsfile       = '/etc/default/sernet-samba'
+          $sambaoptstmpl       = "${module_name}/sernet-samba.erb"
+          $smbconffile         = '/etc/samba/smb.conf'
+          $krbconffile         = '/etc/krb5.conf'
+          $packagepyyaml       = 'python-yaml'
       }
       default: {
           fail('unsupported os')
@@ -45,35 +45,35 @@ class samba::params(
   }else{
     case $::osfamily {
       'redhat': {
-          $packageSambaDC      = 'samba-dc'
-          $packageSambaClassic = 'samba'
-          $packageSambaWinBind = 'samba-winbind'
+          $packagesambadc      = 'samba-dc'
+          $packagesambaclassic = 'samba'
+          $packagesambawinbind = 'samba-winbind'
           # for now, this is not supported by Debian
-          $serviveSambaDC      = undef
-          $serviveSmb          = 'smb'
-          $serviveWinBind      = 'winbind'
-          $sambaCmd            = '/usr/bin/samba-tool'
-          $sambaClientCmd      = '/usr/bin/smbclient'
-          $sambaOptsFile       = '/etc/sysconfig/samba'
-          $sambaOptsTmpl       = "${module_name}/redhat-samba.erb"
-          $smbConfFile         = '/etc/samba/smb.conf'
-          $krbConfFile         = '/etc/krb5.conf'
-          $packagePyYaml       = 'PyYAML'
+          $servivesambadc      = undef
+          $servivesmb          = 'smb'
+          $servivewinbind      = 'winbind'
+          $sambacmd            = '/usr/bin/samba-tool'
+          $sambaclientcmd      = '/usr/bin/smbclient'
+          $sambaoptsfile       = '/etc/sysconfig/samba'
+          $sambaoptstmpl       = "${module_name}/redhat-samba.erb"
+          $smbconffile         = '/etc/samba/smb.conf'
+          $krbconffile         = '/etc/krb5.conf'
+          $packagepyyaml       = 'pyyaml'
       }
       'Debian': {
-          $packageSambaDC      = 'samba'
-          $packageSambaClassic = 'samba'
-          $packageSambaWinBind = 'winbind'
-          $serviveSambaDC      = 'samba-ad-dc'
-          $serviveSmb          = 'samba'
-          $serviveWinBind      = 'winbind'
-          $sambaCmd            = '/usr/bin/samba-tool'
-          $sambaClientCmd      = '/usr/bin/smbclient'
-          $sambaOptsFile       = '/etc/default/samba4'
-          $sambaOptsTmpl       = "${module_name}/debian-samba.erb"
-          $smbConfFile         = '/etc/samba/smb.conf'
-          $krbConfFile         = '/etc/krb5.conf'
-          $packagePyYaml       = 'python-yaml'
+          $packagesambadc      = 'samba'
+          $packagesambaclassic = 'samba'
+          $packagesambawinbind = 'winbind'
+          $servivesambadc      = 'samba-ad-dc'
+          $servivesmb          = 'samba'
+          $servivewinbind      = 'winbind'
+          $sambacmd            = '/usr/bin/samba-tool'
+          $sambaclientcmd      = '/usr/bin/smbclient'
+          $sambaoptsfile       = '/etc/default/samba4'
+          $sambaoptstmpl       = "${module_name}/debian-samba.erb"
+          $smbconffile         = '/etc/samba/smb.conf'
+          $krbconffile         = '/etc/krb5.conf'
+          $packagepyyaml       = 'python-yaml'
       }
       default: {
           fail('unsupported os')
@@ -81,9 +81,9 @@ class samba::params(
     }
   }
 
-  $sambaAddTool     = '/usr/local/bin/additional-samba-tool'
-  $nsswitchConfFile = '/etc/nsswitch.conf'
-  $sambaCreateHome  = '/usr/local/bin/smb-create-home.sh'
+  $sambaaddtool     = '/usr/local/bin/additional-samba-tool'
+  $nsswitchconffile = '/etc/nsswitch.conf'
+  $sambacreatehome  = '/usr/local/bin/smb-create-home.sh'
 
   $logclasslist =  [
     'all',     'tdb',     'printdrivers', 'lanman',   'smb',

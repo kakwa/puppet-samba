@@ -59,13 +59,13 @@ class samba::dc(
 
   case $dnsbackend {
     'internal': {
-      $SambaDNS   = 'SAMBA_INTERNAL'
+      $sambadns   = 'samba_internal'
     }
     'bindFlat': {
-      $SambaDNS   = 'BIND9_FLATFILE'
+      $sambadns   = 'bind9_flatfile'
     }
     'bindDLZ': {
-      $SambaDNS   = 'BIND9_FLATFILE'
+      $sambadns   = 'bind9_flatfile'
     }
     default: {
       fail('unsupported dns backend, \
@@ -75,13 +75,13 @@ must be in ["internal", "bindFlat", "bindDLZ"]')
 
   case $domainlevel {
     '2003': {
-      $domainLevel = '2003'
+      $domainlevel = '2003'
     }
     '2008': {
-      $domainLevel = '2008'
+      $domainlevel = '2008'
     }
     '2008 R2': {
-      $domainLevel = '2008_R2'
+      $domainlevel = '2008_r2'
     }
     default: {
       fail('unsupported domain level, \
@@ -133,12 +133,12 @@ ex: domain="ad" and realm="ad.example.com"')
 
   validate_absolute_path($targetdir)
 
-  $realmDowncase = downcase($realm)
+  $realmdowncase = downcase($realm)
 
-  $scriptDir = smb_clean_path(
-    "${targetdir}/state/sysvol/${realmDowncase}/scripts/"
+  $scriptdir = smb_clean_path(
+    "${targetdir}/state/sysvol/${realmdowncase}/scripts/"
   )
-  validate_absolute_path($scriptDir)
+  validate_absolute_path($scriptdir)
 
   $globaloptsexclude   = concat(keys($globaloptions), $globalabsentoptions)
   $netlogonoptsexclude = concat(keys($netlogonoptions), $netlogonabsentoptions)
@@ -150,52 +150,52 @@ ex: domain="ad" and realm="ad.example.com"')
 
   file { '/etc/samba/smb_path':
     ensure  => 'present',
-    content => $::samba::params::smbConfFile,
+    content => $::samba::params::smbconffile,
     require => File['/etc/samba/'],
   }
 
   package{ 'SambaDC':
     ensure  => 'installed',
-    name    => $::samba::params::packageSambaDC,
+    name    => $::samba::params::packagesambadc,
     require => File['/etc/samba/smb_path'],
   }
 
   # Provision the Domain Controler
   exec{ 'provisionAD':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "test -d '${targetdir}/state/sysvol/${realmDowncase}/'",
-    command => "printf '' > '${::samba::params::smbConfFile}' && \
-${::samba::params::sambaCmd} domain provision ${hostip} \
---domain='${domain}' --realm='${realm}' --dns-backend='${SambaDNS}' \
+    unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
+    command => "printf '' > '${::samba::params::smbconffile}' && \
+${::samba::params::sambacmd} domain provision ${hostip} \
+--domain='${domain}' --realm='${realm}' --dns-backend='${sambadns}' \
 --targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
---configfile='${::samba::params::smbConfFile}' --server-role='${role}' -d 1 && \
-mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
+--configfile='${::samba::params::smbconffile}' --server-role='${role}' -d 1 && \
+mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
   }
 
   service{ 'SambaDC':
     ensure  => 'running',
-    name    => $::samba::params::serviveSambaDC,
+    name    => $::samba::params::servivesambadc,
     require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
   }
 
-  $sambaMode = 'ad'
+  $sambamode = 'ad'
   # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
   file{ 'SambaOptsFile':
-    path    => $::samba::params::sambaOptsFile,
-    content => template($::samba::params::sambaOptsTmpl),
+    path    => $::samba::params::sambaoptsfile,
+    content => template($::samba::params::sambaoptstmpl),
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
   }
 
   package{ 'PyYaml':
     ensure => 'installed',
-    name   => $::samba::params::packagePyYaml,
+    name   => $::samba::params::packagepyyaml,
   }
 
   file{ 'SambaOptsAdditionnalTool':
-    path    => $sambaAddTool,
+    path    => $sambaaddtool,
     source  => "puppet:///modules/${module_name}/additional-samba-tool",
     mode    => '0755',
     require => Package['PyYaml'],
@@ -217,7 +217,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
     if $dnsforwarder != undef {
       smb_setting { 'global/dns forwarder':
         ensure  => present,
-        path    => $::samba::params::smbConfFile,
+        path    => $::samba::params::smbconffile,
         section => 'global',
         setting => 'dns forwarder',
         value   => $dnsforwarder,
@@ -236,9 +236,9 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbConfFile}'",
   # Check and set administrator password
   unless $adminpassword == undef {
     exec{ 'setAdminPassword':
-      unless  => "${::samba::params::sambaClientCmd} \
-//localhost/netlogon ${adminpassword} -UAdministrator  -c 'ls'",
-      command => "${::samba::params::sambaCmd} user setpassword \
+      unless  => "${::samba::params::sambaclientcmd} \
+//localhost/netlogon ${adminpassword} -uadministrator  -c 'ls'",
+      command => "${::samba::params::sambacmd} user setpassword \
 Administrator --newpassword=${adminpassword} -d 1",
       require => Service['SambaDC'],
     }
@@ -247,26 +247,26 @@ Administrator --newpassword=${adminpassword} -d 1",
   # Configure Domain function level
   exec{ 'setDomainFunctionLevel':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "${::samba::params::sambaCmd} domain level show  -d 1\
+    unless  => "${::samba::params::sambacmd} domain level show  -d 1\
 | grep 'Domain function level' | grep -q \"${domainlevel}$\"",
-    command => "${::samba::params::sambaCmd} domain \
-level raise --domain-level='${domainLevel}' -d 1",
+    command => "${::samba::params::sambacmd} domain \
+level raise --domain-level='${domainlevel}' -d 1",
     require => Service['SambaDC'],
   }
 
   # Configure Forest function level
   exec{ 'setForestFunctionLevel':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "${::samba::params::sambaCmd} domain level show -d 1\
+    unless  => "${::samba::params::sambacmd} domain level show -d 1\
 | grep 'Forest function level' | grep -q '${domainlevel}$'",
-    command => "${::samba::params::sambaCmd} domain \
-level raise --forest-level='${domainLevel}' -d 1",
+    command => "${::samba::params::sambacmd} domain \
+level raise --forest-level='${domainlevel}' -d 1",
     require => Exec['setDomainFunctionLevel'],
   }
 
   # Iteration on global options
-  $globaloptionsIndex = prefix(keys($globaloptions), '[globalcust]')
-  ::samba::option{ $globaloptionsIndex:
+  $globaloptionsindex = prefix(keys($globaloptions), '[globalcust]')
+  ::samba::option{ $globaloptionsindex:
     options => $globaloptions,
     section => 'global',
     require => Exec['provisionAD'],
@@ -274,8 +274,8 @@ level raise --forest-level='${domainLevel}' -d 1",
   }
 
   # Iteration on netlogon options
-  $netlogonoptionsIndex = prefix(keys($netlogonoptions), '[netlogoncust]')
-  ::samba::option{ $netlogonoptionsIndex:
+  $netlogonoptionsindex = prefix(keys($netlogonoptions), '[netlogoncust]')
+  ::samba::option{ $netlogonoptionsindex:
     options => $netlogonoptions,
     section => 'netlogon',
     require => Exec['provisionAD'],
@@ -283,15 +283,15 @@ level raise --forest-level='${domainLevel}' -d 1",
   }
 
   # Iteration on sysvol options
-  $sysvoloptionsIndex = prefix(keys($sysvoloptions), '[sysvolcust]')
-  ::samba::option{ $sysvoloptionsIndex:
+  $sysvoloptionsindex = prefix(keys($sysvoloptions), '[sysvolcust]')
+  ::samba::option{ $sysvoloptionsindex:
     options => $sysvoloptions,
     section => 'sysvol',
     require => Exec['provisionAD'],
     notify  => Service['SambaDC'],
   }
 
-  $mandatoryGlobalOptions = {
+  $mandatoryglobaloptions = {
     'workgroup'             => $domain,
     'realm'                 => $realm,
     'netbios name'          => upcase($::hostname),
@@ -303,40 +303,40 @@ level raise --forest-level='${domainLevel}' -d 1",
     'idmap_ldb:use rfc2307' => 'Yes',
   }
 
-  $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
+  $mandatoryglobaloptionsindex = prefix(keys($mandatoryglobaloptions),
     '[global]')
-  ::samba::option{ $mandatoryGlobalOptionsIndex:
-    options         => $mandatoryGlobalOptions,
+  ::samba::option{ $mandatoryglobaloptionsindex:
+    options         => $mandatoryglobaloptions,
     section         => 'global',
     settingsignored => $globaloptsexclude,
     require         => Exec['provisionAD'],
     notify          => Service['SambaDC'],
   }
 
-  $mandatorySysvolOptions = {
+  $mandatorysysvoloptions = {
     'path'      => smb_clean_path("${targetdir}/state/sysvol"),
     'read only' => 'No',
   }
 
-  $mandatorySysvolOptionsIndex = prefix(keys($mandatorySysvolOptions),
+  $mandatorysysvoloptionsindex = prefix(keys($mandatorysysvoloptions),
     '[sysvol]')
-  ::samba::option{ $mandatorySysvolOptionsIndex:
-    options         => $mandatorySysvolOptions,
+  ::samba::option{ $mandatorysysvoloptionsindex:
+    options         => $mandatorysysvoloptions,
     section         => 'sysvol',
     settingsignored => $sysvoloptsexclude,
     require         => Exec['provisionAD'],
     notify          => Service['SambaDC'],
   }
 
-  $mandatoryNetlogonOptions = {
-    'path'      => $scriptDir,
+  $mandatorynetlogonoptions = {
+    'path'      => $scriptdir,
     'read only' => 'No',
   }
 
-  $mandatoryNetlogonOptionsIndex = prefix(keys(
-  $mandatoryNetlogonOptions), '[netlogon]')
-  ::samba::option{ $mandatoryNetlogonOptionsIndex:
-    options         => $mandatoryNetlogonOptions,
+  $mandatorynetlogonoptionsindex = prefix(keys(
+  $mandatorynetlogonoptions), '[netlogon]')
+  ::samba::option{ $mandatorynetlogonoptionsindex:
+    options         => $mandatorynetlogonoptions,
     section         => 'netlogon',
     settingsignored => $netlogonoptsexclude,
     require         => Exec['provisionAD'],
@@ -344,7 +344,7 @@ level raise --forest-level='${domainLevel}' -d 1",
   }
 
   file{ 'SambaCreateHome':
-    path   => $sambaCreateHome,
+    path   => $sambacreatehome,
     source => "puppet:///modules/${module_name}/smb-create-home.sh",
     mode   => '0755',
   }

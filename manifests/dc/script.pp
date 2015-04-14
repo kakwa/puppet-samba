@@ -3,14 +3,14 @@
 define samba::dc::script(
   $content,
 ){
-  $scriptName       = $name
-  $scriptContent    = $content
+  $scriptname       = $name
+  $scriptcontent    = $content
 
-  $scriptPath = "${::samba::dc::scriptDir}/${scriptName}"
-  validate_absolute_path($scriptPath)
+  $scriptpath = "${::samba::dc::scriptdir}/${scriptname}"
+  validate_absolute_path($scriptpath)
 
-  file { $scriptPath:
-    content => regsubst($scriptContent, '(?<!\r)\n', "\r\n", 'EMG'),
+  file { $scriptpath:
+    content => regsubst($scriptcontent, '(?<!\r)\n', "\r\n", 'emg'),
     mode    => '0755',
     require => Exec['provisionAD'],
   }

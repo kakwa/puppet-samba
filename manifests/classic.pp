@@ -41,7 +41,7 @@ class samba::classic(
   $domain               = undef,
   $realm                = undef,
   $adminpassword        = undef,
-  $security             = 'ADS',
+  $security             = 'ads',
   $sambaloglevel        = 1,
   $krbconf              = true,
   $nsswitch             = true,
@@ -71,15 +71,15 @@ class samba::classic(
 ex: domain="ad" and realm="ad.example.com"')
   }
 
-  $checksecurity = ['ADS', 'AUTO', 'USER', 'DOMAIN']
+  $checksecurity = ['ads', 'auto', 'user', 'domain']
   $checksecuritystr = join($checksecurity, ', ')
 
   unless member($checksecurity, upcase($security)){
     fail("role must be in [${checksecuritystr}]")
   }
 
-  $realmLowerCase = downcase($realm)
-  $realmUpperCase = upcase($realm)
+  $realmlowercase = downcase($realm)
+  $realmuppercase = upcase($realm)
   $globaloptsexclude = concat(keys($globaloptions), $globalabsentoptions)
 
   file { '/etc/samba/':
@@ -88,12 +88,12 @@ ex: domain="ad" and realm="ad.example.com"')
 
   file { '/etc/samba/smb_path':
     ensure  => 'present',
-    content => $::samba::params::smbConfFile,
+    content => $::samba::params::smbconffile,
     require => File['/etc/samba/'],
   }
 
   if $krbconf {
-    file {$::samba::params::krbConfFile:
+    file {$::samba::params::krbconffile:
       ensure  => present,
       mode    => '0644',
       content => template("${module_name}/krb5.conf.erb"),
@@ -103,60 +103,60 @@ ex: domain="ad" and realm="ad.example.com"')
 
   if $nsswitch {
     augeas{'samba nsswitch group':
-      context => "/files/${::samba::params::nsswitchConfFile}/",
+      context => "/files/${::samba::params::nsswitchconffile}/",
       changes => [
         'ins service after "*[self::database = \'group\']/service[1]/"',
         'set "*[self::database = \'group\']/service[2]" winbind',
       ],
       onlyif  => 'get "*[self::database = \'group\']/service[2]" != winbind',
       lens    => 'Nsswitch.lns',
-      incl    => $::samba::params::nsswitchConfFile,
+      incl    => $::samba::params::nsswitchconffile,
     }
     augeas{'samba nsswitch passwd':
-      context => "/files/${::samba::params::nsswitchConfFile}/",
+      context => "/files/${::samba::params::nsswitchconffile}/",
       changes => [
         'ins service after "*[self::database = \'passwd\']/service[1]/"',
         'set "*[self::database = \'passwd\']/service[2]" winbind',
       ],
       onlyif  => 'get "*[self::database = \'passwd\']/service[2]" != winbind',
       lens    => 'Nsswitch.lns',
-      incl    => $::samba::params::nsswitchConfFile,
+      incl    => $::samba::params::nsswitchconffile,
     }
   }
 
   package{ 'SambaClassicWinBind':
     ensure  => 'installed',
-    name    => $::samba::params::packageSambaWinBind,
+    name    => $::samba::params::packagesambawinbind,
     require => File['/etc/samba/smb_path'],
   }
 
   package{ 'SambaClassic':
     ensure  => 'installed',
-    name    => $::samba::params::packageSambaClassic,
+    name    => $::samba::params::packagesambaclassic,
     require => Package['SambaClassicWinBind'],
   }
 
   service{ 'SambaSmb':
     ensure  => 'running',
-    name    => $::samba::params::serviveSmb,
+    name    => $::samba::params::servivesmb,
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
   }
 
   service{ 'SambaWinBind':
     ensure  => 'running',
-    name    => $::samba::params::serviveWinBind,
+    name    => $::samba::params::servivewinbind,
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
   }
 
-  $sambaMode = 'classic'
+  $sambamode = 'classic'
   # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
   file{ 'SambaOptsFile':
-    path    => $::samba::params::sambaOptsFile,
-    content => template($::samba::params::sambaOptsTmpl),
+    path    => $::samba::params::sambaoptsfile,
+    content => template($::samba::params::sambaoptstmpl),
     require => Package['SambaClassic'],
   }
 
-  $mandatoryGlobalOptions = {
+  $mandatoryglobaloptions = {
     'workgroup'                          => $domain,
     'realm'                              => $realm,
     'netbios name'                       => $smbname,
@@ -176,15 +176,15 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   file{ 'SambaCreateHome':
-    path   => $::samba::sambaCreateHome,
+    path   => $::samba::sambacreatehome,
     source => "puppet:///modules/${module_name}/smb-create-home.sh",
     mode   => '0755',
   }
 
-  $mandatoryGlobalOptionsIndex = prefix(keys($mandatoryGlobalOptions),
+  $mandatoryglobaloptionsindex = prefix(keys($mandatoryglobaloptions),
     '[global]')
-  ::samba::option{ $mandatoryGlobalOptionsIndex:
-    options         => $mandatoryGlobalOptions,
+  ::samba::option{ $mandatoryglobaloptionsindex:
+    options         => $mandatoryglobaloptions,
     section         => 'global',
     settingsignored => $globaloptsexclude,
     require         => Package['SambaClassic'],
@@ -201,8 +201,8 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   # Iteration on global options
-  $globaloptionsIndex = prefix(keys($globaloptions), '[globalcustom]')
-  ::samba::option{ $globaloptionsIndex:
+  $globaloptionsindex = prefix(keys($globaloptions), '[globalcustom]')
+  ::samba::option{ $globaloptionsindex:
     options => $globaloptions,
     section => 'global',
     require => Package['SambaClassic'],
@@ -225,7 +225,7 @@ ex: domain="ad" and realm="ad.example.com"')
     exec{ 'Join Domain':
       path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
       unless  => 'net ads testjoin',
-      command => "echo '${adminpassword}'| net ads join -U administrator",
+      command => "echo '${adminpassword}'| net ads join -u administrator",
       notify  => Service['SambaWinBind'],
       require => [ Package['SambaClassic'], Service['SambaSmb'] ],
     }
