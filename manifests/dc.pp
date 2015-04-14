@@ -237,7 +237,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
   unless $adminpassword == undef {
     exec{ 'setAdminPassword':
       unless  => "${::samba::params::sambaclientcmd} \
-//localhost/netlogon ${adminpassword} -uadministrator  -c 'ls'",
+//localhost/netlogon ${adminpassword} -Uadministrator  -c 'ls'",
       command => "${::samba::params::sambacmd} user setpassword \
 Administrator --newpassword=${adminpassword} -d 1",
       require => Service['SambaDC'],
