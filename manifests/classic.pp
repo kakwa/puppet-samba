@@ -74,7 +74,7 @@ ex: domain="ad" and realm="ad.example.com"')
   $checksecurity = ['ads', 'auto', 'user', 'domain']
   $checksecuritystr = join($checksecurity, ', ')
 
-  unless member($checksecurity, upcase($security)){
+  unless member($checksecurity, downcase($security)){
     fail("role must be in [${checksecuritystr}]")
   }
 
@@ -176,7 +176,7 @@ ex: domain="ad" and realm="ad.example.com"')
   }
 
   file{ 'SambaCreateHome':
-    path   => $::samba::sambacreatehome,
+    path   => $::samba::params::sambacreatehome,
     source => "puppet:///modules/${module_name}/smb-create-home.sh",
     mode   => '0755',
   }

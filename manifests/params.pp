@@ -1,12 +1,12 @@
 # default parameters
 
 class samba::params(
-  $sernetrepo = false,
+  $sernetpkgs = false,
 ){
-  unless is_bool($sernetrepo){
-    fail('sernetRepo variable must be a boolean')
+  unless is_bool($sernetpkgs){
+    fail('sernetpkgs variable must be a boolean')
   }
-  if $sernetrepo {
+  if $sernetpkgs {
     case $::osfamily {
       'redhat': {
           $packagesambadc      = 'sernet-samba-ad'
@@ -21,7 +21,7 @@ class samba::params(
           $sambaoptstmpl       = "${module_name}/sernet-samba.erb"
           $smbconffile         = '/etc/samba/smb.conf'
           $krbconffile         = '/etc/krb5.conf'
-          $packagepyyaml       = 'pyyaml'
+          $packagepyyaml       = 'PyYAML'
       }
       'Debian': {
           $packagesambadc      = 'sernet-samba-ad'
@@ -58,7 +58,7 @@ class samba::params(
           $sambaoptstmpl       = "${module_name}/redhat-samba.erb"
           $smbconffile         = '/etc/samba/smb.conf'
           $krbconffile         = '/etc/krb5.conf'
-          $packagepyyaml       = 'pyyaml'
+          $packagepyyaml       = 'PyYAML'
       }
       'Debian': {
           $packagesambadc      = 'samba'

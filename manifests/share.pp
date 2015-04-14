@@ -47,11 +47,11 @@ define samba::share(
 ) {
 
   if defined(Package['SambaClassic']){
-    $require = package['sambaclassic']
-    $notify  = service['sambasmb', 'sambawinbind']
+    $require = package['SambaClassic']
+    $notify  = service['SambaSmb', 'SambaWinBind']
   }elsif defined(Package['SambaDC']){
-    $require = exec['provisionad']
-    $notify  = service['sambadc']
+    $require = exec['provisionAD']
+    $notify  = service['SambaDC']
   }else{
     fail('No mode matched, Missing class samba::classic or samba::dc?')
   }

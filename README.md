@@ -70,7 +70,7 @@ This module permits to choose between native distribtion packages or Sernet (sam
 
 ```puppet
 class { 'samba::params':
-  sernetRepo => true, # enable sernet packages (default: false)
+  sernetpkgs => true, # enable sernet packages (default: false)
 }
 ```
 

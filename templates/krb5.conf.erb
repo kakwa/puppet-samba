@@ -9,15 +9,15 @@
  renew_lifetime = 7d
  forwardable = true
  rdns = false
- default_realm = <%= realmUpperCase %>
+ default_realm = <%= realmuppercase %>
  default_ccache_name = KEYRING:persistent:%{uid}
 
 [realms]
- <%= realmUpperCase %> = {
-  kdc = <%= realmLowerCase %>
-  admin_server = <%= realmLowerCase %>
+ <%= realmuppercase %> = {
+  kdc = <%= realmlowercase %>
+  admin_server = <%= realmlowercase %>
  }
 
 [domain_realm]
- .<%= realmLowerCase %> = <%= realmUpperCase %>
- <%= realmLowerCase %> = <%= realmUpperCase %>
+ .<%= realmlowercase %> = <%= realmuppercase %>
+ <%= realmlowercase %> = <%= realmuppercase %>

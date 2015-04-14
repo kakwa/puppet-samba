@@ -10,7 +10,7 @@ define samba::dc::script(
   validate_absolute_path($scriptpath)
 
   file { $scriptpath:
-    content => regsubst($scriptcontent, '(?<!\r)\n', "\r\n", 'emg'),
+    content => regsubst($scriptcontent, '(?<!\r)\n', "\r\n", 'EMG'),
     mode    => '0755',
     require => Exec['provisionAD'],
   }

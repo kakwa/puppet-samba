@@ -75,13 +75,13 @@ must be in ["internal", "bindFlat", "bindDLZ"]')
 
   case $domainlevel {
     '2003': {
-      $domainlevel = '2003'
+      $strdomainlevel = '2003'
     }
     '2008': {
-      $domainlevel = '2008'
+      $strdomainlevel = '2008'
     }
     '2008 R2': {
-      $domainlevel = '2008_r2'
+      $strdomainlevel = '2008_R2'
     }
     default: {
       fail('unsupported domain level, \
@@ -250,7 +250,7 @@ Administrator --newpassword=${adminpassword} -d 1",
     unless  => "${::samba::params::sambacmd} domain level show  -d 1\
 | grep 'Domain function level' | grep -q \"${domainlevel}$\"",
     command => "${::samba::params::sambacmd} domain \
-level raise --domain-level='${domainlevel}' -d 1",
+level raise --domain-level='${strdomainlevel}' -d 1",
     require => Service['SambaDC'],
   }
 
@@ -260,7 +260,7 @@ level raise --domain-level='${domainlevel}' -d 1",
     unless  => "${::samba::params::sambacmd} domain level show -d 1\
 | grep 'Forest function level' | grep -q '${domainlevel}$'",
     command => "${::samba::params::sambacmd} domain \
-level raise --forest-level='${domainlevel}' -d 1",
+level raise --forest-level='${strdomainlevel}' -d 1",
     require => Exec['setDomainFunctionLevel'],
   }
 
