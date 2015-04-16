@@ -1,6 +1,5 @@
 # puppet-samba
 [![Build Status](https://travis-ci.org/kakwa/puppet-samba.svg)](https://travis-ci.org/kakwa/puppet-samba)
-## WORK IN PROGRESS ##
 
 #### Table of Contents
 
@@ -35,10 +34,12 @@
 
 This module manage Samba installation, including samba as an **Active Directory Domain Controler**.
 
-It easily lets you add/modify/remove any parameters of smb.conf, letting you free to customize the installation
-to your specific needs. 
+Any parameter in smb.conf can be added/modified/removed, letting you free to customize the installation
+to your specific needs.
 
-This module is Licensed MIT.
+This module is licensed MIT.
+
+The script additionnal-samba-tool is licensed GPLv3 (depends on python-samba which is GPLv3).
 
 ## Setup
 
@@ -74,10 +75,7 @@ class { 'samba::params':
 }
 ```
 
-If this class is undeclared, the default behavior is to use native distribution packages.
-
-As of march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choice in kerberos implementations.
-Use the Sernet Packages.
+If this class is undeclared, the default behavior is to use native distribution packages. (see [Limitations](#limitations) for CentOS/RedHat)
 
 If the Sernet packages are used, please configure Sernet/Custom repositories containing these packages.
 
@@ -370,9 +368,12 @@ If you want to create subdirectory in a share whil specific permision/acls:
 }
 ```
 
-
-
 ## Limitations
+
+class dc (deploy samba as a domain controler) needs Samba 4.
+
+As of march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choice in kerberos implementations.
+Use the Sernet Packages.
 
 To access Sernet Repositories, you must register on [Sernet Portal](https://portal.enterprisesamba.com/users/sign_up).
 Once it's done, you should have access to your *ACCESSKEY*. Use it and your USERNAME to configure the repo:
@@ -402,7 +403,9 @@ Pull requests are welcomed ^^.
 
 ## Release Notes
 
-No Release yet.
+0.1.0:
+
+ * first release
 
 ## External licenses
 
