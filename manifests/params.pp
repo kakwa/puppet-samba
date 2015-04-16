@@ -11,6 +11,7 @@ class samba::params(
       'redhat': {
           $packagesambadc      = 'sernet-samba-ad'
           $packagesambaclassic = 'sernet-samba'
+          $packagesambaclient  = 'sernet-samba-client'
           $packagesambawinbind = 'sernet-samba-winbind'
           $servivesambadc      = 'sernet-samba-ad'
           $servivesmb          = 'sernet-samba-smbd'
@@ -26,6 +27,7 @@ class samba::params(
       'Debian': {
           $packagesambadc      = 'sernet-samba-ad'
           $packagesambaclassic = 'sernet-samba'
+          $packagesambaclient  = 'sernet-samba-client'
           $packagesambawinbind = 'sernet-samba-winbind'
           $servivesambadc      = 'sernet-samba-ad'
           $servivesmb          = 'sernet-samba-smbd'
@@ -48,6 +50,7 @@ class samba::params(
           $packagesambadc      = 'samba-dc'
           $packagesambaclassic = 'samba'
           $packagesambawinbind = 'samba-winbind'
+          $packagesambaclient  = 'samba-client'
           # for now, this is not supported by Debian
           $servivesambadc      = undef
           $servivesmb          = 'smb'
@@ -64,6 +67,7 @@ class samba::params(
           $packagesambadc      = 'samba'
           $packagesambaclassic = 'samba'
           $packagesambawinbind = 'winbind'
+          $packagesambaclient  = 'smbclient'
           $servivesambadc      = 'samba-ad-dc'
           $servivesmb          = 'samba'
           $servivewinbind      = 'winbind'

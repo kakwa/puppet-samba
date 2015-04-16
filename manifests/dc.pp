@@ -154,10 +154,16 @@ ex: domain="ad" and realm="ad.example.com"')
     require => File['/etc/samba/'],
   }
 
+  package{ 'SambaClient':
+    ensure  => 'installed',
+    name    => $::samba::params::packagesambaclient,
+    require => File['/etc/samba/smb_path'],
+  }
+
   package{ 'SambaDC':
     ensure  => 'installed',
     name    => $::samba::params::packagesambadc,
-    require => File['/etc/samba/smb_path'],
+    require => Package['SambaClient'],
   }
 
   # Provision the Domain Controler
