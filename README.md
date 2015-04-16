@@ -92,10 +92,11 @@ class { ::samba::dc:
   # Mandatory parameters
   domain                => 'ad',              # * AD domain name
   realm                 => 'ad.example.org',  # * Realm name (must match domain)
-  dnsbackend            => 'internal',        # * DNS backend ('internal',
-                                              #   'bindFlat' or 'bindDLZ')
 
   # Optionnal parameters
+  dnsbackend            => 'internal',        # * DNS backend ('internal',
+                                              #   'bindFlat' or 'bindDLZ')
+                                              #   default: internal
   adminpassword         => 'P455WordS',       # * Administrator password
                                               #   (default: undef)
   dnsforwarder          => '8.8.8.8',         # * Dns forwarder IP (default: undef)

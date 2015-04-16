@@ -39,7 +39,7 @@
 class samba::dc(
   $domain                = undef,
   $realm                 = undef,
-  $dnsbackend            = undef,
+  $dnsbackend            = 'internal',
   $dnsforwarder          = undef,
   $adminpassword         = undef,
   $role                  = 'dc',
@@ -59,13 +59,13 @@ class samba::dc(
 
   case $dnsbackend {
     'internal': {
-      $sambadns   = 'samba_internal'
+      $sambadns   = 'SAMBA_INTERNAL'
     }
     'bindFlat': {
-      $sambadns   = 'bind9_flatfile'
+      $sambadns   = 'BIND9_FLATFILE'
     }
     'bindDLZ': {
-      $sambadns   = 'bind9_flatfile'
+      $sambadns   = 'BIND9_DLZ'
     }
     default: {
       fail('unsupported dns backend, \
