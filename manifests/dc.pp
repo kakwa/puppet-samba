@@ -201,7 +201,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
   }
 
   file{ 'SambaOptsAdditionnalTool':
-    path    => $sambaaddtool,
+    path    => $::samba::params::sambaaddtool,
     source  => "puppet:///modules/${module_name}/additional-samba-tool",
     mode    => '0755',
     require => Package['PyYaml'],
@@ -350,7 +350,7 @@ level raise --forest-level='${strdomainlevel}' -d 1",
   }
 
   file{ 'SambaCreateHome':
-    path   => $sambacreatehome,
+    path   => $::samba::params::sambacreatehome,
     source => "puppet:///modules/${module_name}/smb-create-home.sh",
     mode   => '0755',
   }
