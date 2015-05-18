@@ -149,6 +149,8 @@ class { ::samba::dc::ppolicy:
 }
 ```
 
+If this class is not specified, default from samba-tool provisioning will be kept.
+
 #### Logon Scripts
 
 Adding logon scripts:
@@ -232,6 +234,10 @@ class { '::samba::classic':
 ```
 
 ### Idmap
+
+Idmap is to map user ids to unix uid/uid numbers, it supports several backends which can be configured with the following resources.
+
+Note that configuring a '\*' domain seems necessary for Idmap to properly work. 
 
 #### Idmap nss, tdb or rid
 
@@ -378,10 +384,10 @@ If you want to create subdirectory in a share whil specific permision/acls:
 
 ## Limitations
 
-class dc (deploy samba as a domain controler) needs Samba 4.
+class **samba::dc** (deploy Samba as a Domain Controler) needs Samba 4.
 
-As of march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choice in kerberos implementations.
-Use the Sernet Packages.
+As of march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choices in kerberos implementations.
+If you plan to deploy Samba as a DC on CentOS/RedHat use the Sernet Packages.
 
 To access Sernet Repositories, you must register on [Sernet Portal](https://portal.enterprisesamba.com/users/sign_up).
 Once it's done, you should have access to your *ACCESSKEY*. Use it and your USERNAME to configure the repo:
@@ -408,6 +414,8 @@ This module will not configure the repo, you have to do it otherwise.
 ## Development
 
 Any form of contribution (bug reports, feature requests...) is welcomed. Pull requests will be merged after review.
+
+If you have questions regarding how to use this module, don't hesitate to fill a bug. 
 
 * [GitHub Bug Tracker](https://github.com/kakwa/puppet-samba/issues)
 * [GitHub Pull requests](https://github.com/kakwa/puppet-samba/pulls)
