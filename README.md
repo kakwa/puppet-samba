@@ -1,5 +1,8 @@
 # puppet-samba
 [![Build Status](https://travis-ci.org/kakwa/puppet-samba.svg)](https://travis-ci.org/kakwa/puppet-samba)
+[![Downloads](https://img.shields.io/puppetforge/dt/kakwa/samba.svg)](https://travis-ci.org/kakwa/puppet-samba)
+[![Score](https://img.shields.io/puppetforge/f/kakwa/samba.svg)](https://travis-ci.org/kakwa/puppet-samba)
+[![Version](https://img.shields.io/puppetforge/v/kakwa/samba.svg)](https://travis-ci.org/kakwa/puppet-samba)
 
 #### Table of Contents
 
