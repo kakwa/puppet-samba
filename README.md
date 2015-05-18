@@ -32,7 +32,7 @@
 
 ## Module Description
 
-This module manage Samba installation, including samba as an **Active Directory Domain Controler**.
+This module manages Samba installation, including samba as an **Active Directory Domain Controler**.
 
 Any parameter in smb.conf can be added/modified/removed, letting you free to customize the installation
 to your specific needs.
@@ -50,9 +50,9 @@ This module will install the samba packages and setup smb.conf.
 In 'classic':
 
 * By default, it will enable winbind in nsswitch (through augeas, not modifying anything more than necessary).
-* By default, it will join the share the Domain Controler.
+* By default, it will join the Domain Controler.
 * It will configure and enable the winbind service
-* It will deploy 'smb-create-home.sh', a small helper script to create user's home
+* It will deploy 'smb-create-home.sh', a small helper script to create user's home automatically
 
 In 'dc':
 
@@ -77,11 +77,13 @@ class { 'samba::params':
 
 If this class is undeclared, the default behavior is to use native distribution packages. (see [Limitations](#limitations) for CentOS/RedHat)
 
-If the Sernet packages are used, please configure Sernet/Custom repositories containing these packages.
+If the Sernet packages are used, please configure a repository containing these packages.
 
 ### Samba 4 AD Domain Controler
 
 #### Domain Controller
+
+* [Domain Controller](https://wiki.samba.org/index.php/Samba_AD_DC_HOWTO)
 
 To provision the domain controller use the *samba::dc* class:
 
@@ -102,7 +104,8 @@ class { ::samba::dc:
   targetdir             => '/var/lib/samba/', # * Deployment directory
                                               #   (default: '/var/lib/samba/')
   domainlevel           => '2003',            # * Functionnality level ('2003',
-                                              #   '2008' or '2008 R2') (default 2003)
+                                              #   '2008' or '2008 R2') (default 2003).
+                                              #   Can be upgraded, but not downgraded
   sambaloglevel         => 3,                 # * Log level (from 1 to 10) (default: 1)
   logtosyslog           => false,             # * Log not to file but to syslog
                                               #   (default: false)
@@ -193,6 +196,8 @@ smb_group { 'mygroup':
 ```
 
 ### Samba Classic
+
+* [Domain Member](https://wiki.samba.org/index.php/Setup_a_Samba_AD_Member_Server)
 
 ```puppet
 class { '::samba::classic':
@@ -399,9 +404,19 @@ This module will not configure the repo, you have to do it otherwise.
 
 ## Development
 
-Pull requests are welcomed ^^.
+Any form of contribution (bug reports, feature requests...) is welcomed. Pull requests will be merged after review.
+
+* [GitHub Bug Tracker](https://github.com/kakwa/puppet-samba/issues)
+* [GitHub Pull requests](https://github.com/kakwa/puppet-samba/pulls)
+
+Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
+
+0.1.1:
+
+ * Better tags in metadata.json
+ * Better documentation
 
 0.1.0:
 
