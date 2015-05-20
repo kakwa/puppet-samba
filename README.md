@@ -424,6 +424,9 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.1.2:
+ * Better summary in metadata.json
+
 0.1.1:
 
  * Better tags in metadata.json
