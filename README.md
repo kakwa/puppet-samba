@@ -220,6 +220,8 @@ class { '::samba::classic':
   krbconf               => true,          # * Deploy krb5.conf file (default: true)
   nsswitch              => true,          # * Add winbind to nsswitch,
                                           #   (default: true)
+  adminuser             => 'custadmin'    # * Domain Administrator login
+                                          #   (default: 'administrator')
   adminpassword         => 'P455WordS',   # * Domain Administrator
                                           #   password (for joining)
                                           #   (default: undef, no join)
