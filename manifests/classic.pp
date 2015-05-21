@@ -226,7 +226,7 @@ ex: domain="ad" and realm="ad.example.com"')
     exec{ 'Join Domain':
       path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
       unless  => 'net ads testjoin',
-      command => "echo '${adminpassword}'| net ads join -u ${adminpuser}",
+      command => "echo '${adminpassword}'| net ads join -u ${adminuser}",
       notify  => Service['SambaWinBind'],
       require => [ Package['SambaClassic'], Service['SambaSmb'] ],
     }
