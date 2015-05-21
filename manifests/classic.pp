@@ -40,6 +40,7 @@ class samba::classic(
   $smbname              = undef,
   $domain               = undef,
   $realm                = undef,
+  $adminuser            = 'administrator',
   $adminpassword        = undef,
   $security             = 'ads',
   $sambaloglevel        = 1,
@@ -225,7 +226,7 @@ ex: domain="ad" and realm="ad.example.com"')
     exec{ 'Join Domain':
       path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
       unless  => 'net ads testjoin',
-      command => "echo '${adminpassword}'| net ads join -u administrator",
+      command => "echo '${adminpassword}'| net ads join -U ${adminuser}",
       notify  => Service['SambaWinBind'],
       require => [ Package['SambaClassic'], Service['SambaSmb'] ],
     }
