@@ -426,7 +426,12 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.2.0:
+ * adding parameter adminuser for class **samba::classic**
+   default value (administrator) maintains the previous behaviour
+
 0.1.2:
+
  * Better summary in metadata.json
 
 0.1.1:
