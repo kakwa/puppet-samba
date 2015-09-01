@@ -173,7 +173,7 @@ ex: domain="ad" and realm="ad.example.com"')
     command => "printf '' > '${::samba::params::smbconffile}' && \
 ${::samba::params::sambacmd} domain provision ${hostip} \
 --domain='${domain}' --realm='${realm}' --dns-backend='${sambadns}' \
---targetdir='${targetdir}' --workgroup='${domain}' --use-rfc2307 \
+--targetdir='${targetdir}' --use-rfc2307 \
 --configfile='${::samba::params::smbconffile}' --server-role='${role}' -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
     require => Package['SambaDC'],
