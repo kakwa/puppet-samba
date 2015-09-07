@@ -168,7 +168,7 @@ Use the following commands to list available options for your samba version
 $ samba-tool domain passwordsettings --help
 
 # List available string_show:
-samba-tool domain passwordsettings show
+$ samba-tool domain passwordsettings show
 ```
 
 #### Logon Scripts
