@@ -446,6 +446,11 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.3.0:
+ * remove useless --workgroup option in DC provisioning
+ * add type ppolicy_param to set individual ppolicy parameters
+ * fix ppolicy class to be more robust to version changes
+
 0.2.0:
  * adding parameter adminuser for class **samba::classic**
    default value (administrator) maintains the previous behaviour
