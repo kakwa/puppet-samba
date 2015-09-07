@@ -151,6 +151,26 @@ class { ::samba::dc::ppolicy:
 
 If this class is not specified, default from samba-tool provisioning will be kept.
 
+Password Policy parameters can be set individually:
+
+```puppet
+samba::dc::ppolicy_param{'--account-lockout-duration':
+  option      => '--account-lockout-duration',         # option name in samba-tool
+  show_string => 'Account lockout duration (mins):',   # string name in show
+  value       => '45',                                 # value
+}
+```
+
+Use the following commands to list available options for your samba version
+
+```bash
+# List available options:
+$ samba-tool domain passwordsettings --help
+
+# List available string_show:
+samba-tool domain passwordsettings show
+```
+
 #### Logon Scripts
 
 Adding logon scripts:
