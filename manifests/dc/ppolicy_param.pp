@@ -30,7 +30,7 @@ corresponding to option",
     require => Service['SambaDC'],
     unless  => "[ \
 \"\$( ${::samba::params::sambacmd} domain passwordsettings show -d 1 | \
-sed 's/${show_string}\ *//p;d' )\" = \
+sed 's/${show_string} *//p;d' )\" = \
 '${value}' ]",
     command => "${::samba::params::sambacmd} domain passwordsettings set -d 1 \
 ${option}='${value}'",
