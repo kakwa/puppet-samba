@@ -36,23 +36,39 @@ class samba::dc::ppolicy (
   }
 
   # Configure Password Policy
-  exec{ 'setPPolicy':
-    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    require => Service['SambaDC'],
-    unless  => "\
-[ \"\$( ${::samba::params::sambacmd} domain passwordsettings show -d 1 \
-|sed 's/^.*:\\ *\\([0-9]\\+\\|on\\|off\\).*$/\\1/gp;d' | md5sum )\" = \
-\"\$(printf \
-'${ppolicycomplexity}\\n${ppolicyplaintext}\\n${ppolicyhistorylength}\
-\\n${ppolicyminpwdlength}\\n${ppolicyminpwdage}\\n${ppolicymaxpwdage}\\n' \
-| md5sum )\" ]",
+  samba::dc::ppolicy_param{'--complexity':
+    option      => '--complexity',
+    show_string => 'Password complexity:',
+    value       => $ppolicycomplexity,
+  }
 
-    command => "${::samba::params::sambacmd} domain passwordsettings set -d 1 \
---complexity='${ppolicycomplexity}' \
---store-plaintext='${ppolicyplaintext}' \
---history-length='${ppolicyhistorylength}' \
---min-pwd-length='${ppolicyminpwdlength}' \
---min-pwd-age='${ppolicyminpwdage}' \
---max-pwd-age='${ppolicymaxpwdage}'",
+  samba::dc::ppolicy_param{'--store-plaintext':
+    option      => '--store-plaintext',
+    show_string => 'Store plaintext passwords:',
+    value       => $ppolicyplaintext,
+  }
+
+  samba::dc::ppolicy_param{'--history-length':
+    option      => '--history-length',
+    show_string => 'Password history length:',
+    value       => $ppolicyhistorylength,
+  }
+
+  samba::dc::ppolicy_param{'--min-pwd-length':
+    option      => '--min-pwd-length',
+    show_string => 'Minimum password length:',
+    value       => $ppolicyminpwdlength,
+  }
+
+  samba::dc::ppolicy_param{'--min-pwd-age':
+    option      => '--min-pwd-age',
+    show_string => 'Minimum password age (days):',
+    value       => $ppolicyminpwdage,
+  }
+
+  samba::dc::ppolicy_param{'--max-pwd-age':
+    option      => '--max-pwd-age',
+    show_string => 'Maximum password age (days):',
+    value       => $ppolicymaxpwdage,
   }
 }
