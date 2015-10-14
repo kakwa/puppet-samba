@@ -66,11 +66,10 @@ class samba::classic(
     fail('smbname must be a valid domain')
   }
 
-  $tmparr = split($realm, '[.]')
-  unless $domain == $tmparr[0] {
-    fail('domain must be the fist part of realm, \
-ex: domain="ad" and realm="ad.example.com"')
-  }
+  #$tmparr = split($realm, '[.]')
+  #unless $domain == $tmparr[0] {
+  #  fail('domain must be the fist part of realm, ex: domain="ad" and realm="ad.example.com"')
+  #}
 
   $checksecurity = ['ads', 'auto', 'user', 'domain']
   $checksecuritystr = join($checksecurity, ', ')
