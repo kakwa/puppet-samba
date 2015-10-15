@@ -13,7 +13,7 @@ node 'ad.example.org' {
 
     class { '::samba::dc':
       domain             => 'DC',
-      realm              => 'dc.kakwa.fr',
+      realm              => 'ad.example.org',
       dnsbackend         => 'internal',
       domainlevel        => '2008 R2',
       sambaloglevel      => 1,
