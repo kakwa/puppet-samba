@@ -11,51 +11,51 @@ node 'ad.example.org' {
       sernetpkgs => false,
     }
 
-    class { ::samba::dc:
-        domain          => 'DC',
-        realm           => 'dc.kakwa.fr',
-        dnsbackend      => 'internal',
-        domainlevel     => '2008 R2',
-        sambaloglevel   => 1,
-        logtosyslog     => true,
-        ip              => '192.168.199.80',
-        sambaclassloglevel => {
-          'smb'   => 2,
-          'idmap' => 2,
-        },
-        dnsforwarder    => '192.168.199.42',
+    class { '::samba::dc':
+      domain             => 'DC',
+      realm              => 'dc.kakwa.fr',
+      dnsbackend         => 'internal',
+      domainlevel        => '2008 R2',
+      sambaloglevel      => 1,
+      logtosyslog        => true,
+      ip                 => '192.168.199.80',
+      sambaclassloglevel => {
+        'smb'   => 2,
+        'idmap' => 2,
+      },
+      dnsforwarder       => '192.168.199.42',
     }
 
-    class { ::samba::dc::ppolicy:
-       ppolicycomplexity     => 'on',
-       ppolicyplaintext      => 'off',
-       ppolicyhistorylength  => 12,
-       ppolicyminpwdlength   => 10,
-       ppolicyminpwdage      => 1,
-       ppolicymaxpwdage      => 90,
+    class { '::samba::dc::ppolicy':
+      ppolicycomplexity    => 'on',
+      ppolicyplaintext     => 'off',
+      ppolicyhistorylength => 12,
+      ppolicyminpwdlength  => 10,
+      ppolicyminpwdage     => 1,
+      ppolicymaxpwdage     => 90,
     }
 
     smb_user { 'administrator':
-      ensure   => present,
-      password => 'c0mPL3xe_P455woRd',
+      ensure     => present,
+      password   => 'c0mPL3xe_P455woRd',
       attributes => {
-          uidNumber           => '15220',
-          gidNumber           => '15220',
-          msSFU30NisDomain    => 'dc',
-          scriptPath          => 'login1.cmd',
+        uidNumber        => '15220',
+        gidNumber        => '15220',
+        msSFU30NisDomain => 'dc',
+        scriptPath       => 'login1.cmd',
       },
-      groups   => ['domain users','administrators'],
+      groups     => ['domain users','administrators'],
     }
 
     smb_group { 'mygroup':
-      ensure   => present,
-      scope    => 'Domain',
-      type     => 'Security',
+      ensure     => present,
+      scope      => 'Domain',
+      type       => 'Security',
       attributes => {
-          gidNumber           => '15222',
-          msSFU30NisDomain    => 'dc',
+        gidNumber        => '15222',
+        msSFU30NisDomain => 'dc',
       },
-      groups   => ['domain users', 'administrators'],
+      groups     => ['domain users', 'administrators'],
     }
 
     ::samba::dc::script { 'login1.cmd':

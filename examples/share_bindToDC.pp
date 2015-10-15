@@ -31,42 +31,43 @@ node 'share.example.org' {
 
   # recover uid and gid from Domain Controler (unix attributes)
   ::samba::idmap { 'Domain DC':
-    domain       => 'DC',
-    idrangemin   => 10000,
-    idrangemax   => 19999,
-    backend      => 'ad',
-    schema_mode  => 'rfc2307',
+    domain      => 'DC',
+    idrangemin  => 10000,
+    idrangemax  => 19999,
+    backend     => 'ad',
+    schema_mode => 'rfc2307',
   }
 
   # a default map (*) is needed for idmap to work
   ::samba::idmap { 'Domain *':
-    domain       => '*',
-    idrangemin   => 100000,
-    idrangemax   => 199999,
-    backend      => 'tdb',
+    domain     => '*',
+    idrangemin => 100000,
+    idrangemax => 199999,
+    backend    => 'tdb',
   }
 
   ::samba::share { 'Test Share':
-    path            => '/srv/test/',
-    mode            => '0775',
-    owner           => 'root',
-    group           => 'domain user',
-    options         => {
+    path    => '/srv/test/',
+    mode    => '0775',
+    owner   => 'root',
+    group   => 'domain user',
+    options => {
       'comment'   => 'My test share that I want',
-      'browsable'     => 'Yes',
-      'read only'     => 'No',
+      'browsable' => 'Yes',
+      'read only' => 'No',
     },
   }
 
   ::samba::share { 'homes':
-    path            => '/srv/home/home_%U',
-    options         => {
+    path    => '/srv/home/home_%U',
+    options => {
       'comment'        => 'Home Folder',
       'browsable'      => 'No',
       'read only'      => 'No',
       'directory mask' => '700',
       'create mask'    => '700',
-      'root preexec'   => 'smb-create-home.sh -d /srv/home/home_%U -u %U -m 700',
+      'root preexec'   => "smb-create-home.sh -d \
+/srv/home/home_%U -u %U -m 700",
     },
   }
 }
