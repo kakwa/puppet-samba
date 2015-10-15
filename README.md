@@ -11,6 +11,7 @@
     * [What samba affects](#what-samba-affects)
     * [Setup requirements](#setup-requirements)
 3. [Usage](#usage)
+    * [Examples](#examples)
     * [Packages](#packages)
     * [Samba Domain Controller](#samba-4-ad-domain-controler)
           * [Domain Controller](#domain-controller)
@@ -67,6 +68,10 @@ This script handles users/groups and their attributes (list, add or remove attri
 This module requires puppetlabs-stdlib module.
 
 ## Usage
+
+### Examples
+
+Look at the [examples](https://github.com/kakwa/puppet-samba/tree/master/examples) directory.
 
 ### Packages
 
