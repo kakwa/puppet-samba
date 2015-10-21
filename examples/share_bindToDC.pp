@@ -50,7 +50,7 @@ node 'share.example.org' {
     path    => '/srv/test/',
     mode    => '0775',
     owner   => 'root',
-    group   => 'domain user',
+    group   => 'domain users',
     options => {
       'comment'   => 'My test share that I want',
       'browsable' => 'Yes',

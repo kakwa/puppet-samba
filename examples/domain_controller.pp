@@ -44,7 +44,7 @@ node 'ad.example.org' {
         msSFU30NisDomain => 'dc',
         scriptPath       => 'login1.cmd',
       },
-      groups     => ['domain users','administrators'],
+      groups     => ['domain users', 'administrators'],
     }
 
     smb_group { 'mygroup':
