@@ -3,7 +3,7 @@ require File.expand_path('../smb_file/section', __FILE__)
 
 module Puppet
 module Util
-  class IniFile
+  class SmbFile
 
     def initialize(path, key_val_separator = ' = ')
 
@@ -241,7 +241,7 @@ module Util
     end
 
     def lines
-        @lines ||= IniFile.readlines(@path)
+        @lines ||= SmbFile.readlines(@path)
     end
 
     # This is mostly here because it makes testing easier--we don't have

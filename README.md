@@ -451,6 +451,10 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.3.1:
+ * fix namespace collision between puppetlabs-inifile and smb_file resource
+ * adding examples
+
 0.3.0:
  * remove useless --workgroup option in DC provisioning
  * add type ppolicy_param to set individual ppolicy parameters

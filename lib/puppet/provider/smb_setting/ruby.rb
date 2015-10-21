@@ -35,9 +35,9 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
       if file_path.nil?
         return resources
       end
-      ini_file  = Puppet::Util::IniFile.new(file_path, '=')
-      ini_file.section_names.each do |section_name|
-        settings = ini_file.get_settings(section_name)
+      smb_file  = Puppet::Util::SmbFile.new(file_path, '=')
+      smb_file.section_names.each do |section_name|
+        settings = smb_file.get_settings(section_name)
         if settings.length == 0 and section_name != ''
            resources.push(
             new(
@@ -69,28 +69,28 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
   end
 
   def exists?
-    setting == 'emptySection' or !ini_file.get_value(section, setting).nil?
+    setting == 'emptySection' or !smb_file.get_value(section, setting).nil?
   end
 
   def create
-    ini_file.set_value(section, setting, resource[:value])
-    ini_file.save
-    @ini_file = nil
+    smb_file.set_value(section, setting, resource[:value])
+    smb_file.save
+    @smb_file = nil
   end
 
   def destroy
-    ini_file.remove_setting(section, setting)
-    ini_file.save
-    @ini_file = nil
+    smb_file.remove_setting(section, setting)
+    smb_file.save
+    @smb_file = nil
   end
 
   def value
-    ini_file.get_value(section, setting)
+    smb_file.get_value(section, setting)
   end
 
   def value=(value)
-    ini_file.set_value(section, setting, resource[:value])
-    ini_file.save
+    smb_file.set_value(section, setting, resource[:value])
+    smb_file.save
   end
 
   def section
@@ -126,8 +126,8 @@ Puppet::Type.type(:smb_setting).provide(:ruby) do
   end
 
   private
-  def ini_file
-    @ini_file ||= Puppet::Util::IniFile.new(file_path, separator)
+  def smb_file
+    @smb_file ||= Puppet::Util::SmbFile.new(file_path, separator)
   end
 
 end

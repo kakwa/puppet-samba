@@ -1,6 +1,6 @@
 module Puppet
 module Util
-class IniFile
+class SmbFile
   class Section
     # Some implementation details:
     #
