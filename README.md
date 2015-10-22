@@ -411,7 +411,9 @@ If you want to create subdirectory in a share whil specific permision/acls:
 
 ## Limitations
 
-class **samba::dc** (deploy Samba as a Domain Controler) needs Samba 4.
+class **samba::dc** (deploy Samba as a Domain Controler) needs Samba in version 4.0.0 or above.
+
+This version is available in Debian Jessie and above, or in Wheezy using Debian backports.
 
 As of march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choices in kerberos implementations.
 If you plan to deploy Samba as a DC on CentOS/RedHat use the Sernet Packages.
