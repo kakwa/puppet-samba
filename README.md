@@ -396,16 +396,18 @@ If you want to create subdirectory in a share whil specific permision/acls:
 ```puppet
 ::samba::share { 'Sub Dir':
   # Mandatory parameters
-  path            => '/srv/test/sub',
+  path              => '/srv/test/sub',
 
   # Optionnal parameters
-  owner           => 'root',      # * owner of the directory
-                                  #   (default: root)
-  group           => 'root',      # * group of the directory 
-                                  #   (default: root)
-  mode            => '0775',      # * mode of the directory
-                                  #   (default: 770)
-  acl             => [],          # * list of posix acls (default: undef)
+  owner             => 'root',      # * owner of the directory
+                                    #   (default: root)
+  group             => 'root',      # * group of the directory 
+                                    #   (default: root)
+  mode              => '0775',      # * mode of the directory
+                                    #   (default: 770)
+  acl               => [],          # * list of posix acls (default: undef)
+  manage_directory  => true,        # * let the resource handle the shared 
+                                    #   directory creation (default: true)
 }
 ```
 
@@ -452,6 +454,10 @@ If you have questions regarding how to use this module, don't hesitate to fill a
 Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
+
+master:
+ * add manage_directory parameter to samba::share in order to
+ make directory creation optional (useful for print server)
 
 0.3.1:
  * fix namespace collision between puppetlabs-inifile and smb_file resource
