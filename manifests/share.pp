@@ -44,6 +44,7 @@ define samba::share(
   $group = 'root',
   $mode  = '0777',
   $acl   = undef,
+  $manage_directory = true,
 ) {
 
   if defined(Package['SambaClassic']){
@@ -60,12 +61,14 @@ define samba::share(
     $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
     validate_absolute_path($rootpath)
 
-    ::samba::dir {$rootpath:
-      path  => $rootpath,
-      owner => $owner,
-      group => $group,
-      mode  => $mode,
-      acl   => $acl,
+    if $manage_directory {
+      ::samba::dir {$rootpath:
+        path  => $rootpath,
+        owner => $owner,
+        group => $group,
+        mode  => $mode,
+        acl   => $acl,
+      }
     }
 
     smb_setting { "${name}/path":
