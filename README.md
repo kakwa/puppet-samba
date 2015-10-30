@@ -455,7 +455,7 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
-master:
+0.4.0:
  * add manage_directory parameter to samba::share in order to
  make directory creation optional (useful for print server)
 
