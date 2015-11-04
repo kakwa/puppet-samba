@@ -234,6 +234,7 @@ class { '::samba::classic':
   # Mandatory parameters
   domain                => 'DC',          # * Domain to authentify against
   realm                 => 'dc.kakwa.fr', # * Realm to authentify against
+  strictrealm           => true,          # * Check for Strict Realm
   smbname               => 'SMB',         # * Share name
   sambaloglevel         => 3,             # * Samba log level
   logtosyslog           => true,          # * Log to Syslog
