@@ -51,6 +51,7 @@ class samba::classic(
   $logtosyslog          = false,
   $globaloptions        = {},
   $globalabsentoptions  = [],
+  $joinou               = undef,
 ) inherits ::samba::params{
 
 
@@ -225,10 +226,14 @@ class samba::classic(
   }
 
   unless $adminpassword == undef {
+    $ou = $joinou ? {
+      default => "createcomputer=\"${joinou}\"",
+      undef   => '',
+    }
     exec{ 'Join Domain':
       path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
       unless  => 'net ads testjoin',
-      command => "echo '${adminpassword}'| net ads join -U '${adminuser}'",
+      command => "echo '${adminpassword}'| net ads join -U '${adminuser}' ${ou}",
       notify  => Service['SambaWinBind'],
       require => [ Package['SambaClassic'], Service['SambaSmb'] ],
     }

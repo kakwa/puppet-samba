@@ -232,32 +232,33 @@ smb_group { 'mygroup':
 ```puppet
 class { '::samba::classic':
   # Mandatory parameters
-  domain                => 'DC',          # * Domain to authentify against
-  realm                 => 'dc.kakwa.fr', # * Realm to authentify against
-  strictrealm           => true,          # * Check for Strict Realm
-  smbname               => 'SMB',         # * Share name
-  sambaloglevel         => 3,             # * Samba log level
-  logtosyslog           => true,          # * Log to Syslog
+  domain                => 'DC',            # * Domain to authentify against
+  realm                 => 'dc.kakwa.fr',   # * Realm to authentify against
+  smbname               => 'SMB',           # * Share name
+  sambaloglevel         => 3,               # * Samba log level
+  logtosyslog           => true,            # * Log to Syslog
 
   # Optionnal parameters
-  security              => 'ADS',         # * security mode.
-                                          #   in ['ADS', 'AUTO', 'USER', 'DOMAIN']
-                                          #   default: 'ADS'
-  krbconf               => true,          # * Deploy krb5.conf file (default: true)
-  nsswitch              => true,          # * Add winbind to nsswitch,
-                                          #   (default: true)
-  adminuser             => 'custadmin'    # * Domain Administrator login
-                                          #   (default: 'administrator')
-  adminpassword         => 'P455WordS',   # * Domain Administrator
-                                          #   password (for joining)
-                                          #   (default: undef, no join)
-  sambaclassloglevel    => {              # * Set log level by log classes
-    'printdrivers' => 1,                  #   (default: undef)
+  strictrealm           => true,            # * Check for Strict Realm
+  security              => 'ADS',           # * security mode.
+                                            # in ['ADS', 'AUTO', 'USER', 'DOMAIN']
+                                            # default: 'ADS'
+  krbconf               => true,            # * Deploy krb5.conf file (default: true)
+  nsswitch              => true,            # * Add winbind to nsswitch,
+                                            # (default: true)
+  adminuser             => 'custadmin'      # * Domain Administrator login
+                                            # (default: 'administrator')
+  adminpassword         => 'P455WordS',     # * Domain Administrator
+                                            # password (for joining)
+                                            # (default: undef, no join)
+  joinou                => 'Computer/Samba' # * OU to Join
+  sambaclassloglevel    => {                # * Set log level by log classes
+    'printdrivers' => 1,                    # (default: undef)
     'idmap'        => 5,
     'winbind'      => 3,
   },
-  globaloptions       => {},              # * Custom options in section [global]
-  globalabsentoptions => [],              # * Remove default settings put
+  globaloptions       => {},                # * Custom options in section [global]
+  globalabsentoptions => [],                # * Remove default settings put
 }
 ```
 
