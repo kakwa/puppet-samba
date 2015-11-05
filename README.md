@@ -239,7 +239,7 @@ class { '::samba::classic':
   logtosyslog           => true,            # * Log to Syslog
 
   # Optionnal parameters
-  strictrealm           => true,            # * Check for Strict Realm
+  strictrealm           => true,            # * Check for Strict Realm (default: true)
   security              => 'ADS',           # * security mode.
                                             # in ['ADS', 'AUTO', 'USER', 'DOMAIN']
                                             # default: 'ADS'
