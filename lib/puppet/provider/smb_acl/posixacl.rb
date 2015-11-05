@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'acl')
+require File.join(File.dirname(__FILE__), '..', 'smb_acl')
 
 Puppet::Type.type(:smb_acl).provide(:posixacl, :parent => Puppet::Provider::Smb_Acl) do
   desc "Provide posix 1e acl functions using posix getfacl/setfacl commands"
