@@ -39,7 +39,7 @@ class samba::params(
           $smbconffile         = '/etc/samba/smb.conf'
           $krbconffile         = '/etc/krb5.conf'
           $packagepyyaml       = 'python-yaml'
-      }
+      }      
       default: {
           fail('unsupported os')
       }
@@ -70,6 +70,22 @@ class samba::params(
           $packagesambaclient  = 'smbclient'
           $servivesambadc      = 'samba-ad-dc'
           $servivesmb          = 'samba'
+          $servivewinbind      = 'winbind'
+          $sambacmd            = '/usr/bin/samba-tool'
+          $sambaclientcmd      = '/usr/bin/smbclient'
+          $sambaoptsfile       = '/etc/default/samba4'
+          $sambaoptstmpl       = "${module_name}/debian-samba.erb"
+          $smbconffile         = '/etc/samba/smb.conf'
+          $krbconffile         = '/etc/krb5.conf'
+          $packagepyyaml       = 'python-yaml'
+      }
+      'Ubuntu': {
+          $packagesambadc      = 'samba'
+          $packagesambaclassic = 'samba'
+          $packagesambawinbind = 'winbind'
+          $packagesambaclient  = 'smbclient'
+          $servivesambadc      = 'samba-ad-dc'
+          $servivesmb          = 'smb'
           $servivewinbind      = 'winbind'
           $sambacmd            = '/usr/bin/samba-tool'
           $sambaclientcmd      = '/usr/bin/smbclient'
