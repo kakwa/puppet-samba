@@ -69,7 +69,7 @@ class samba::params(
           $packagesambawinbind = 'winbind'
           $packagesambaclient  = 'smbclient'
           $servivesambadc      = 'samba-ad-dc'
-        if $::$operatingsystem == 'Ubuntu' {
+        if $::operatingsystem == 'Ubuntu' {
           $servivesmb          = 'smbd'
         } else {
           $servivesmb          = 'samba'
