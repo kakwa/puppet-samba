@@ -8,8 +8,8 @@ define samba::log(
 ) {
 
   unless is_integer($sambaloglevel)
-    and $sambaloglevel >= 0
-    and $sambaloglevel <= 10{
+    and ($sambaloglevel + 0) >= 0
+    and ($sambaloglevel + 0) <= 10{
     fail('loglevel must be an integer between 0 and 10')
   }
 
