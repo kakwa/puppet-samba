@@ -457,6 +457,10 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.6.0:
+ * add support for Ubuntu
+ * fix for puppet 4
+
 0.5.0:
  * add optional parameter joinou in class classic to specify the OU in AD where the samba server must be declared
  * add optional parameter strictrealm to enable/disable strict realm check
