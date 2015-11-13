@@ -394,7 +394,7 @@ Note that configuring a '\*' domain seems necessary for Idmap to properly work.
 
 #### Directories
 
-If you want to create subdirectory in a share whil specific permision/acls:
+If you want to create subdirectory in a share with specific permisions/acls:
 
 
 ```puppet
