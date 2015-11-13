@@ -54,7 +54,7 @@ This module will install the samba packages and setup smb.conf.
 In 'classic':
 
 * By default, it will enable winbind in nsswitch (through augeas, not modifying anything more than necessary).
-* By default, it will join the Domain Controler.
+* By default, it will join the Domain Controller.
 * It will configure and enable the winbind service
 * It will deploy 'smb-create-home.sh', a small helper script to create user's home automatically
 
