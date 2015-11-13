@@ -372,21 +372,23 @@ Note that configuring a '\*' domain seems necessary for Idmap to properly work.
 ::samba::share { 'Test Share':
   # Mandatory parameters
   path            => '/srv/test/',
-
+  
   # Optionnal parameters
-  owner           => 'root',      # * owner of the share directory
-                                  #   (default: root)
-  group           => 'root',      # * group of the share directory 
-                                  #   (default: root)
-  mode            => '0775',      # * mode of the share directory
-                                  #   (default: 0777)
-  acl             => [],          # * list of posix acls (default: undef)
-  options         => {            # * Custom options in section [Test Share]
-      'browsable'     => 'Yes',
-      'root preexec'  => 'mkdir -p \'/home/home_%U\'',
+  manage_directory  => true,        # * let the resource handle the shared 
+                                    #   directory creation (default: true)
+  owner             => 'root',      # * owner of the share directory
+                                    #   (default: root)
+  group             => 'root',      # * group of the share directory 
+                                    #   (default: root)
+  mode              => '0775',      # * mode of the share directory
+                                    #   (default: 0777)
+  acl               => [],          # * list of posix acls (default: undef)
+  options           => {            # * Custom options in section [Test Share]
+      'browsable'       => 'Yes',
+      'root preexec'    => 'mkdir -p \'/home/home_%U\'',
   },
-  absentoptions   => ['path'],    # * Remove default settings put by this resource
-                                  #   default?: []
+  absentoptions     => ['path'],    # * Remove default settings put by this resource
+                                    #   default?: []
 }
 ```
 
@@ -396,7 +398,7 @@ If you want to create subdirectory in a share whil specific permision/acls:
 
 
 ```puppet
-::samba::share { 'Sub Dir':
+::samba::dir { 'Sub Dir':
   # Mandatory parameters
   path              => '/srv/test/sub',
 
@@ -408,8 +410,6 @@ If you want to create subdirectory in a share whil specific permision/acls:
   mode              => '0775',      # * mode of the directory
                                     #   (default: 770)
   acl               => [],          # * list of posix acls (default: undef)
-  manage_directory  => true,        # * let the resource handle the shared 
-                                    #   directory creation (default: true)
 }
 ```
 
