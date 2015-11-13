@@ -38,12 +38,12 @@
 
 This module manages Samba installation, including samba as an **Active Directory Domain Controler**.
 
-Any parameter in smb.conf can be added/modified/removed, letting you free to customize the installation
+Any parameter in smb.conf can be added/modified/removed, keeping you free to customize the installation
 to your specific needs.
 
 This module is licensed MIT.
 
-The script additionnal-samba-tool is licensed GPLv3 (depends on python-samba which is GPLv3).
+The script additional-samba-tool is licensed GPLv3 (depends on python-samba which is GPLv3).
 
 ## Setup
 
@@ -60,7 +60,7 @@ In 'classic':
 
 In 'dc':
 
-* It will deploy additionnal-samba-tool, a python script completing samba-tool
+* It will deploy additional-samba-tool, a python script completing samba-tool
 This script handles users/groups and their attributes (list, add or remove attributes)
 
 ### Setup Requirements
@@ -75,7 +75,7 @@ Look at the [examples](https://github.com/kakwa/puppet-samba/tree/master/example
 
 ### Packages
 
-This module permits to choose between native distribtion packages or Sernet (samba developpers) packages:
+This module permits to choose between native distribution packages or Sernet (Samba developers) packages:
 
 ```puppet
 class { 'samba::params':
@@ -87,7 +87,7 @@ If this class is undeclared, the default behavior is to use native distribution 
 
 If the Sernet packages are used, please configure a repository containing these packages.
 
-### Samba 4 AD Domain Controler
+### Samba 4 AD Domain Controller
 
 #### Domain Controller
 
@@ -111,7 +111,7 @@ class { ::samba::dc:
   ip                    => '192.168.1.1'      # * DC listening IP (default undef)
   targetdir             => '/var/lib/samba/', # * Deployment directory
                                               #   (default: '/var/lib/samba/')
-  domainlevel           => '2003',            # * Functionnality level ('2003',
+  domainlevel           => '2003',            # * Functionality level ('2003',
                                               #   '2008' or '2008 R2') (default 2003).
                                               #   Can be upgraded, but not downgraded
   sambaloglevel         => 3,                 # * Log level (from 1 to 10) (default: 1)
@@ -159,7 +159,7 @@ If this class is not specified, default from samba-tool provisioning will be kep
 Password Policy parameters can be set individually:
 
 ```puppet
-samba::dc::ppolicy_param{'--account-lockout-duration':
+samba::dc::ppolicy_param{'account-lockout-duration':
   option      => '--account-lockout-duration',         # option name in samba-tool
   show_string => 'Account lockout duration (mins):',   # string name in show
   value       => '45',                                 # value
@@ -264,7 +264,7 @@ class { '::samba::classic':
 
 ### Idmap
 
-Idmap is to map user ids to unix uid/uid numbers, it supports several backends which can be configured with the following resources.
+Idmap is to map user ids to unix uid/uid numbers, it supports several back-ends which can be configured with the following resources.
 
 Note that configuring a '\*' domain seems necessary for Idmap to properly work. 
 
@@ -392,7 +392,7 @@ Note that configuring a '\*' domain seems necessary for Idmap to properly work.
 
 #### Directories
 
-If you want to create subdirectory in a share whil specific permision/acls:
+If you want to create subdirectory in a share whith specific permissions/acls:
 
 
 ```puppet
@@ -415,7 +415,7 @@ If you want to create subdirectory in a share whil specific permision/acls:
 
 ## Limitations
 
-class **samba::dc** (deploy Samba as a Domain Controler) needs Samba in version 4.0.0 or above.
+class **samba::dc** (deploy Samba as a Domain Controller) needs Samba in version 4.0.0 or above.
 
 This version is available in Debian Jessie and above, or in Wheezy using Debian backports.
 
@@ -442,7 +442,7 @@ deb https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/debian whee
 deb-src https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/debian wheezy main
 ```
 
-This module will not configure the repo, you have to do it otherwise.
+This module will not configure the repository, you have to do it otherwise.
 
 ## Development
 
@@ -456,6 +456,9 @@ If you have questions regarding how to use this module, don't hesitate to fill a
 Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
+
+0.6.1:
+ * fix documentation
 
 0.6.0:
  * add support for Ubuntu
