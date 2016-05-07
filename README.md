@@ -456,6 +456,9 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.6.2:
+ * fix daemon name on Debian versions >=8 
+
 0.6.1:
  * fix documentation
 
