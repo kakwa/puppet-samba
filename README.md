@@ -114,6 +114,8 @@ class { ::samba::dc:
   domainlevel           => '2003',            # * Functionality level ('2003',
                                               #   '2008' or '2008 R2') (default 2003).
                                               #   Can be upgraded, but not downgraded
+  domainprovargs        => '',                # * Additionnal arguments for domain
+                                              #   provision (ex: --domain-sid)
   sambaloglevel         => 3,                 # * Log level (from 1 to 10) (default: 1)
   logtosyslog           => false,             # * Log not to file but to syslog
                                               #   (default: false)
