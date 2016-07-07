@@ -45,6 +45,7 @@ class samba::dc(
   $role                  = 'dc',
   $targetdir             = '/var/lib/samba/',
   $domainlevel           = '2003',
+  $domainprovargs        = '',
   $sambaloglevel         = 1,
   $ip                    = undef,
   $logtosyslog           = false,
@@ -174,7 +175,7 @@ ex: domain="ad" and realm="ad.example.com"')
 ${::samba::params::sambacmd} domain provision ${hostip} \
 --domain='${domain}' --realm='${realm}' --dns-backend='${sambadns}' \
 --targetdir='${targetdir}' --use-rfc2307 \
---configfile='${::samba::params::smbconffile}' --server-role='${role}' -d 1 && \
+--configfile='${::samba::params::smbconffile}' --server-role='${role}' ${domainprovargs} -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
