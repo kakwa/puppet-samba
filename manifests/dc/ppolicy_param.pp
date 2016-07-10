@@ -12,7 +12,7 @@ define samba::dc::ppolicy_param(
     "option must start with '--' and be \
 a valid 'samba-tool domain passwordsettings' option",
   )
-  
+
   validate_re(
     $show_string,
     '^.*:$',
