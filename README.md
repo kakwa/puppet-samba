@@ -458,7 +458,16 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.7.1:
+
+ * fix templates (thanks to Michael Sweetser)
+
+0.7.0:
+
+ * add parameter to pass additionnal parameters for domain provisioning 
+
 0.6.2:
+
  * fix daemon name on Debian versions >=8 
 
 0.6.1:
