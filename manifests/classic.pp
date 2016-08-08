@@ -132,18 +132,18 @@ class samba::classic(
     }
   }
 
+  package{ 'SambaClassic':
+    ensure  => 'installed',
+    name    => $::samba::params::packagesambaclassic,
+  }
+
   if $manage_winbind {
     package{ 'SambaClassicWinBind':
       ensure  => 'installed',
       name    => $::samba::params::packagesambawinbind,
       require => File['/etc/samba/smb_path'],
     }
-  }
-
-  package{ 'SambaClassic':
-    ensure  => 'installed',
-    name    => $::samba::params::packagesambaclassic,
-    require => $manage_winbind ? Package['SambaClassicWinBind'] : '',
+    Package['SambaClassicWinBind'] -> Package['SambaClassic']
   }
 
   service{ 'SambaSmb':
@@ -152,12 +152,13 @@ class samba::classic(
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
   }
 
-  service{ 'SambaWinBind':
-    ensure  => 'running',
-    name    => $::samba::params::servivewinbind,
-    require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
+  if $manage_winbind {
+    service{ 'SambaWinBind':
+      ensure  => 'running',
+      name    => $::samba::params::servivewinbind,
+      require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
+    }
   }
-
   $sambamode = 'classic'
   # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
   file{ 'SambaOptsFile':
@@ -210,7 +211,7 @@ class samba::classic(
     '[global]')
 
   if $manage_winbind {
-    $services_to_notify = ['SambaSmb', 'SambaWinBind'
+    $services_to_notify = ['SambaSmb', 'SambaWinBind']
   }
   else {
     $services_to_notify = ['SambaSmb']
