@@ -107,7 +107,7 @@ class samba::classic(
         notify  => Service['SambaSmb', 'SambaWinBind'],
       }
     }
-  
+
     if $nsswitch {
       augeas{'samba nsswitch group':
         context => "/files/${::samba::params::nsswitchconffile}/",
@@ -133,8 +133,8 @@ class samba::classic(
   }
 
   package{ 'SambaClassic':
-    ensure  => 'installed',
-    name    => $::samba::params::packagesambaclassic,
+    ensure => 'installed',
+    name   => $::samba::params::packagesambaclassic,
   }
 
   if $manage_winbind {
