@@ -45,8 +45,8 @@ class samba::classic(
   $adminpassword        = undef,
   $security             = 'ads',
   $sambaloglevel        = 1,
-  $join_domain          = false,
-  $manage_winbind       = false,
+  $join_domain          = true,
+  $manage_winbind       = true,
   $krbconf              = true,
   $nsswitch             = true,
   $sambaclassloglevel   = undef,
@@ -107,7 +107,7 @@ class samba::classic(
         notify  => Service['SambaSmb', 'SambaWinBind'],
       }
     }
-  
+
     if $nsswitch {
       augeas{'samba nsswitch group':
         context => "/files/${::samba::params::nsswitchconffile}/",
@@ -133,8 +133,8 @@ class samba::classic(
   }
 
   package{ 'SambaClassic':
-    ensure  => 'installed',
-    name    => $::samba::params::packagesambaclassic,
+    ensure => 'installed',
+    name   => $::samba::params::packagesambaclassic,
   }
 
   if $manage_winbind {
