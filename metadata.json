@@ -1,6 +1,6 @@
 {
   "name": "kakwa-samba",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "author": "kakwa",
   "summary": "Module managing Samba, including Samba as a AD Domain Controller",
   "license": "MIT",
