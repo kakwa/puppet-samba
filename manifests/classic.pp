@@ -56,6 +56,9 @@ class samba::classic(
   $joinou               = undef,
 ) inherits ::samba::params{
 
+  if ( !$manage_winbind ) and ( !defined(Service['SambaWinBind']) ) {
+    fail('must provide SambaWinBind service if manage_winbind == false')
+  }
 
   unless is_domain_name($realm){
     fail('realm must be a valid domain')
