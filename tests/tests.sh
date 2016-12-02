@@ -21,7 +21,8 @@ run(){
 cd `dirname $0`/..
 puppet module install puppetlabs-stdlib --modulepath=`pwd`/../
 
-run tests/init.pp "AD test failed"
+run tests/init.pp "classic test failed"
 
+run tests/dc.pp "AD test failed"
 
 exit $ret
