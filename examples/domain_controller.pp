@@ -1,11 +1,11 @@
 # Basic configuration for a domain controller
 node 'ad.example.org' {
 
-    # kerberos is sensitive to time, 
-    # having an ntp might be a good idea
-    class { '::ntp':
-      servers => [ 'pool.ntp.org' ],
-    }
+#    # kerberos is sensitive to time, 
+#    # having an ntp might be a good idea
+#    class { '::ntp':
+#      servers => [ 'pool.ntp.org' ],
+#    }
 
     class { 'samba::params':
       sernetpkgs => false,
