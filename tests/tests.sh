@@ -1,18 +1,27 @@
 #!/bin/sh
 
-cd `dirname $0`
-puppet module install puppetlabs-stdlib --modulepath=`pwd`/../../
+cleanup(){
+    # some clean up
+    apt-get purge -y samba-common
+    apt-get autoremove -y
+    rm -f /usr/local/bin/additional-samba-tool
+    rm -f /usr/local/bin/smb-create-home.sh
+}
 
-puppet apply --certname=ad.example.org examples/domain_controller.pp --modulepath=`pwd`/../../ --debug
+run(){
+    pp=$1
+    message=$2
+    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/../ --debug
+    tmp=$?
+    [ $tmp -eq 0 ] || echo "$message"
+    ret=$(( $ret + $tmp ))
+	cleanup
+}
 
-ret=$?
+cd `dirname $0`/..
+puppet module install puppetlabs-stdlib --modulepath=`pwd`/../
 
-[ $ret -eq 0 ] || echo "AD step failed"
+run tests/init.pp "AD test failed"
 
-# some clean up
-apt-get purge -y samba-common
-apt-get autoremove -y
-rm -f /usr/local/bin/additional-samba-tool
-rm -f /usr/local/bin/smb-create-home.sh
 
 exit $ret

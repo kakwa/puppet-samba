@@ -11,14 +11,14 @@
 #
 
 class { 'samba::params':
-  sernetRepo => false,
+  sernetpkgs   => false,
 }
 
 class { '::samba::classic':
   domain              => 'DC',
   realm               => 'dc.kakwa.fr',
   smbname             => 'SMB',
-  adminpassword       => 'qwertyP455',
+  join_domain         => false,
   sambaloglevel       => 3,
   logtosyslog         => true,
   sambaclassloglevel  => {
