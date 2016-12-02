@@ -114,6 +114,8 @@ class { ::samba::dc:
   domainlevel           => '2003',            # * Functionality level ('2003',
                                               #   '2008' or '2008 R2') (default 2003).
                                               #   Can be upgraded, but not downgraded
+  domainprovargs        => '',                # * Additionnal arguments for domain
+                                              #   provision (ex: --domain-sid)
   sambaloglevel         => 3,                 # * Log level (from 1 to 10) (default: 1)
   logtosyslog           => false,             # * Log not to file but to syslog
                                               #   (default: false)
@@ -232,33 +234,35 @@ smb_group { 'mygroup':
 ```puppet
 class { '::samba::classic':
   # Mandatory parameters
-  domain                => 'DC',            # * Domain to authentify against
-  realm                 => 'dc.kakwa.fr',   # * Realm to authentify against
-  smbname               => 'SMB',           # * Share name
-  sambaloglevel         => 3,               # * Samba log level
-  logtosyslog           => true,            # * Log to Syslog
+  domain                => 'DC',             # * Domain to authentify against
+  realm                 => 'dc.kakwa.fr',    # * Realm to authentify against
+  smbname               => 'SMB',            # * Share name
+  sambaloglevel         => 3,                # * Samba log level
+  logtosyslog           => true,             # * Log to Syslog
 
   # Optionnal parameters
-  strictrealm           => true,            # * Check for Strict Realm (default: true)
-  security              => 'ADS',           # * security mode.
-                                            # in ['ADS', 'AUTO', 'USER', 'DOMAIN']
-                                            # default: 'ADS'
-  krbconf               => true,            # * Deploy krb5.conf file (default: true)
-  nsswitch              => true,            # * Add winbind to nsswitch,
-                                            # (default: true)
-  adminuser             => 'custadmin'      # * Domain Administrator login
-                                            # (default: 'administrator')
-  adminpassword         => 'P455WordS',     # * Domain Administrator
-                                            # password (for joining)
-                                            # (default: undef, no join)
-  joinou                => 'Computer/Samba' # * OU to Join
-  sambaclassloglevel    => {                # * Set log level by log classes
-    'printdrivers' => 1,                    # (default: undef)
+  strictrealm           => true,             # * Check for Strict Realm (default: true)
+  security              => 'ADS',            # * security mode.
+                                             # in ['ADS', 'AUTO', 'USER', 'DOMAIN']
+                                             # default: 'ADS'
+  manage_winbind        => true              # * Manage the winbind service (default: true)
+  krbconf               => true,             # * Deploy krb5.conf file (default: true)
+  nsswitch              => true,             # * Add winbind to nsswitch,
+                                             # (default: true)
+  join_domain           => true,             # * Flag to enable domain join (default: true)
+  adminuser             => 'custadmin'       # * Domain Administrator login
+                                             # (default: 'administrator')
+  adminpassword         => 'P455WordS',      # * Domain Administrator
+                                             # password (for joining)
+                                             # (default: undef, no join)
+  joinou                => 'Computer/Samba', # * OU to Join
+  sambaclassloglevel    => {                 # * Set log level by log classes
+    'printdrivers' => 1,                     # (default: undef)
     'idmap'        => 5,
     'winbind'      => 3,
   },
-  globaloptions       => {},                # * Custom options in section [global]
-  globalabsentoptions => [],                # * Remove default settings put
+  globaloptions       => {},                 # * Custom options in section [global]
+  globalabsentoptions => [],                 # * Remove default settings put
 }
 ```
 
@@ -455,6 +459,23 @@ If you have questions regarding how to use this module, don't hesitate to fill a
 Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
+
+0.7.2:
+
+ * add switch join_domain to enable/disable Domain Join in classic class (Thanks to Mattias Giese)
+ * add switch manage_winbind to enable/disable winbind service in classic class (Thanks to Mattias Giese)
+
+0.7.1:
+
+ * fix templates (thanks to Michael Sweetser)
+
+0.7.0:
+
+ * add parameter to pass additionnal parameters for domain provisioning 
+
+0.6.2:
+
+ * fix daemon name on Debian versions >=8 
 
 0.6.1:
  * fix documentation

@@ -4,7 +4,7 @@
 #   "ad"      to use the Active Directory server (which starts the smbd on its own)
 # (Be aware that you also need to enable the services/init scripts that
 # automatically start up the desired daemons.)
-SAMBA_START_MODE="<%= sambamode %>"
+SAMBA_START_MODE="<%= @sambamode %>"
 
 # SAMBA_RESTART_ON_UPDATE defines if the the services should be restarted when
 # the RPMs are updated. Setting this to "yes" effectively enables the

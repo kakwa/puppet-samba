@@ -49,7 +49,12 @@ define samba::share(
 
   if defined(Package['SambaClassic']){
     $require = Package['SambaClassic']
-    $notify  = Service['SambaSmb', 'SambaWinBind']
+    if defined(Service['SambaWinbind']) {
+      $notify  = Service['SambaSmb', 'SambaWinBind']
+    }
+    else {
+      $notify  = Service['SambaSmb']
+    }
   }elsif defined(Package['SambaDC']){
     $require = Exec['provisionAD']
     $notify  = Service['SambaDC']
