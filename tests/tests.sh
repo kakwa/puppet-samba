@@ -2,8 +2,12 @@
 
 cleanup(){
     # some clean up
-    apt-get purge -y samba-common winbind
+    apt-get purge -y winbind
+    apt-get purge -y samba-common
     apt-get autoremove -y
+    pkill -9 samba
+    pkill -9 smb
+    pkill -9 nmd
     rm -f /usr/local/bin/additional-samba-tool
     rm -f /usr/local/bin/smb-create-home.sh
 }
