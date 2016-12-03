@@ -12,6 +12,7 @@ cleanup(){
     pkill -9 nmb
     rm -f /usr/local/bin/additional-samba-tool
     rm -f /usr/local/bin/smb-create-home.sh
+    rm -rf /var/run/samba/
 }
 
 run(){
@@ -38,7 +39,7 @@ echo "#####################################################"
 echo "#####################################################"
 echo
 
-cleanup
+cleanup >/dev/null 2>&1
 
 echo
 echo "#####################################################"
@@ -56,11 +57,11 @@ echo
 echo "#####################################################"
 echo "#####################################################"
 echo
-[ $tmp -eq 0 ] || echo "AD doesn't have all listening ports"
+[ $tmp -ne 0 ] || echo "AD doesn't have all listening ports"
 echo
 echo "#####################################################"
 echo "#####################################################"
 
-cleanup
+cleanup >/dev/null 2>&1
 
 exit $ret
