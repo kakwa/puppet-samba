@@ -187,10 +187,10 @@ ex: domain="ad" and realm="ad.example.com"')
   # default
   case $::osfamily {
     'redhat': {
-        $cleanup = 'true'
+        $cleanup = '/bin/true'
     }
     'Debian': {
-        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; true'
+        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
     }
     default: {
         fail('unsupported os')
