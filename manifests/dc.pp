@@ -175,7 +175,7 @@ ex: domain="ad" and realm="ad.example.com"')
 
   service{ 'SambaClassic':
     ensure  => 'stopped',
-    name    => $::samba::params::servivesambadc,
+    name    => $::samba::params::servivesmb,
     enable  => false,
     require => Package['SambaDC'],
   }
