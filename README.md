@@ -460,6 +460,10 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.7.3:
+
+ * fix missing winbind package in dc class (Debian)
+
 0.7.2:
 
  * add switch join_domain to enable/disable Domain Join in classic class (Thanks to Mattias Giese)
