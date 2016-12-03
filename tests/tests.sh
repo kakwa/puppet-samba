@@ -20,18 +20,40 @@ run(){
 cd `dirname $0`/..
 puppet module install puppetlabs-stdlib --modulepath=`pwd`/../
 
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
+
 run tests/init.pp "classic test failed"
+
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
 
 cleanup
 
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
+
 run tests/dc.pp "AD test failed"
 
-netstat -apn | grep -q ':389'; ret=$(( $ret + $? ))
-netstat -apn | grep -q ':53';  ret=$(( $ret + $? ))
-netstat -apn | grep -q ':636'; ret=$(( $ret + $? ))
-netstat -apn | grep -q ':464'; ret=$(( $ret + $? ))
+netstat -apn | grep ':389'; ret=$(( $ret + $? ))
+netstat -apn | grep ':53';  ret=$(( $ret + $? ))
+netstat -apn | grep ':636'; ret=$(( $ret + $? ))
+netstat -apn | grep ':464'; ret=$(( $ret + $? ))
 
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
 [ $tmp -eq 0 ] || echo "AD doesn't have all listening ports"
+echo
+echo "#####################################################"
+echo "#####################################################"
 
 cleanup
 
