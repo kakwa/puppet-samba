@@ -185,7 +185,6 @@ ex: domain="ad" and realm="ad.example.com"')
   # the debian package and the init script in debian are a bit crappy and
   # don't track the processes properly and start the samba service by
   # default
-  #
   case $::osfamily {
     'redhat': {
         $cleanup = 'true'
@@ -200,7 +199,7 @@ ex: domain="ad" and realm="ad.example.com"')
   exec{ 'CleanService':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
-    command => "${cleanup}",
+    command => $cleanup,
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
   }
