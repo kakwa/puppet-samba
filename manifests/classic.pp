@@ -150,6 +150,7 @@ class samba::classic(
     ensure  => 'running',
     name    => $::samba::params::servivesmb,
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
+    enable  => true,
   }
 
   if $manage_winbind {
@@ -157,6 +158,7 @@ class samba::classic(
       ensure  => 'running',
       name    => $::samba::params::servivewinbind,
       require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
+      enable  => true,
     }
   }
   $sambamode = 'classic'

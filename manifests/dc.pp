@@ -173,6 +173,13 @@ ex: domain="ad" and realm="ad.example.com"')
     require => Package['SambaClient', 'SambaWinBind'],
   }
 
+  service{ 'SambaClassic':
+    ensure  => 'stopped',
+    name    => $::samba::params::servivesambadc,
+    enable  => false,
+    require => Package['SambaDC'],
+  }
+
   # Provision the Domain Controler
   exec{ 'provisionAD':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
@@ -191,6 +198,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
     ensure  => 'running',
     name    => $::samba::params::servivesambadc,
     require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
+    enable  => true,
   }
 
   $sambamode = 'ad'
