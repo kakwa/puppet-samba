@@ -155,6 +155,12 @@ ex: domain="ad" and realm="ad.example.com"')
     require => File['/etc/samba/'],
   }
 
+  package{ 'SambaWinBind':
+    ensure  => 'installed',
+    name    => $::samba::params::packagesambawinbind,
+    require => File['/etc/samba/smb_path'],
+  }
+
   package{ 'SambaClient':
     ensure  => 'installed',
     name    => $::samba::params::packagesambaclient,
@@ -164,7 +170,7 @@ ex: domain="ad" and realm="ad.example.com"')
   package{ 'SambaDC':
     ensure  => 'installed',
     name    => $::samba::params::packagesambadc,
-    require => Package['SambaClient'],
+    require => Package['SambaClient', 'SambaWinBind'],
   }
 
   # Provision the Domain Controler
