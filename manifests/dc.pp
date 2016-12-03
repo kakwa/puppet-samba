@@ -185,10 +185,22 @@ ex: domain="ad" and realm="ad.example.com"')
   # the debian package and the init script in debian are a bit crappy and
   # don't track the processes properly and start the samba service by
   # default
+  #
+  case $::osfamily {
+    'redhat': {
+        $cleanup = 'true'
+    }
+    'Debian': {
+        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; true'
+    }
+    default: {
+        fail('unsupported os')
+    }
+  }
   exec{ 'CleanService':
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
-    command => "pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; true",
+    command => "${cleanup}",
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
   }
