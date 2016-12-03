@@ -2,8 +2,8 @@
 
 cleanup(){
     # some clean up
-    /etc/init.d/samba-ad-dc stop
     /etc/init.d/samba stop
+    /etc/init.d/samba-ad-dc stop
     apt-get purge -y winbind
     apt-get purge -y samba-common
     apt-get autoremove -y
@@ -17,7 +17,7 @@ cleanup(){
 run(){
     pp=$1
     message=$2
-    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/../ --debug
+    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/../ --debug --color=false
     tmp=$?
     [ $tmp -eq 0 ] || echo "$message"
     ret=$(( $ret + $tmp ))
