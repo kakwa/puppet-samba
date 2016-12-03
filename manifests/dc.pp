@@ -178,6 +178,19 @@ ex: domain="ad" and realm="ad.example.com"')
     name    => $::samba::params::servivesmb,
     enable  => false,
     require => Package['SambaDC'],
+    notify  => Service['SambaDC'],
+  }
+
+  # it's ugly but this should only run in case of an initial provisioning.
+  # the debian package and the init script in debian are a bit crappy and
+  # don't track the processes properly and start the samba service by
+  # default
+  exec{ 'CleanService':
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+    unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
+    command => "pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; true",
+    require => Package['SambaDC'],
+    notify  => Service['SambaDC'],
   }
 
   # Provision the Domain Controler
@@ -190,7 +203,7 @@ ${::samba::params::sambacmd} domain provision ${hostip} \
 --targetdir='${targetdir}' --use-rfc2307 \
 --configfile='${::samba::params::smbconffile}' --server-role='${role}' ${domainprovargs} -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
-    require => Package['SambaDC'],
+    require => Exec['CleanService'],
     notify  => Service['SambaDC'],
   }
 
