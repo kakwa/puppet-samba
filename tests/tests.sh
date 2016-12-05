@@ -62,6 +62,43 @@ echo
 echo "#####################################################"
 echo "#####################################################"
 
+
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
+
+
+# testing password setting for samba AD password
+run tests/smb_user.pp "AD test failed"
+
+netstat -apn | grep ':389'; ret=$(( $ret + $? ))
+netstat -apn | grep ':53';  ret=$(( $ret + $? ))
+netstat -apn | grep ':636'; ret=$(( $ret + $? ))
+netstat -apn | grep ':464'; ret=$(( $ret + $? ))
+
+####
+# test the force_password = false setting
+# check that we can connect
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || ret=1
+# reset password
+samba-tool 'user', setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || ret=1
+# reapply (should not change the passowrd for user test2
+run tests/smb_user.pp "AD test failed"
+# connect with puppet defined password should fail
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && ret=$(( $ret + $1 ))
+# connect with manually defined password should successed
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest2 -c ls && ret=$(( $ret + $1 ))
+###
+
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
+[ $tmp -eq 0 ] || echo "SMB_USER failed"
+echo
+
+
 cleanup >/dev/null 2>&1
 
 exit $ret

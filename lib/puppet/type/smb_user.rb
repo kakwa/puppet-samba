@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:smb_user) do
 
   ensurable do
@@ -16,6 +18,11 @@ Puppet::Type.newtype(:smb_user) do
 
   newparam(:password) do
     desc 'password of the user'
+  end
+
+  newparam(:force_password, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc 'force the password value (if false, only set password at creation time)'
+    defaultto true
   end
 
   newparam(:groups) do

@@ -53,12 +53,14 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       @add_entry = true
       @modify_attr = true
     end
-    begin
-      command = [command(:sambaclient), '//localhost/netlogon', resource[:password], "-U#{resource[:name]}", '-c', 'ls']
-      output  = execute(command)
-      Puppet.debug(output)
-    rescue Puppet::ExecutionFailure => ex
-      @modify_password = true
+    if @add_entry == true or not resource[:force_password] and resource[:password].to_s != 0
+        begin
+          command = [command(:sambaclient), '//localhost/netlogon', resource[:password], "-U#{resource[:name]}", '-c', 'ls']
+          output  = execute(command)
+          Puppet.debug(output)
+        rescue Puppet::ExecutionFailure => ex
+          @modify_password = true
+        end
     end
     if resource[:groups].is_a? String
       groups = [resource[:groups]]
