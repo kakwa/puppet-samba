@@ -82,13 +82,13 @@ netstat -apn | grep ':464'; ret=$(( $ret + $? ))
 # check that we can connect
 smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || ret=1
 # reset password
-samba-tool 'user', setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || ret=1
+samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || ret=1
 # reapply (should not change the passowrd for user test2
 run tests/smb_user.pp "AD test failed"
 # connect with puppet defined password should fail
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && ret=$(( $ret + $1 ))
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && ret=$(( $ret + $? ))
 # connect with manually defined password should successed
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest2 -c ls && ret=$(( $ret + $1 ))
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest2 -c ls && ret=$(( $ret + $? ))
 ###
 
 echo
