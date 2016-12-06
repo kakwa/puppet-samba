@@ -53,7 +53,7 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
       @add_entry = true
       @modify_attr = true
     end
-    if @add_entry == true or not resource[:force_password] and resource[:password].to_s != 0
+    if @add_entry == true or not resource[:force_password] and resource[:password].to_s != ''
         begin
           command = [command(:sambaclient), '//localhost/netlogon', resource[:password], "-U#{resource[:name]}", '-c', 'ls']
           output  = execute(command)
@@ -82,7 +82,11 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
   def create
     if @add_entry
       begin
-        command = [command(:sambatool), 'user', 'create', resource[:name], resource[:password], '-d', '1']
+        if resource[:password].to_s != ''
+          command = [command(:sambatool), 'user', 'create', resource[:name], resource[:password], '-d', '1']
+        else
+          command = [command(:sambatool), 'user', 'create', resource[:name], '--random-password', '-d', '1']
+        end
         output = execute(command)
         Puppet.debug(output)
       rescue Puppet::ExecutionFailure => ex
