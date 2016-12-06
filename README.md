@@ -196,13 +196,15 @@ Adding users:
 
 ```puppet
 smb_user { 'test user':                       # * user name
-  ensure     => present,                      # * absent | present
-  password   => 'QwertyP455aaa',              # * user password
-  groups     => ['domain users',              # * list of groups
+  ensure         => present,                  # * absent | present
+  password       => 'QwertyP455aaa',          # * user password (default: random)
+  force_password => true,                     # * force password value, if false
+                                              #   only set at creation (default: true)
+  groups         => ['domain users',          # * list of groups (default: [])
      'administrators'],
   attributes => {                             # * hash of attributes
      uidNumber   => '15222',                  #   use list for multivalued attributes
-     gidNumber   => '10001',
+     gidNumber   => '10001',                  #   (default: {} (no attributes))
      msSFU30NisDomain => 'dc',
      mail => ['test@toto.fr'],
   },
@@ -462,7 +464,8 @@ Contribution must not raise errors from puppet-lint.
 
 0.7.3:
 
- * fix missing winbind package in dc class (Debian)
+ * fix dc deployment on Debian (needed cleaning of the /var/run/samba directory)
+ * add ```force_password``` parameter to ```smb_user``` resource to only set password at creation and not touch it after
 
 0.7.2:
 
