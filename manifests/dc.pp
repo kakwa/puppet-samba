@@ -192,6 +192,9 @@ ex: domain="ad" and realm="ad.example.com"')
     'Debian': {
         $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
     }
+    'Ubuntu': {
+        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
+    }
     default: {
         fail('unsupported os')
     }

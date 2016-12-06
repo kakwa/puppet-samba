@@ -72,7 +72,7 @@ class samba::params(
           if $::operatingsystem == 'Ubuntu' {
             $servivesmb          = 'smbd'
           } elsif ($::operatingsystem == 'Debian') and ($::operatingsystemmajrelease >= '8') {
-            $servivesmb          = 'samba'
+            $servivesmb          = 'smbd'
           } else {
             $servivesmb          = 'samba'
           }
