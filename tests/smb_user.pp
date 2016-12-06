@@ -69,18 +69,19 @@ ping -n 11 127.0.0.1 > nul
 
 smb_user { 'test':
   ensure     => present,
+  groups     => ['domain users', 'administrators'],
   attributes => {
     uidNumber        => '15221',
     gidNumber        => '15221',
     msSFU30NisDomain => 'dc',
     scriptPath       => 'login1.cmd',
   },
-  groups     => ['domain users', 'administrators'],
 }
 
 smb_user { 'test2':
-  ensure     => present,
-  password   => 'c0mPL3xe_P455woRd',
+  ensure         => present,
+  password       => 'c0mPL3xe_P455woRd',
+  groups         => ['domain users', 'administrators'],
   force_password => false,
   attributes => {
     uidNumber        => '15222',
@@ -88,7 +89,4 @@ smb_user { 'test2':
     msSFU30NisDomain => 'dc',
     scriptPath       => 'login1.cmd',
   },
-  groups     => ['domain users', 'administrators'],
 }
-
-
