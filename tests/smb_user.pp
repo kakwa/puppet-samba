@@ -81,9 +81,9 @@ smb_user { 'test':
 smb_user { 'test2':
   ensure         => present,
   password       => 'c0mPL3xe_P455woRd',
-  groups         => ['domain users', 'administrators'],
   force_password => false,
-  attributes => {
+  groups         => ['domain users', 'administrators'],
+  attributes     => {
     uidNumber        => '15222',
     gidNumber        => '15222',
     msSFU30NisDomain => 'dc',
