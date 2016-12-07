@@ -13,6 +13,7 @@ cleanup(){
     rm -f /usr/local/bin/additional-samba-tool
     rm -f /usr/local/bin/smb-create-home.sh
     rm -rf /var/run/samba/
+    rm -rf /srv/test
 }
 
 exit_error(){
