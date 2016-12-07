@@ -80,7 +80,7 @@ smb_user { 'test':
 
 smb_user { 'test2':
   ensure         => present,
-  password       => 'c0mpl3xe_p455word',
+  password       => 'c0mPL3xe_P455woRd',
   force_password => false,
   groups         => ['domain users', 'administrators'],
   attributes     => {
@@ -93,7 +93,7 @@ smb_user { 'test2':
 
 smb_user { 'test3':
   ensure         => present,
-  password       => 'c0mpl3xe_p455word',
+  password       => 'c0mPL3xe_P455woRd',
   force_password => true,
   groups         => ['domain users', 'administrators'],
   attributes     => {
