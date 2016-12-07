@@ -63,8 +63,8 @@ class { '::samba::classic':
   acl     =>
     [
       'group::rwx',
-      "group:nobody:rwx",
-      "group:puppet:r-x",
+      'group:nobody:rwx',
+      'group:puppet:r-x',
       'mask::rwx' ,
       'other::---',
       'user::rwx',
