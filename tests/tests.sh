@@ -82,9 +82,13 @@ netstat -apn | grep ':464' || exit_error "should listen on 464"
 smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || exit_error "failed to login 1 test2"
 # reset password
 samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
+samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
+samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
 samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
 # reapply (should not change the passowrd for user test2
 run tests/smb_user.pp "smb_user test failed (apply 2)"
+# need to remove authentication cache (otherwise old password works...)
+sleep 60
 # connect with puppet defined password should fail
 smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && exit_error "succeded to login (not expected) test2"
 # connect with manually defined password should successed
