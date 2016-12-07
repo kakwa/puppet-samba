@@ -462,6 +462,10 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.7.4:
+
+ * fix dependency error if manage_winbind is false
+
 0.7.3:
 
  * fix dc deployment on Debian (needed cleaning of the /var/run/samba directory)
