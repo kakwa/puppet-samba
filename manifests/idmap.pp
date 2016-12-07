@@ -75,19 +75,19 @@ define samba::idmap(
   $cp = "idmap config ${domain} :"
 
   if defined(Service['SambaSmb']){
-     $s_tmp_1 = [Service['SambaSmb']]
+    $s_tmp_1 = [Service['SambaSmb']]
   } else {
-     $s_tmp_1 = []
+    $s_tmp_1 = []
   }
   if defined(Service['SambaWinBind']){
-     $s_tmp_2 = [Service['SambaWinBind']]
+    $s_tmp_2 = [Service['SambaWinBind']]
   } else {
-     $s_tmp_2 = []
+    $s_tmp_2 = []
   }
   if defined(Service['SambaDC']){
-     $s_tmp_3 = [Service['SambaDC']]
+    $s_tmp_3 = [Service['SambaDC']]
   } else {
-     $s_tmp_3 = []
+    $s_tmp_3 = []
   }
 
   if defined(Package['SambaClassic']){
