@@ -15,13 +15,17 @@ cleanup(){
     rm -rf /var/run/samba/
 }
 
+exit_error(){
+    msg=$1
+    echo $msg
+    cleanup >/dev/null 2>&1
+    exit 1
+}
+
 run(){
     pp=$1
     message=$2
-    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/../ --debug --color=false
-    tmp=$?
-    [ $tmp -eq 0 ] || echo "$message"
-    ret=$(( $ret + $tmp ))
+    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/../ --color=false || exit_error "$message"
 }
 
 cd `dirname $0`/..
@@ -48,20 +52,15 @@ echo
 
 run tests/dc.pp "AD test failed"
 
-netstat -apn | grep ':389'; ret=$(( $ret + $? ))
-netstat -apn | grep ':53';  ret=$(( $ret + $? ))
-netstat -apn | grep ':636'; ret=$(( $ret + $? ))
-netstat -apn | grep ':464'; ret=$(( $ret + $? ))
+netstat -apn | grep ':389' || exit_error "should listen on 389"
+netstat -apn | grep ':53'  || exit_error "should listen on 53"
+netstat -apn | grep ':636' || exit_error "should listen on 636"
+netstat -apn | grep ':464' || exit_error "should listen on 464"
 
 echo
 echo "#####################################################"
 echo "#####################################################"
 echo
-[ $tmp -eq 0 ] || echo "AD doesn't have all listening ports"
-echo
-echo "#####################################################"
-echo "#####################################################"
-
 
 echo
 echo "#####################################################"
@@ -70,34 +69,33 @@ echo
 
 
 # testing password setting for samba AD password
-run tests/smb_user.pp "AD test failed"
+run tests/smb_user.pp "smb_user test failed (apply 1)"
 
-netstat -apn | grep ':389'; ret=$(( $ret + $? ))
-netstat -apn | grep ':53';  ret=$(( $ret + $? ))
-netstat -apn | grep ':636'; ret=$(( $ret + $? ))
-netstat -apn | grep ':464'; ret=$(( $ret + $? ))
+netstat -apn | grep ':389' || exit_error "should listen on 389"
+netstat -apn | grep ':53'  || exit_error "should listen on 53"
+netstat -apn | grep ':636' || exit_error "should listen on 636"
+netstat -apn | grep ':464' || exit_error "should listen on 464"
 
 ####
 # test the force_password = false setting
 # check that we can connect
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || ret=1
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || exit_error "failed to login 1 test2"
 # reset password
-samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || ret=1
+samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
+samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
 # reapply (should not change the passowrd for user test2
-run tests/smb_user.pp "AD test failed"
+run tests/smb_user.pp "smb_user test failed (apply 2)"
 # connect with puppet defined password should fail
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && ret=$(( $ret + $? ))
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && exit_error "succeded to login (not expected) test2"
 # connect with manually defined password should successed
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest2 -c ls && ret=$(( $ret + $? ))
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest2 -c ls || exit_error "failed to login 2 test2"
+smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest3 -c ls || exit_error "failed to login 2 test3"
 ###
 
 echo
 echo "#####################################################"
 echo "#####################################################"
 echo
-[ $tmp -eq 0 ] || echo "SMB_USER failed"
-echo
-
 
 cleanup >/dev/null 2>&1
 

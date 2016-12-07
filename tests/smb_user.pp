@@ -80,12 +80,25 @@ smb_user { 'test':
 
 smb_user { 'test2':
   ensure         => present,
-  password       => 'c0mPL3xe_P455woRd',
+  password       => 'c0mpl3xe_p455word',
   force_password => false,
   groups         => ['domain users', 'administrators'],
   attributes     => {
     uidNumber        => '15222',
     gidNumber        => '15222',
+    msSFU30NisDomain => 'dc',
+    scriptPath       => 'login1.cmd',
+  },
+}
+
+smb_user { 'test3':
+  ensure         => present,
+  password       => 'c0mpl3xe_p455word',
+  force_password => true,
+  groups         => ['domain users', 'administrators'],
+  attributes     => {
+    uidNumber        => '15223',
+    gidNumber        => '15223',
     msSFU30NisDomain => 'dc',
     scriptPath       => 'login1.cmd',
   },
