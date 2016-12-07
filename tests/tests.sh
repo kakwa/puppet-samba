@@ -80,7 +80,7 @@ netstat -apn | grep ':464' || exit_error "should listen on 464"
 # test the force_password = false setting
 # check that we can connect
 smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || exit_error "failed to login 1 test2"
-# reset password
+# reset password (don't know why, but it needs to be set 2 times to invalidate auth cache with previous password)
 samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
 samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
 samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
@@ -103,4 +103,18 @@ echo
 
 cleanup >/dev/null 2>&1
 
-exit $ret
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
+
+run tests/no_winbind.pp "winbind test failed"
+
+echo
+echo "#####################################################"
+echo "#####################################################"
+echo
+
+cleanup >/dev/null 2>&1
+
+exit 0
