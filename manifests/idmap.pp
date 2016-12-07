@@ -74,6 +74,30 @@ define samba::idmap(
 
   $cp = "idmap config ${domain} :"
 
+  if defined(Service['SambaSmb']){
+     $s_tmp_1 = [Service['SambaSmb']]
+  } else {
+     $s_tmp_1 = []
+  }
+  if defined(Service['SambaWinBind']){
+     $s_tmp_2 = [Service['SambaWinBind']]
+  } else {
+     $s_tmp_2 = []
+  }
+  if defined(Service['SambaDC']){
+     $s_tmp_3 = [Service['SambaDC']]
+  } else {
+     $s_tmp_3 = []
+  }
+
+  if defined(Package['SambaClassic']){
+    $package = Package['SambaClassic']
+  } elsif defined(Package['SambaDC']){
+    $package = Package['SambaDC']
+  }
+
+  $services = concat($s_tmp_1, $s_tmp_2, $s_tmp_3)
+
   case downcase($backend) {
     'ad': {
       unless $schema_mode {
@@ -117,7 +141,7 @@ define samba::idmap(
         path    => '/usr/bin:/bin:/sbin:/usr/bin',
         command => "net idmap secret ${domain} ${ldap_passwd} && \
 echo '${ldap_passwd}' | sha1sum >${hash_ldap}",
-        require => Service['SambaSmb', 'SambaWinBind'],
+        require => $services,
         unless  => "test \"`echo 'password' \
 | sha1sum`\" = \"`cat ${hash_ldap}`\"",
       }
@@ -155,8 +179,8 @@ echo '${ldap_passwd}' | sha1sum >${hash_ldap}",
   ::samba::option{ $idmapoptionsindex:
     options => $idmapoptions,
     section => 'global',
-    require => Package['SambaClassic'],
-    notify  => Service['SambaSmb', 'SambaWinBind'],
+    require => $package,
+    notify  => $services,
   }
 }
 
