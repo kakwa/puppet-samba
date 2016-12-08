@@ -47,12 +47,23 @@ node 'ad.example.org' {
       groups     => ['domain users', 'administrators'],
     }
 
-    smb_group { 'mygroup':
+    smb_group { 'wtest group':
       ensure     => present,
       scope      => 'Domain',
       type       => 'Security',
       attributes => {
         gidNumber        => '15222',
+        msSFU30NisDomain => 'dc',
+      },
+      groups     => ['domain users', 'administrators'],
+    }
+
+    smb_group { 'rtest group':
+      ensure     => present,
+      scope      => 'Domain',
+      type       => 'Security',
+      attributes => {
+        gidNumber        => '15223',
         msSFU30NisDomain => 'dc',
       },
       groups     => ['domain users', 'administrators'],

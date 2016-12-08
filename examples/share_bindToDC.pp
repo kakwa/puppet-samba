@@ -48,7 +48,7 @@ node 'share.example.org' {
 
   ::samba::share { 'Test Share':
     path    => '/srv/test/',
-    mode    => '0775',
+    mode    => '0750',
     owner   => 'root',
     group   => 'domain users',
     options => {
@@ -56,7 +56,16 @@ node 'share.example.org' {
       'browsable' => 'Yes',
       'read only' => 'No',
     },
-  }
+    acl     =>
+      [
+        'group::rwx',
+        'd:group:wtest group:rwx',
+        'd:group:rtest group:r-x',
+        'mask::rwx' ,
+        'other::---',
+        'user::rwx',
+      ],
+}
 
   ::samba::share { 'homes':
     path    => '/srv/home/home_%U',
