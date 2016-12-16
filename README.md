@@ -370,6 +370,17 @@ Note that configuring a '\*' domain seems necessary for Idmap to properly work.
 }
 ```
 
+### Multiple Realms
+
+```
+class { '::samba::classic':
+  default_realm => 'FOREST.EXAMPLE.COM'
+  additional_realms => [
+    'FOREST.EXAMPLE.COM'
+  ]
+}
+```
+
 ### Samba Shares
 
 #### Shares

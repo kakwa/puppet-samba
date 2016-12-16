@@ -9,7 +9,7 @@
  renew_lifetime = 7d
  forwardable = true
  rdns = false
- default_realm = <%= @realmuppercase %>
+ default_realm = <%= @_default_realm %>
  default_ccache_name = KEYRING:persistent:%{uid}
 
 [realms]
@@ -18,6 +18,17 @@
   admin_server = <%= @realmlowercase %>
  }
 
+<% @additional_realms.each do |realm| -%>
+ <%= realm.upcase %> = {
+  kdc = <%= realm.downcase %>
+  admin_server = <%= realm.downcase %>
+ }
+
+<% end -%>
 [domain_realm]
  .<%= @realmlowercase %> = <%= @realmuppercase %>
  <%= @realmlowercase %> = <%= @realmuppercase %>
+<% @additional_realms.each do |realm| -%>
+ .<%= realm.downcase %> = <%= realm.upcase %>
+ <%= realm.downcase %> = <%= realm.upcase %>
+<% end -%>
