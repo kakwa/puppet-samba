@@ -479,6 +479,8 @@ Contribution must not raise errors from puppet-lint.
 0.7.4:
 
  * fix dependency error if manage_winbind is false
+ * add possibility to configure multiples realms in krb5.conf (Thanks to Jan-Otto Kröpke)
+ * add some test scripts and scenarii
 
 0.7.3:
 
@@ -519,7 +521,7 @@ Contribution must not raise errors from puppet-lint.
 
 0.3.1:
  * fix namespace collision between puppetlabs-inifile and smb_file resource
- * adding examples
+ * add examples
 
 0.3.0:
  * remove useless --workgroup option in DC provisioning
@@ -527,7 +529,7 @@ Contribution must not raise errors from puppet-lint.
  * fix ppolicy class to be more robust to version changes
 
 0.2.0:
- * adding parameter adminuser for class **samba::classic**
+ * add parameter adminuser for class **samba::classic**
    default value (administrator) maintains the previous behaviour
 
 0.1.2:
