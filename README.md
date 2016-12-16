@@ -27,6 +27,7 @@
           * [hash](#idmap-hash)
           * [ldap](#idmap-ldap)
           * [tdb2](#idmap-tdb2)
+    * [Multiple Realms](#multiple-realms)
     * [Samba Shares](#samba-shares)
           * [Shares](#shares)
           * [Directories](#directories)
@@ -372,11 +373,13 @@ Note that configuring a '\*' domain seems necessary for Idmap to properly work.
 
 ### Multiple Realms
 
-```
+To add multiple realms in krb5.conf, use the following syntax:
+
+```puppet
 class { '::samba::classic':
   default_realm => 'FOREST.EXAMPLE.COM'
   additional_realms => [
-    'FOREST.EXAMPLE.COM'
+    'FOREST2.EXAMPLE.ORG'
   ]
 }
 ```
