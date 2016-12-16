@@ -54,6 +54,8 @@ class samba::classic(
   $globaloptions        = {},
   $globalabsentoptions  = [],
   $joinou               = undef,
+  $default_realm        = undef,
+  $additional_realms    = [],
 ) inherits ::samba::params{
 
 
@@ -84,9 +86,21 @@ class samba::classic(
     fail("role must be in [${checksecuritystr}]")
   }
 
+  if $additional_realms {
+    validate_array($additional_realms)
+  }
+
+  if $default_realm {
+    validate_string($default_realm)
+  }
+
+
   $realmlowercase = downcase($realm)
   $realmuppercase = upcase($realm)
   $globaloptsexclude = concat(keys($globaloptions), $globalabsentoptions)
+
+  $_default_realm = pick($default_realm, $realmuppercase)
+
 
   file { '/etc/samba/':
     ensure  => 'directory',
