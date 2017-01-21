@@ -476,6 +476,11 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+
+0.7.5:
+
+ * fix non determistic log setup with ruby <= 1.8 (Thanks to m4xp0w4)
+
 0.7.4:
 
  * fix dependency error if manage_winbind is false
