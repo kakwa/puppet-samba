@@ -49,6 +49,7 @@ class samba::classic(
   $manage_winbind       = true,
   $krbconf              = true,
   $nsswitch             = true,
+  $pam                  = false,
   $sambaclassloglevel   = undef,
   $logtosyslog          = false,
   $globaloptions        = {},
@@ -147,6 +148,58 @@ class samba::classic(
         onlyif  => 'get "*[self::database = \'passwd\']/service[2]" != winbind',
         lens    => 'Nsswitch.lns',
         incl    => $::samba::params::nsswitchconffile,
+      }
+    }
+
+    if $pam {
+      package{ 'SambaPamWinbind':
+        ensure => 'installed',
+        name   => $::samba::params::packagesambapamwinbind
+      }
+
+      if $krbconf {
+        $winbindauthargs = ['krb5_auth', 'krb5_ccache_type=FILE', 'cached_login', 'try_first_pass']
+      } else {
+        $winbindauthargs = ['cached_login', 'try_first_pass']
+      }
+
+      pam { 'samba pam winbind auth':
+        ensure    => present,
+        service   => 'system-auth',
+        type      => 'auth',
+        control   => 'sufficient',
+        module    => 'pam_winbind.so',
+        arguments => $winbindauthargs,
+        position  => 'before module pam_deny.so'
+      }
+
+      pam { 'samba pam winbind account':
+        ensure    => present,
+        service   => 'system-account',
+        type      => 'account',
+        control   => 'required',
+        module    => 'pam_winbind.so',
+        arguments => 'use_first_pass',
+        position  => 'before module pam_deny.so'
+      }
+
+      pam { 'samba pam winbind session':
+        ensure   => present,
+        service  => 'system-session',
+        type     => 'session',
+        control  => 'optional',
+        module   => 'pam_winbind.so',
+        position => 'after module pam_unix.so'
+      }
+
+      pam { 'samba pam winbind password':
+        ensure    => present,
+        service   => 'system-password',
+        type      => 'password',
+        control   => 'sufficient',
+        module    => 'pam_winbind.so',
+        arguments => ['use_authtok', 'try_first_pass'],
+        position  => 'before module pam_deny.so'
       }
     }
   }
