@@ -123,6 +123,11 @@ class samba::classic(
     }
 
     if $nsswitch {
+      package{ 'SambaNssWinbind':
+        ensure => 'installed',
+        name   => $::samba::params::packagesambansswinbind
+      }
+
       augeas{'samba nsswitch group':
         context => "/files/${::samba::params::nsswitchconffile}/",
         changes => [
