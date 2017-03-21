@@ -14,6 +14,7 @@ class samba::params(
           $packagesambaclient     = 'sernet-samba-client'
           $packagesambawinbind    = 'sernet-samba-winbind'
           $packagesambansswinbind = 'sernet-samba-libs'
+          $packagesambapamwinbind = 'sernet-samba-libs'
           $servivesambadc         = 'sernet-samba-ad'
           $servivesmb             = 'sernet-samba-smbd'
           $servivewinbind         = 'sernet-samba-winbindd'
@@ -31,6 +32,7 @@ class samba::params(
           $packagesambaclient     = 'sernet-samba-client'
           $packagesambawinbind    = 'sernet-samba-winbind'
           $packagesambansswinbind = 'sernet-samba-libs'
+          $packagesambapamwinbind = 'sernet-samba-libs'
           $servivesambadc         = 'sernet-samba-ad'
           $servivesmb             = 'sernet-samba-smbd'
           $servivewinbind         = 'sernet-samba-winbindd'
@@ -53,6 +55,7 @@ class samba::params(
           $packagesambaclassic    = 'samba'
           $packagesambawinbind    = 'samba-winbind'
           $packagesambansswinbind = 'samba-winbind-clients'
+          $packagesambapamwinbind = 'samba-winbind-clients'
           $packagesambaclient     = 'samba-client'
           # for now, this is not supported by Debian
           $servivesambadc         = undef
@@ -71,6 +74,7 @@ class samba::params(
           $packagesambaclassic    = 'samba'
           $packagesambawinbind    = 'winbind'
           $packagesambansswinbind = 'libnss-winbind'
+          $packagesambapamwinbind = 'libpam-winbind'
           $packagesambaclient     = 'smbclient'
           $servivesambadc         = 'samba-ad-dc'
           if $::operatingsystem == 'Ubuntu' {
