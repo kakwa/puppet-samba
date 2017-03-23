@@ -9,7 +9,8 @@
   "issues_url": "https://github.com/kakwa/puppet-samba/issues",
   "tags": ["samba", "fileserver", "cifs", "smb", "Domain", "Controller", "DC", "AD", "Active", "Directory"],
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 3.0.0"}
+    {"name":"puppetlabs-stdlib","version_requirement":">= 3.0.0"},
+    {"name":"augeasproviders_pam","version_requirement":">= 2.1.0"}
   ],
   "operatingsystem_support": [
     {
@@ -36,7 +37,8 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "14.04"
+        "14.04",
+        "16.04",
       ]
     }
   ]
