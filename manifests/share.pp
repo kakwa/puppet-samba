@@ -74,7 +74,7 @@ define samba::share(
         group        => $group,
         mode         => $mode,
         acl          => $acl,
-        file_options => $file_param,
+        file_options => $file_options,
       }
     }
 
