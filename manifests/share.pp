@@ -44,6 +44,7 @@ define samba::share(
   $group = 'root',
   $mode  = '0777',
   $acl   = undef,
+  $file_options = {},
   $manage_directory = true,
 ) {
 
@@ -68,11 +69,12 @@ define samba::share(
 
     if $manage_directory {
       ::samba::dir {$rootpath:
-        path  => $rootpath,
-        owner => $owner,
-        group => $group,
-        mode  => $mode,
-        acl   => $acl,
+        path         => $rootpath,
+        owner        => $owner,
+        group        => $group,
+        mode         => $mode,
+        acl          => $acl,
+        file_options => $file_param,
       }
     }
 

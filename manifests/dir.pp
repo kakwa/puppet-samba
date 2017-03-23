@@ -38,10 +38,11 @@
 
 define samba::dir(
   $path,
-  $owner = 'root',
-  $group = 'root',
-  $mode  = '1770',
-  $acl   = undef,
+  $owner        = 'root',
+  $group        = 'root',
+  $mode         = '1770',
+  $acl          = undef,
+  $file_options = {},
 ) {
 
   unless $path{
@@ -63,6 +64,7 @@ define samba::dir(
     owner   => $owner,
     group   => $group,
     mode    => $mode,
+    *       => $file_param,
   }
 
   if $acl {
