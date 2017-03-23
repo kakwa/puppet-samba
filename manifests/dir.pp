@@ -64,7 +64,7 @@ define samba::dir(
     owner   => $owner,
     group   => $group,
     mode    => $mode,
-    *       => $file_param,
+    *       => $file_options,
   }
 
   if $acl {
