@@ -31,6 +31,7 @@ run(){
 
 cd `dirname $0`/..
 puppet module install puppetlabs-stdlib --modulepath=`pwd`/../
+puppet module install herculesteam-augeasproviders_pam --modulepath=`pwd`/../
 
 echo
 echo "#####################################################"
