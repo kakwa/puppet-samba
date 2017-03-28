@@ -97,6 +97,6 @@ define samba::share(
   $absoptlist = prefix($absentoptions, $name)
   smb_setting { $absoptlist :
     ensure  => absent,
-    section => 'netlogon',
+    section => $name,
   }
 }
