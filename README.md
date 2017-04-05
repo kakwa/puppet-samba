@@ -477,6 +477,11 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.8.0:
+
+ * fix absentoptions handling in share definition
+ * fix add missing package libnss-winbind/samba-winbind-clients (thanks to Chris Roberts)
+ * add support for pam configuration (thanks to Chris Roberts)
 
 0.7.5:
 
