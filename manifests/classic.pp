@@ -152,9 +152,11 @@ class samba::classic(
     }
 
     if $pam {
-      package{ 'SambaPamWinbind':
-        ensure => 'installed',
-        name   => $::samba::params::packagesambapamwinbind
+      if ($::samba::params::packagesambapamwinbind != $::samba::params::packagesambansswinbind) and !$nsswitch {
+        package{ 'SambaPamWinbind':
+          ensure => 'installed',
+          name   => $::samba::params::packagesambapamwinbind
+        }
       }
 
       if $krbconf {
