@@ -152,7 +152,10 @@ class samba::classic(
     }
 
     if $pam {
-      if ($::samba::params::packagesambapamwinbind != $::samba::params::packagesambansswinbind) and !$nsswitch {
+      # Only add package here if different to the nss-winbind package,
+      # or nss and pam aren't both enabled, to avoid duplicate definition.
+      if ($::samba::params::packagesambapamwinbind != $::samba::params::packagesambansswinbind)
+      or !$nsswitch {
         package{ 'SambaPamWinbind':
           ensure => 'installed',
           name   => $::samba::params::packagesambapamwinbind
