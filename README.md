@@ -477,6 +477,10 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+0.8.1:
+
+* fix error on RHEL (pam-winbind and nss-winbind are in just one package) (Thanks to David Gardner)
+
 0.8.0:
 
  * fix absentoptions handling in share definition
