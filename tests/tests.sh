@@ -7,6 +7,7 @@ cleanup(){
     apt-get purge -y winbind
     apt-get purge -y samba-common
     apt-get autoremove -y
+    yum erase -y samba samba-common-libs samba-client-libs samba-common samba-libs samba-winbind samba-winbind-module
     pkill -9 samba
     pkill -9 smb
     pkill -9 nmb
