@@ -33,7 +33,7 @@ cd `dirname $0`/..
 mkdir `pwd`/modules
 puppet module install puppetlabs-stdlib --modulepath=`pwd`/modules
 puppet module install herculesteam-augeasproviders_pam --modulepath=`pwd`/modules
-ln -s ../ /modules/samba
+ln -s ../ ./modules/samba
 
 echo
 echo "#####################################################"
