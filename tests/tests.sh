@@ -26,7 +26,10 @@ exit_error(){
 run(){
     pp=$1
     message=$2
-    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/modules --color=false || exit_error "$message"
+    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/modules --color=false --detailed-exitcodes
+    ret=$?
+    [ $ret -eq 4 ] && exit_error "$message"
+    [ $ret -eq 6 ] && exit_error "$message"
 }
 
 cd `dirname $0`/..
