@@ -8,7 +8,7 @@ pipeline {
             node(label: 'root_centos-7') {
               sh 'git config --global user.email "jenkins@kakwa.fr";env | sort'
               sh 'git config --global user.name "jenkins@kakwa.fr"'
-              git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true, branch: '*')
+              git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true, branch: '${env.BRANCH_NAME}')
               sh 'git clean -fdx'
               sh 'export OS=centos-7; ./tests/tests.sh'
             }
@@ -19,7 +19,7 @@ pipeline {
             node(label: 'root_debian-8') {
               sh 'git config --global user.email "jenkins@kakwa.fr"'
               sh 'git config --global user.name "jenkins@kakwa.fr"'
-              git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true, branch: '*')
+              git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true, branch: '${env.BRANCH_NAME}')
               sh 'git clean -fdx'
               sh 'export OS=debian-8; ./tests/tests.sh'
             }
