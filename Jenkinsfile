@@ -14,7 +14,7 @@ pipeline {
             }
           },
           "Debian 8": {
-            node(label: 'debian-8') {
+            node(label: 'root_debian-8') {
               sh 'git config --global user.email "jenkins@kakwa.fr"'
               sh 'git config --global user.name "jenkins@kakwa.fr"'
               git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true)
