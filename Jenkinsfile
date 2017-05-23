@@ -10,7 +10,7 @@ pipeline {
               sh 'git config --global user.name "jenkins@kakwa.fr"'
               git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true)
               sh 'git clean -fdx'
-              sh 'export OS=centos-7; /bin/true'
+              sh 'export OS=centos-7; ./tests/tests.sh'
             }
           },
           "Debian 8": {
@@ -19,7 +19,7 @@ pipeline {
               sh 'git config --global user.name "jenkins@kakwa.fr"'
               git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true)
               sh 'git clean -fdx'
-              sh 'export OS=debian-8; /bin/true'
+              sh 'export OS=debian-8; ./tests/tests.sh'
             }
           }
         )

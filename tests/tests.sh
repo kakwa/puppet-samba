@@ -52,86 +52,90 @@ echo "#####################################################"
 echo "#####################################################"
 echo
 
-run tests/dc.pp "AD test failed"
 
-netstat -apn | grep ':389' || exit_error "should listen on 389"
-netstat -apn | grep ':53'  || exit_error "should listen on 53"
-netstat -apn | grep ':636' || exit_error "should listen on 636"
-netstat -apn | grep ':464' || exit_error "should listen on 464"
+if [ "$OS" = "debian-8" ]
+then
+    run tests/dc.pp "AD test failed"
+    
+    netstat -apn | grep ':389' || exit_error "should listen on 389"
+    netstat -apn | grep ':53'  || exit_error "should listen on 53"
+    netstat -apn | grep ':636' || exit_error "should listen on 636"
+    netstat -apn | grep ':464' || exit_error "should listen on 464"
+    
+    echo
+    echo "#####################################################"
+    echo "#####################################################"
+    echo
+    
+    echo
+    echo "#####################################################"
+    echo "#####################################################"
+    echo
+    
+    
+    # testing password setting for samba AD password
+    run tests/smb_user.pp "smb_user test failed (apply 1)"
+    
+    netstat -apn | grep ':389' || exit_error "should listen on 389"
+    netstat -apn | grep ':53'  || exit_error "should listen on 53"
+    netstat -apn | grep ':636' || exit_error "should listen on 636"
+    netstat -apn | grep ':464' || exit_error "should listen on 464"
+    
+    ####
+    # test the force_password = false setting
+    # check that we can connect
+    smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || exit_error "failed to login 1 test2"
+    # reset password (don't know why, but it needs to be set 2 times to invalidate auth cache with previous password)
+    samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
+    samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
+    samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
+    samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
+    # reapply (should not change the passowrd for user test2
+    run tests/smb_user.pp "smb_user test failed (apply 2)"
+    # need to remove authentication cache (otherwise old password works...)
+    sleep 60
+    # connect with puppet defined password should fail
+    smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && exit_error "succeded to login (not expected) test2"
+    # connect with manually defined password should successed
+    smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest2 -c ls || exit_error "failed to login 2 test2"
+    smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest3 -c ls || exit_error "failed to login 2 test3"
+    ###
+    
+    echo
+    echo "#####################################################"
+    echo "#####################################################"
+    echo
+    
+    cleanup >/dev/null 2>&1
+    
+    echo
+    echo "#####################################################"
+    echo "#####################################################"
+    echo
+    
+    run tests/no_winbind.pp "winbind test failed"
+    
+    echo
+    echo "#####################################################"
+    echo "#####################################################"
+    echo
+    
+    cleanup >/dev/null 2>&1
+    
+    echo
+    echo "#####################################################"
+    echo "#####################################################"
+    echo
+    
+    run tests/smb_acl.pp "acl test failed"
+    
+    echo
+    echo "#####################################################"
+    echo "#####################################################"
+    echo
 
-echo
-echo "#####################################################"
-echo "#####################################################"
-echo
-
-echo
-echo "#####################################################"
-echo "#####################################################"
-echo
-
-
-# testing password setting for samba AD password
-run tests/smb_user.pp "smb_user test failed (apply 1)"
-
-netstat -apn | grep ':389' || exit_error "should listen on 389"
-netstat -apn | grep ':53'  || exit_error "should listen on 53"
-netstat -apn | grep ':636' || exit_error "should listen on 636"
-netstat -apn | grep ':464' || exit_error "should listen on 464"
-
-####
-# test the force_password = false setting
-# check that we can connect
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls || exit_error "failed to login 1 test2"
-# reset password (don't know why, but it needs to be set 2 times to invalidate auth cache with previous password)
-samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
-samba-tool 'user' setpassword test2 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test2"
-samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
-samba-tool 'user' setpassword test3 --newpassword "c0mPL3xe_P455woRd2" -d 1 || exit_error "failed set password test3"
-# reapply (should not change the passowrd for user test2
-run tests/smb_user.pp "smb_user test failed (apply 2)"
-# need to remove authentication cache (otherwise old password works...)
-sleep 60
-# connect with puppet defined password should fail
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd" -Utest2 -c ls && exit_error "succeded to login (not expected) test2"
-# connect with manually defined password should successed
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest2 -c ls || exit_error "failed to login 2 test2"
-smbclient '//localhost/netlogon' "c0mPL3xe_P455woRd2" -Utest3 -c ls || exit_error "failed to login 2 test3"
-###
-
-echo
-echo "#####################################################"
-echo "#####################################################"
-echo
-
-cleanup >/dev/null 2>&1
-
-echo
-echo "#####################################################"
-echo "#####################################################"
-echo
-
-run tests/no_winbind.pp "winbind test failed"
-
-echo
-echo "#####################################################"
-echo "#####################################################"
-echo
-
-cleanup >/dev/null 2>&1
-
-echo
-echo "#####################################################"
-echo "#####################################################"
-echo
-
-run tests/smb_acl.pp "acl test failed"
-
-echo
-echo "#####################################################"
-echo "#####################################################"
-echo
-
-cleanup >/dev/null 2>&1
+    cleanup >/dev/null 2>&1
+fi
 
 
 exit 0
