@@ -26,12 +26,14 @@ exit_error(){
 run(){
     pp=$1
     message=$2
-    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/../ --color=false || exit_error "$message"
+    puppet apply --certname=ad.example.org $pp --modulepath=`pwd`/modules --color=false || exit_error "$message"
 }
 
 cd `dirname $0`/..
-puppet module install puppetlabs-stdlib --modulepath=`pwd`/../
-puppet module install herculesteam-augeasproviders_pam --modulepath=`pwd`/../
+mkdir `pwd`/modules
+puppet module install puppetlabs-stdlib --modulepath=`pwd`/modules
+puppet module install herculesteam-augeasproviders_pam --modulepath=`pwd`/modules
+ln -s .. /modules/puppet-samba
 
 echo
 echo "#####################################################"
