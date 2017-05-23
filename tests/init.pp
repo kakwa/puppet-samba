@@ -21,6 +21,7 @@ class { '::samba::classic':
   join_domain         => false,
   sambaloglevel       => 3,
   logtosyslog         => true,
+  manage_winbind      => false,
   sambaclassloglevel  => {
     'smb'     => 2,
     'idmap'   => 10,
