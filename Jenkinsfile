@@ -6,7 +6,7 @@ pipeline {
         parallel(
           "CentOS 7": {
             node(label: 'root_centos-7') {
-              sh 'git config --global user.email "jenkins@kakwa.fr"'
+              sh 'git config --global user.email "jenkins@kakwa.fr";env | sort'
               sh 'git config --global user.name "jenkins@kakwa.fr"'
               git(url: 'https://github.com/kakwa/puppet-samba', poll: true, changelog: true, branch: '*')
               sh 'git clean -fdx'
