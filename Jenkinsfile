@@ -12,6 +12,8 @@ pipeline {
               sh 'git clean -fdx'
               sh 'export OS=centos-7; ./tests/tests.sh'
             }
+            
+            
           },
           "Debian 8": {
             node(label: 'root_debian-8') {
@@ -21,6 +23,8 @@ pipeline {
               sh 'git clean -fdx'
               sh 'export OS=debian-8; ./tests/tests.sh'
             }
+            
+            
           }
         )
       }
