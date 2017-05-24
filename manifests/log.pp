@@ -29,6 +29,13 @@ define samba::log(
     fail('logtosyslog must be a boolean')
   }
 
+
+  if $sambaloglevel != undef {
+    $syslog_loglevel = "syslog@${sambaloglevel}"
+  } else {
+    $syslog_loglevel = "syslog"
+  }
+
   # Configure Loglevel
   unless member($settingsignored, 'log level'){
     smb_setting { 'global/log level':
@@ -41,45 +48,69 @@ define samba::log(
   }
 
   # If specify, configure syslog
+  notice("Samba version: $::samba_version")
   if $logtosyslog {
-    unless member($settingsignored, 'syslog'){
-      smb_setting { 'global/syslog':
-        ensure  => present,
-        path    => $::samba::params::smbconffile,
-        section => 'global',
-        setting => 'syslog',
-        value   => "${sambaloglevel}${logadditional}",
+    if versioncmp($::samba_version, '4.3.0') <= 0 {
+      unless member($settingsignored, 'syslog'){
+        smb_setting { 'global/syslog':
+          ensure  => present,
+          path    => $::samba::params::smbconffile,
+          section => 'global',
+          setting => 'syslog',
+          value   => "${sambaloglevel}${logadditional}",
+        }
       }
-    }
 
-    unless member($settingsignored, 'syslog only'){
-      smb_setting { 'global/syslog only':
-        ensure  => present,
-        path    => $::samba::params::smbconffile,
-        section => 'global',
-        setting => 'syslog only',
-        value   => 'yes',
+      unless member($settingsignored, 'syslog only'){
+        smb_setting { 'global/syslog only':
+          ensure  => present,
+          path    => $::samba::params::smbconffile,
+          section => 'global',
+          setting => 'syslog only',
+          value   => 'yes',
+        }
+      }
+    } else {
+      unless member($settingsignored, 'logging'){
+        smb_setting { 'global/logging':
+          ensure  => present,
+          path    => $::samba::params::smbconffile,
+          section => 'global',
+          setting => 'logging',
+          value   => $syslog_loglevel,
+        }
       }
     }
   }
   # If not, keep login ing file, and disable syslog
   else {
-    unless member($settingsignored, 'syslog only'){
-      smb_setting { 'global/syslog only':
-        ensure  => present,
-        path    => $::samba::params::smbconffile,
-        section => 'global',
-        setting => 'syslog only',
-        value   => 'no',
+    if versioncmp($::samba_version, '4.3.0') <= 0 {
+      unless member($settingsignored, 'syslog only'){
+        smb_setting { 'global/syslog only':
+          ensure  => present,
+          path    => $::samba::params::smbconffile,
+          section => 'global',
+          setting => 'syslog only',
+          value   => 'no',
+        }
       }
-    }
 
-    unless member($settingsignored, 'syslog'){
-      smb_setting { 'global/syslog':
-        ensure  => absent,
-        path    => $::samba::params::smbconffile,
-        section => 'global',
-        setting => 'syslog',
+      unless member($settingsignored, 'syslog'){
+        smb_setting { 'global/syslog':
+          ensure  => absent,
+          path    => $::samba::params::smbconffile,
+          section => 'global',
+          setting => 'syslog',
+        }
+      }
+    } else {
+      unless member($settingsignored, 'logging'){
+        smb_setting { 'global/logging':
+          ensure  => absent,
+          path    => $::samba::params::smbconffile,
+          section => 'global',
+          setting => 'logging',
+        }
       }
     }
   }
