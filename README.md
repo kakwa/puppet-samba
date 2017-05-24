@@ -451,7 +451,7 @@ If you want to create a DNS zone (most useful for creating the reverse zone afte
 If you want to create a DNS entry (most useful for creating the reverse DNS entries):
 
 ```puppet
-::samba::dc::dnszone { 'Reverse Entry':
+::samba::dc::dnsentry { 'Reverse Entry':
   # Mandatory parameters
   zone              => '0.168.192.in-addr.arpa'
   host              => '1'
@@ -503,6 +503,13 @@ If you have questions regarding how to use this module, don't hesitate to fill a
 Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
+
+0.9.0:
+
+* add logtosyslog option handling for samba >= 4.3.0
+* add custom fact samba_version to recover the available samba version
+* add params given_name and use_username_as_cn in smb_user resource (Thanks to Chris Roberts)
+* add samba::dc::dnszone and samba::dc::dnsentry classes (Thanks to Chris Roberts)
 
 0.8.1:
 
