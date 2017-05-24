@@ -33,7 +33,7 @@ define samba::log(
   if $sambaloglevel != undef {
     $syslog_loglevel = "syslog@${sambaloglevel}"
   } else {
-    $syslog_loglevel = "syslog"
+    $syslog_loglevel = 'syslog'
   }
 
   # Configure Loglevel
@@ -48,7 +48,6 @@ define samba::log(
   }
 
   # If specify, configure syslog
-  notice("Samba version: $::samba_version")
   if $logtosyslog {
     if versioncmp($::samba_version, '4.3.0') <= 0 {
       unless member($settingsignored, 'syslog'){
