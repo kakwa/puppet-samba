@@ -203,7 +203,9 @@ smb_user { 'test user':                       # * user name
                                               #   only set at creation (default: true)
   groups         => ['domain users',          # * list of groups (default: [])
      'administrators'],
-  attributes => {                             # * hash of attributes
+  given_name     => 'test user gn',           # * user given name (default: '')
+  use_username_as_cn => true,                 # * use username as cn (default: false)
+  attributes     => {                         # * hash of attributes
      uidNumber   => '15222',                  #   use list for multivalued attributes
      gidNumber   => '10001',                  #   (default: {} (no attributes))
      msSFU30NisDomain => 'dc',
