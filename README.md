@@ -433,6 +433,31 @@ If you want to create subdirectory in a share with specific permissions/acls:
 }
 ```
 
+#### DNS Zones 
+
+If you want to create a DNS zone (most useful for creating the reverse zone after DC creation):
+
+```puppet
+::samba::dc::dnszone { 'Reverse Zone':
+  # Mandatory parameters
+  zone              => '0.168.192.in-addr.arpa'
+}
+```
+
+#### DNS Entries
+
+If you want to create a DNS entry (most useful for creating the reverse DNS entries):
+
+```puppet
+::samba::dc::dnszone { 'Reverse Entry':
+  # Mandatory parameters
+  zone              => '0.168.192.in-addr.arpa'
+  host              => '1'
+  type              => 'PTR'
+  record            => 'dc.samdom.example.com.'
+}
+```
+
 ## Limitations
 
 class **samba::dc** (deploy Samba as a Domain Controller) needs Samba in version 4.0.0 or above.
