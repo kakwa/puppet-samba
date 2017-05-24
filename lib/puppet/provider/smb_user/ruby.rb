@@ -82,11 +82,21 @@ Puppet::Type.type(:smb_user).provide(:ruby) do
   def create
     if @add_entry
       begin
+        command = [command(:sambatool), 'user', 'create', resource[:name]]
         if resource[:password].to_s != ''
-          command = [command(:sambatool), 'user', 'create', resource[:name], resource[:password], '-d', '1']
+          command.push(resource[:password])
         else
-          command = [command(:sambatool), 'user', 'create', resource[:name], '--random-password', '-d', '1']
+          command.push('--random-password')
         end
+        if resource[:given_name].to_s != ''
+          command.push('--given-name')
+          command.push(resource[:given_name])
+        end
+        if resource[:use_username_as_cn]
+          command.push('--use-username-as-cn')
+        end
+        command.push('-d')
+        command.push('1')
         output = execute(command)
         Puppet.debug(output)
       rescue Puppet::ExecutionFailure => ex

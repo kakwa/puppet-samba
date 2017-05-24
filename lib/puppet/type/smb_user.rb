@@ -11,6 +11,16 @@ Puppet::Type.newtype(:smb_user) do
     desc 'Name of the user'
   end
 
+  newparam(:use_username_as_cn, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc 'Force use of username as user\'s CN'
+    defaultto false
+  end
+
+  newparam(:given_name) do
+    desc 'User\'s given name'
+    defaultto ''
+  end
+
   newparam(:attributes) do
     desc 'hash of attributes'
     defaultto {}
