@@ -466,30 +466,14 @@ class **samba::dc** (deploy Samba as a Domain Controller) needs Samba in version
 
 This version is available in Debian Jessie and above, or in Wheezy using Debian backports.
 
-As of march 2015, CentOS/RedHat doesn't support Samba 4 AD DC due to choices in kerberos implementations.
-If you plan to deploy Samba as a DC on CentOS/RedHat use the Sernet Packages.
+As of May 2017, CentOS/RedHat doesn't support Samba 4 AD DC due to choices in kerberos implementations.
 
-To access Sernet Repositories, you must register on [Sernet Portal](https://portal.enterprisesamba.com/users/sign_up).
-Once it's done, you should have access to your *ACCESSKEY*. Use it and your USERNAME to configure the repo:
+If you plan to deploy Samba as a DC on CentOS/RedHat you will need to build samba yourself.
+Another possibility is to use the [Samba+ Sernet Packages](https://shop.samba.plus/) which requires a paid subscription.
 
-sernet-samba-4.1.repo:
-```ini
-[sernet-samba-4.1]
-name=SerNet Samba 4.1 Packages (centos-7)
-type=rpm-md
-baseurl=https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/centos/7/
-gpgcheck=1
-gpgkey=https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/centos/7/repodata/repomd.xml.key
-enabled=1
-```
-
-sernet-samba-4.1.list:
-```yml
-deb https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/debian wheezy main
-deb-src https://USERNAME:ACCESSKEY@download.sernet.de/packages/samba/4.1/debian wheezy main
-```
-
-This module will not configure the repository, you have to do it otherwise.
+Formerly, this Puppet module handled installing Samba from the free packages Sernet packages, these packages are EOL and
+are no longer available. For security reasons please be advised to migrate to a properly maintained solution
+(samba+ subscription, Debian/Ubuntu, self-maintained samba package).
 
 ## Development
 

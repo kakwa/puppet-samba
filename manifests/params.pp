@@ -7,47 +7,7 @@ class samba::params(
     fail('sernetpkgs variable must be a boolean')
   }
   if $sernetpkgs {
-    case $::osfamily {
-      'redhat': {
-          $packagesambadc         = 'sernet-samba-ad'
-          $packagesambaclassic    = 'sernet-samba'
-          $packagesambaclient     = 'sernet-samba-client'
-          $packagesambawinbind    = 'sernet-samba-winbind'
-          $packagesambansswinbind = 'sernet-samba-libs'
-          $packagesambapamwinbind = 'sernet-samba-libs'
-          $servivesambadc         = 'sernet-samba-ad'
-          $servivesmb             = 'sernet-samba-smbd'
-          $servivewinbind         = 'sernet-samba-winbindd'
-          $sambacmd               = '/usr/bin/samba-tool'
-          $sambaclientcmd         = '/usr/bin/smbclient'
-          $sambaoptsfile          = '/etc/default/sernet-samba'
-          $sambaoptstmpl          = "${module_name}/sernet-samba.erb"
-          $smbconffile            = '/etc/samba/smb.conf'
-          $krbconffile            = '/etc/krb5.conf'
-          $packagepyyaml          = 'PyYAML'
-      }
-      'Debian': {
-          $packagesambadc         = 'sernet-samba-ad'
-          $packagesambaclassic    = 'sernet-samba'
-          $packagesambaclient     = 'sernet-samba-client'
-          $packagesambawinbind    = 'sernet-samba-winbind'
-          $packagesambansswinbind = 'sernet-samba-libs'
-          $packagesambapamwinbind = 'sernet-samba-libs'
-          $servivesambadc         = 'sernet-samba-ad'
-          $servivesmb             = 'sernet-samba-smbd'
-          $servivewinbind         = 'sernet-samba-winbindd'
-          $sambacmd               = '/usr/bin/samba-tool'
-          $sambaclientcmd         = '/usr/bin/smbclient'
-          $sambaoptsfile          = '/etc/default/sernet-samba'
-          $sambaoptstmpl          = "${module_name}/sernet-samba.erb"
-          $smbconffile            = '/etc/samba/smb.conf'
-          $krbconffile            = '/etc/krb5.conf'
-          $packagepyyaml          = 'python-yaml'
-      }
-      default: {
-          fail('unsupported os')
-      }
-    }
+    fail('sernetpkgs is not supported anymore as these packages are EOL')
   }else{
     case $::osfamily {
       'redhat': {
