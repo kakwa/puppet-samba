@@ -473,6 +473,10 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+1.0.0:
+
+* Remove support for the Sernet packages (these packages are EOL and no longer available)
+
 0.9.0:
 
 * add logtosyslog option handling for samba >= 4.3.0
