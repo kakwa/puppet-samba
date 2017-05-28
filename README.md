@@ -12,7 +12,6 @@
     * [Setup requirements](#setup-requirements)
 3. [Usage](#usage)
     * [Examples](#examples)
-    * [Packages](#packages)
     * [Samba Domain Controller](#samba-4-ad-domain-controler)
     * [Samba Domain Controller: Domain Controller](#domain-controller)
     * [Samba Domain Controller: Password Policy](#password-policy)
@@ -73,20 +72,6 @@ This module requires puppetlabs-stdlib module.
 ### Examples
 
 Look at the [examples](https://github.com/kakwa/puppet-samba/tree/master/examples) directory.
-
-### Packages
-
-This module permits to choose between native distribution packages or Sernet (Samba developers) packages:
-
-```puppet
-class { 'samba::params':
-  sernetpkgs => true, # enable sernet packages (default: false)
-}
-```
-
-If this class is undeclared, the default behavior is to use native distribution packages. (see [Limitations](#limitations) for CentOS/RedHat)
-
-If the Sernet packages are used, please configure a repository containing these packages.
 
 ### Samba 4 AD Domain Controller
 
