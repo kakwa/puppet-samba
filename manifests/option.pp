@@ -4,6 +4,7 @@ define samba::option(
       $options,
       $section,
       $settingsignored = [],
+      $smbconffile = $::samba::params::smbconffile,
 ){
   $optionssetting = regsubst($title, '^\[.*\](.*)$', '\1')
   $optionsvalue   = $options[$optionssetting]
@@ -11,7 +12,7 @@ define samba::option(
   unless member($settingsignored, $optionssetting){
     smb_setting { "${section}/${optionssetting}":
       ensure            => present,
-      path              => $::samba::params::smbconffile,
+      path              => $smbconffile,
       section           => $section,
       setting           => $optionssetting,
       value             => $optionsvalue,

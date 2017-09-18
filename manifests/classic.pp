@@ -37,26 +37,36 @@
 #
 
 class samba::classic(
-  $smbname              = undef,
-  $domain               = undef,
-  $realm                = undef,
-  $strictrealm          = true,
-  $adminuser            = 'administrator',
-  $adminpassword        = undef,
-  $security             = 'ads',
-  $sambaloglevel        = 1,
-  $join_domain          = true,
-  $manage_winbind       = true,
-  $krbconf              = true,
-  $nsswitch             = true,
-  $pam                  = false,
-  $sambaclassloglevel   = undef,
-  $logtosyslog          = false,
-  $globaloptions        = {},
-  $globalabsentoptions  = [],
-  $joinou               = undef,
-  $default_realm        = undef,
-  $additional_realms    = [],
+  $smbname                = undef,
+  $domain                 = undef,
+  $realm                  = undef,
+  $strictrealm            = true,
+  $adminuser              = 'administrator',
+  $adminpassword          = undef,
+  $security               = 'ads',
+  $sambaloglevel          = 1,
+  $join_domain            = true,
+  $manage_winbind         = true,
+  $krbconf                = true,
+  $nsswitch               = true,
+  $pam                    = false,
+  $sambaclassloglevel     = undef,
+  $logtosyslog            = false,
+  $globaloptions          = {},
+  $globalabsentoptions    = [],
+  $joinou                 = undef,
+  $default_realm          = undef,
+  $additional_realms      = [],
+  $packagesambaclassic    = $::samba::params::packagesambaclassic,
+  $packagesambawinbind    = $::samba::params::packagesambawinbind,
+  $packagesambansswinbind = $::samba::params::packagesambansswinbind,
+  $packagesambapamwinbind = $::samba::params::packagesambapamwinbind,
+  $servivesmb             = $::samba::params::servivesmb,
+  $servivewinbind         = $::samba::params::servivewinbind,
+  $sambaoptsfile          = $::samba::params::sambaoptsfile,
+  $sambaoptstmpl          = $::samba::params::sambaoptstmpl,
+  $smbconffile            = $::samba::params::smbconffile,
+  $krbconffile            = $::samba::params::krbconffile,
 ) inherits ::samba::params{
 
 
@@ -109,13 +119,13 @@ class samba::classic(
 
   file { '/etc/samba/smb_path':
     ensure  => 'present',
-    content => $::samba::params::smbconffile,
+    content => $smbconffile,
     require => File['/etc/samba/'],
   }
 
   if $join_domain {
     if $krbconf {
-      file {$::samba::params::krbconffile:
+      file {$krbconffile:
         ensure  => present,
         mode    => '0644',
         content => template("${module_name}/krb5.conf.erb"),
@@ -126,7 +136,7 @@ class samba::classic(
     if $nsswitch {
       package{ 'SambaNssWinbind':
         ensure => 'installed',
-        name   => $::samba::params::packagesambansswinbind
+        name   => $packagesambansswinbind
       }
 
       augeas{'samba nsswitch group':
@@ -154,11 +164,11 @@ class samba::classic(
     if $pam {
       # Only add package here if different to the nss-winbind package,
       # or nss and pam aren't both enabled, to avoid duplicate definition.
-      if ($::samba::params::packagesambapamwinbind != $::samba::params::packagesambansswinbind)
+      if ($packagesambapamwinbind != $packagesambansswinbind)
       or !$nsswitch {
         package{ 'SambaPamWinbind':
           ensure => 'installed',
-          name   => $::samba::params::packagesambapamwinbind
+          name   => $packagesambapamwinbind
         }
       }
 
@@ -211,13 +221,13 @@ class samba::classic(
 
   package{ 'SambaClassic':
     ensure => 'installed',
-    name   => $::samba::params::packagesambaclassic,
+    name   => $packagesambaclassic,
   }
 
   if $manage_winbind {
     package{ 'SambaClassicWinBind':
       ensure  => 'installed',
-      name    => $::samba::params::packagesambawinbind,
+      name    => $packagesambawinbind,
       require => File['/etc/samba/smb_path'],
     }
     Package['SambaClassicWinBind'] -> Package['SambaClassic']
@@ -225,7 +235,7 @@ class samba::classic(
 
   service{ 'SambaSmb':
     ensure  => 'running',
-    name    => $::samba::params::servivesmb,
+    name    => $servivesmb,
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
     enable  => true,
   }
@@ -233,7 +243,7 @@ class samba::classic(
   if $manage_winbind {
     service{ 'SambaWinBind':
       ensure  => 'running',
-      name    => $::samba::params::servivewinbind,
+      name    => $servivewinbind,
       require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
       enable  => true,
     }
@@ -241,8 +251,8 @@ class samba::classic(
   $sambamode = 'classic'
   # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
   file{ 'SambaOptsFile':
-    path    => $::samba::params::sambaoptsfile,
-    content => template($::samba::params::sambaoptstmpl),
+    path    => $sambaoptsfile,
+    content => template($sambaoptstmpl),
     require => Package['SambaClassic'],
   }
 
