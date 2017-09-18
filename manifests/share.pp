@@ -45,6 +45,7 @@ define samba::share(
   $mode  = '0777',
   $acl   = undef,
   $manage_directory = true,
+  $smbconffile = $::samba::params::smbconffile,
 ) {
 
   if defined(Package['SambaClassic']){
@@ -77,7 +78,7 @@ define samba::share(
     }
 
     smb_setting { "${name}/path":
-      path    => $::samba::params::smbconffile,
+      path    => $smbconffile,
       section => $name,
       setting => 'path',
       value   => $path,
