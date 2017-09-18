@@ -5,7 +5,7 @@ define samba::log(
   $logtosyslog,
   $settingsignored,
   $sambaclassloglevel = undef,
-  $smbconffile = $::samba:params::smbconffile,
+  $smbconffile = $::samba::params::smbconffile,
 ) {
 
   unless is_integer($sambaloglevel)

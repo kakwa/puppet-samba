@@ -62,7 +62,7 @@ class samba::dc(
   $servivesambadc        = $::samba::params::servivesambadc,
   $servivesmb            = $::samba::params::servivesmb,
   $sambacmd              = $::samba::params::sambacmd,
-  $sambaclientcmd        = $::samba::params::sambaclientcmd.
+  $sambaclientcmd        = $::samba::params::sambaclientcmd,
   $sambaoptsfile         = $::samba::params::sambaoptsfile,
   $sambaoptstmpl         = $::samba::params::sambaoptstmpl,
   $smbconffile           = $::samba::params::smbconffile,

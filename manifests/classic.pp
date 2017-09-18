@@ -59,8 +59,8 @@ class samba::classic(
   $additional_realms      = [],
   $packagesambaclassic    = $::samba::params::packagesambaclassic,
   $packagesambawinbind    = $::samba::params::packagesambawinbind,
-  $packagesambansswinbind = $::samba::params::packagesambansswinbind
-  $packagesambapamwinbind = $::samba::params::packagesambapamwinbind
+  $packagesambansswinbind = $::samba::params::packagesambansswinbind,
+  $packagesambapamwinbind = $::samba::params::packagesambapamwinbind,
   $servivesmb             = $::samba::params::servivesmb,
   $servivewinbind         = $::samba::params::servivewinbind,
   $sambaoptsfile          = $::samba::params::sambaoptsfile,
