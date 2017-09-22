@@ -53,8 +53,8 @@ define samba::dir(
 
   exec {"Create path ${rootpath}":
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "test -e '${rootpath}'",
     command => "mkdir -p '${rootpath}'",
+    creates => '${rootpath}',
   }
 
   file {$rootpath:
