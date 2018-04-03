@@ -56,6 +56,7 @@ class samba::dc(
   $globalabsentoptions                                            = [],
   $netlogonabsentoptions                                          = [],
   $sysvolabsentoptions                                            = [],
+  Optional[String] $cleanup                                       = undef,
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -184,26 +185,15 @@ ex: domain="ad" and realm="ad.example.com"')
   # the debian package and the init script in debian are a bit crappy and
   # don't track the processes properly and start the samba service by
   # default
-  case $::osfamily {
-    'redhat': {
-        $cleanup = '/bin/true'
+  if $cleanup {
+    exec{ 'CleanService':
+      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+      unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
+      command => $cleanup,
+      require => Package['SambaDC'],
+      before  => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
     }
-    'Debian': {
-        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
-    }
-    'Ubuntu': {
-        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
-    }
-    default: {
-        fail('unsupported os')
-    }
-  }
-  exec{ 'CleanService':
-    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
-    command => $cleanup,
-    require => Package['SambaDC'],
-    notify  => Service['SambaDC'],
   }
 
   # Provision the Domain Controler
@@ -216,7 +206,6 @@ ${::samba::params::sambacmd} domain provision ${hostip} \
 --targetdir='${targetdir}' --use-rfc2307 \
 --configfile='${::samba::params::smbconffile}' --server-role='${role}' ${domainprovargs} -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
-    require => Exec['CleanService'],
     notify  => Service['SambaDC'],
   }
 
