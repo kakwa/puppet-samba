@@ -67,7 +67,7 @@ define samba::share(
     validate_absolute_path($rootpath)
 
     if $manage_directory {
-      ::samba::dir {$rootpath:
+      samba::dir {$rootpath:
         path  => $rootpath,
         owner => $owner,
         group => $group,
@@ -87,7 +87,7 @@ define samba::share(
   }
 
   $optionsindex = prefix(keys($options), "[${name}]")
-  ::samba::option{ $optionsindex:
+  samba::option{ $optionsindex:
     options => $options,
     section => $name,
     require => $require,
