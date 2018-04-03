@@ -37,26 +37,26 @@
 #
 
 class samba::classic(
-  $smbname              = undef,
-  $domain               = undef,
-  $realm                = undef,
-  $strictrealm          = true,
-  $adminuser            = 'administrator',
-  $adminpassword        = undef,
-  $security             = 'ads',
-  $sambaloglevel        = 1,
-  $join_domain          = true,
-  $manage_winbind       = true,
-  $krbconf              = true,
-  $nsswitch             = true,
-  $pam                  = false,
-  $sambaclassloglevel   = undef,
-  $logtosyslog          = false,
-  $globaloptions        = {},
-  $globalabsentoptions  = [],
-  $joinou               = undef,
-  $default_realm        = undef,
-  $additional_realms    = [],
+  $smbname                        = undef,
+  $domain                         = undef,
+  $realm                          = undef,
+  $strictrealm                    = true,
+  $adminuser                      = 'administrator',
+  $adminpassword                  = undef,
+  $security                       = 'ads',
+  $sambaloglevel                  = 1,
+  $join_domain                    = true,
+  $manage_winbind                 = true,
+  $krbconf                        = true,
+  $nsswitch                       = true,
+  $pam                            = false,
+  $sambaclassloglevel             = undef,
+  $logtosyslog                    = false,
+  $globaloptions                  = {},
+  $globalabsentoptions            = [],
+  $joinou                         = undef,
+  Optional[String] $default_realm = undef,
+  Array $additional_realms        = [],
 ) inherits samba::params{
 
 
@@ -85,14 +85,6 @@ class samba::classic(
 
   unless member($checksecurity, downcase($security)){
     fail("role must be in [${checksecuritystr}]")
-  }
-
-  if $additional_realms {
-    validate_array($additional_realms)
-  }
-
-  if $default_realm {
-    validate_string($default_realm)
   }
 
 

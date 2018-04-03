@@ -1,17 +1,11 @@
 # log resource
 
 define samba::log(
-  $sambaloglevel,
-  $logtosyslog,
+  Integer[0,10] $sambaloglevel,
+  Boolean $logtosyslog,
   $settingsignored,
   $sambaclassloglevel = undef,
 ) {
-
-  unless is_integer($sambaloglevel)
-    and ($sambaloglevel + 0) >= 0
-    and ($sambaloglevel + 0) <= 10{
-    fail('loglevel must be an integer between 0 and 10')
-  }
 
   $classlist = $samba::params::logclasslist
   $classliststr = join($classlist, ', ')
@@ -25,10 +19,6 @@ define samba::log(
   }else {
     $logadditional = ''
   }
-  unless is_bool($logtosyslog){
-    fail('logtosyslog must be a boolean')
-  }
-
 
   if $sambaloglevel != undef {
     $syslog_loglevel = "syslog@${sambaloglevel}"

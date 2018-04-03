@@ -37,25 +37,25 @@
 #
 
 class samba::dc(
-  $domain                = undef,
-  $realm                 = undef,
-  $dnsbackend            = 'internal',
-  $dnsforwarder          = undef,
-  $adminpassword         = undef,
-  $role                  = 'dc',
-  $targetdir             = '/var/lib/samba/',
-  $domainlevel           = '2003',
-  $domainprovargs        = '',
-  $sambaloglevel         = 1,
-  $ip                    = undef,
-  $logtosyslog           = false,
-  $sambaclassloglevel    = undef,
-  $globaloptions         = {},
-  $netlogonoptions       = {},
-  $sysvoloptions         = {},
-  $globalabsentoptions   = [],
-  $netlogonabsentoptions = [],
-  $sysvolabsentoptions   = [],
+  $domain                                    = undef,
+  $realm                                     = undef,
+  $dnsbackend                                = 'internal',
+  Optional[Stdlib::Ip_address] $dnsforwarder = undef,
+  $adminpassword                             = undef,
+  $role                                      = 'dc',
+  Stdlib::Absolutepath $targetdir            = '/var/lib/samba/',
+  $domainlevel                               = '2003',
+  $domainprovargs                            = '',
+  $sambaloglevel                             = 1,
+  $ip                                        = undef,
+  $logtosyslog                               = false,
+  $sambaclassloglevel                        = undef,
+  $globaloptions                             = {},
+  $netlogonoptions                           = {},
+  $sysvoloptions                             = {},
+  $globalabsentoptions                       = [],
+  $netlogonabsentoptions                     = [],
+  $sysvolabsentoptions                       = [],
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -109,10 +109,6 @@ must be in ["2003", "2008", "2008 R2"]')
 ex: domain="ad" and realm="ad.example.com"')
   }
 
-  unless $dnsforwarder == undef or is_ip_address($dnsforwarder){
-    fail('dns forwarder must be a valid IP address')
-  }
-
   if defined(Service['SambaSmb']) or defined(Service['SambaWinBind']){
     fail('Can\'t use samba::dc and samba::classic on the same node')
   }
@@ -132,14 +128,12 @@ ex: domain="ad" and realm="ad.example.com"')
     $hostip=''
   }
 
-  validate_absolute_path($targetdir)
-
   $realmdowncase = downcase($realm)
 
   $scriptdir = smb_clean_path(
     "${targetdir}/state/sysvol/${realmdowncase}/scripts/"
   )
-  validate_absolute_path($scriptdir)
+  assert_type(Stdlib::Absolutepath, $scriptdir)
 
   $globaloptsexclude   = concat(keys($globaloptions), $globalabsentoptions)
   $netlogonoptsexclude = concat(keys($netlogonoptions), $netlogonabsentoptions)

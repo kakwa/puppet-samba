@@ -37,33 +37,28 @@
 #
 
 define samba::idmap(
-    $domain               = undef,
-    $idrangemin           = undef,
-    $idrangemax           = undef,
-    $backend              = undef,
-    $schema_mode          = undef,
-    $rangesize            = 100000,
-    $read_only            = 'no',
-    $ignore_builtin       = 'no',
-    $name_map             = undef,
-    $ldap_base_dn         = undef,
-    $ldap_user_dn         = undef,
-    $ldap_url             = undef,
-    $ldap_passwd          = undef,
-    $script               = undef,
-    ) {
+    Integer $idrangemin,
+    Integer $idrangemax,
+    String $domain  = undef,
+    $backend        = undef,
+    $schema_mode    = undef,
+    $rangesize      = 100000,
+    $read_only      = 'no',
+    $ignore_builtin = 'no',
+    $name_map       = undef,
+    $ldap_base_dn   = undef,
+    $ldap_user_dn   = undef,
+    $ldap_url       = undef,
+    $ldap_passwd    = undef,
+    $script         = undef,
+) {
 
-  unless is_integer($idrangemin)
-    and is_integer($idrangemax)
-    and $idrangemin >= 0
+  unless $idrangemin >= 0
     and $idrangemax >= $idrangemin {
       fail('idrangemin and idrangemax must be integers \
           and idrangemin <= idrangemax')
     }
 
-  unless $domain{
-    fail('domain must be a valid domain or *')
-  }
 
   $checkbackend = ['ad', 'autorid', 'hash', 'ldap', 'nss', 'rid', 'tdb2', 'tdb']
   $checkbackendstr = join($checkbackend, ', ')

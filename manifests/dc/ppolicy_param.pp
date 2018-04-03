@@ -3,7 +3,7 @@
 define samba::dc::ppolicy_param(
   $option,
   $show_string,
-  $value,
+  String $value,
 ){
 
   validate_re(
@@ -20,10 +20,6 @@ a valid 'samba-tool domain passwordsettings' option",
 and be the string in 'samba-tool domain passwordsettings show' \
 corresponding to option",
   )
-
-  unless $value {
-    fail('value must not be empty')
-  }
 
   exec{"cmd_ppolicy_param ${option}":
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',

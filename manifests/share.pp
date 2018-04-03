@@ -64,7 +64,7 @@ define samba::share(
 
   unless member(concat(keys($options), $absentoptions), 'path'){
     $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
-    validate_absolute_path($rootpath)
+    assert_type(Stdlib::Absolutepath, $rootpath)
 
     if $manage_directory {
       samba::dir {$rootpath:
