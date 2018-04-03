@@ -37,12 +37,8 @@
 #
 
 define samba::dc::dnszone(
-    $zone                 = undef,
-    ) {
-
-  unless $zone{
-    fail('zone must be a valid domain')
-  }
+  String $zone                 = undef,
+) {
 
   exec { "dnszone ${title}":
     path    => '/bin:/usr/sbin:/usr/bin',

@@ -37,27 +37,11 @@
 #
 
 define samba::dc::dnsentry(
-    $zone                 = undef,
-    $host                 = undef,
-    $type                 = undef,
-    $record               = undef,
-    ) {
-
-  unless $zone{
-    fail('zone must be a valid domain')
-  }
-
-  unless $host{
-    fail('host must be a valid hostname')
-  }
-
-  unless $type{
-    fail('type must be a valid dns record type')
-  }
-
-  unless $record{
-    fail('record must be a valid dns record')
-  }
+  String $zone  = undef,
+  String $host  = undef,
+  String $type  = undef,
+  String$record = undef,
+) {
 
   exec { "dnsentry ${title}":
     path    => '/bin:/usr/sbin:/usr/bin',

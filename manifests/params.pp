@@ -1,11 +1,8 @@
 # default parameters
 
 class samba::params(
-  $sernetpkgs = false,
+  Boolean $sernetpkgs = false,
 ){
-  unless is_bool($sernetpkgs){
-    fail('sernetpkgs variable must be a boolean')
-  }
   if $sernetpkgs {
     fail('sernetpkgs is not supported anymore as these packages are EOL')
   }else{
