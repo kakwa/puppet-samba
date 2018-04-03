@@ -9,7 +9,7 @@ class samba::params(
   if $sernetpkgs {
     fail('sernetpkgs is not supported anymore as these packages are EOL')
   }else{
-    case $::osfamily {
+    case $facts['os']['family'] {
       'redhat': {
           $packagesambadc         = 'samba-dc'
           $packagesambaclassic    = 'samba'
@@ -37,9 +37,9 @@ class samba::params(
           $packagesambapamwinbind = 'libpam-winbind'
           $packagesambaclient     = 'smbclient'
           $servivesambadc         = 'samba-ad-dc'
-          if $::operatingsystem == 'Ubuntu' {
+          if $facts['os']['name'] == 'Ubuntu' {
             $servivesmb           = 'smbd'
-          } elsif ($::operatingsystem == 'Debian') and ($::operatingsystemmajrelease >= '8') {
+          } elsif ($facts['os']['name'] == 'Debian') and ($facts['os']['release']['major'] >= '8') {
             $servivesmb           = 'smbd'
           } else {
             $servivesmb           = 'samba'
