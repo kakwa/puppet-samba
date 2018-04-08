@@ -26,10 +26,10 @@ class { '::samba::dc':
 class { '::samba::dc::ppolicy':
   ppolicycomplexity    => 'on',
   ppolicyplaintext     => 'off',
-  ppolicyhistorylength => 12,
-  ppolicyminpwdlength  => 10,
-  ppolicyminpwdage     => 1,
-  ppolicymaxpwdage     => 90,
+  ppolicyhistorylength => '12',
+  ppolicyminpwdlength  => '10',
+  ppolicyminpwdage     => '1',
+  ppolicymaxpwdage     => '90',
 }
 
 smb_user { 'administrator':
