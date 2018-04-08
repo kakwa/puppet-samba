@@ -11,7 +11,7 @@ define samba::option(
   unless member($settingsignored, $optionssetting){
     smb_setting { "${section}/${optionssetting}":
       ensure            => present,
-      path              => $::samba::params::smbconffile,
+      path              => $samba::params::smbconffile,
       section           => $section,
       setting           => $optionssetting,
       value             => $optionsvalue,

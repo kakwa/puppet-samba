@@ -7,7 +7,7 @@ class samba::dc::ppolicy (
   $ppolicyminpwdlength   = 7,
   $ppolicyminpwdage      = 1,
   $ppolicymaxpwdage      = 42,
-) inherits ::samba::params{
+) inherits samba::params{
   $checkpp = ['on', 'off', 'default']
   $checkppstr = join($checkpp, ', ')
 

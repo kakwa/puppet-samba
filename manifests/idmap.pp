@@ -176,7 +176,7 @@ echo '${ldap_passwd}' | sha1sum >${hash_ldap}",
 
   $idmapoptionsindex = prefix(keys($idmapoptions),
       '[global]')
-  ::samba::option{ $idmapoptionsindex:
+  samba::option{ $idmapoptionsindex:
     options => $idmapoptions,
     section => 'global',
     require => $package,

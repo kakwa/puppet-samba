@@ -29,10 +29,10 @@ corresponding to option",
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
     require => Service['SambaDC'],
     unless  => "[ \
-\"\$( ${::samba::params::sambacmd} domain passwordsettings show -d 1 | \
+\"\$( ${samba::params::sambacmd} domain passwordsettings show -d 1 | \
 sed 's/${show_string} *//p;d' )\" = \
 '${value}' ]",
-    command => "${::samba::params::sambacmd} domain passwordsettings set -d 1 \
+    command => "${samba::params::sambacmd} domain passwordsettings set -d 1 \
 ${option}='${value}'",
   }
 }
