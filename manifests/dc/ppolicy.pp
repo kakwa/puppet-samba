@@ -35,24 +35,24 @@ class samba::dc::ppolicy (
   samba::dc::ppolicy_param{'--history-length':
     option      => '--history-length',
     show_string => 'Password history length:',
-    value       => $ppolicyhistorylength,
+    value       => "$ppolicyhistorylength",
   }
 
   samba::dc::ppolicy_param{'--min-pwd-length':
     option      => '--min-pwd-length',
     show_string => 'Minimum password length:',
-    value       => $ppolicyminpwdlength,
+    value       => "$ppolicyminpwdlength",
   }
 
   samba::dc::ppolicy_param{'--min-pwd-age':
     option      => '--min-pwd-age',
     show_string => 'Minimum password age (days):',
-    value       => $ppolicyminpwdage,
+    value       => "$ppolicyminpwdage",
   }
 
   samba::dc::ppolicy_param{'--max-pwd-age':
     option      => '--max-pwd-age',
     show_string => 'Maximum password age (days):',
-    value       => $ppolicymaxpwdage,
+    value       => "$ppolicymaxpwdage",
   }
 }
