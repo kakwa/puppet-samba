@@ -473,6 +473,15 @@ Contribution must not raise errors from puppet-lint.
 
 ## Release Notes
 
+
+2.0.0:
+
+* drop support for puppet < 4.0.0
+* add support for Arch (Thanks to Tim Meusel)
+* add support for functional level 2012(R2) (Thanks to Tim Meusel)
+* use the type system of the newer Puppet DSL (Thanks to Tim Meusel)
+* switch from topscope to relative scope (Thanks to Tim Meusel)
+
 1.0.0:
 
 * Remove support for the Sernet packages (these packages are EOL and no longer available)
