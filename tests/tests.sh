@@ -151,6 +151,8 @@ then
     # testing password setting for samba AD password
     run tests/smb_user.pp "smb_user test failed (apply 1)"
 
+    sleep 10
+
     netstat -apn | grep ':389' || exit_error "should listen on 389"
     netstat -apn | grep ':53'  || exit_error "should listen on 53"
     netstat -apn | grep ':636' || exit_error "should listen on 636"

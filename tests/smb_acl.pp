@@ -59,7 +59,7 @@ class { '::samba::classic':
     'browsable' => 'Yes',
     'read only' => 'No',
   },
-  mode    => 0770,
+  mode    => '0770',
   acl     =>
     [
       'group::rwx',
