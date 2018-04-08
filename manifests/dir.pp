@@ -37,19 +37,15 @@
 #
 
 define samba::dir(
-  $path,
+  String $path,
   $owner = 'root',
   $group = 'root',
   $mode  = '1770',
   $acl   = undef,
 ) {
 
-  unless $path{
-    fail('missing paramter path')
-  }
-
   $rootpath = regsubst($path, '(^[^%]*/)[^%]*%.*', '\1')
-  validate_absolute_path($rootpath)
+  assert_type(Stdlib::Absolutepath, $rootpath)
 
   exec {"Create path ${rootpath}":
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',

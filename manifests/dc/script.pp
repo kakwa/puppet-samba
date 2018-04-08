@@ -1,13 +1,13 @@
 # Logon script resource
 
 define samba::dc::script(
-  $content,
+  String $content,
 ){
   $scriptname       = $name
   $scriptcontent    = $content
 
   $scriptpath = "${samba::dc::scriptdir}/${scriptname}"
-  validate_absolute_path($scriptpath)
+  assert_type(Stdlib::Absolutepath, $scriptpath)
 
   file { $scriptpath:
     content => regsubst($scriptcontent, '(?<!\r)\n', "\r\n", 'EMG'),

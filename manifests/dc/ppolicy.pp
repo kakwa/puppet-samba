@@ -3,10 +3,10 @@
 class samba::dc::ppolicy (
   $ppolicycomplexity     = 'on',
   $ppolicyplaintext      = 'off',
-  $ppolicyhistorylength  = 24,
-  $ppolicyminpwdlength   = 7,
-  $ppolicyminpwdage      = 1,
-  $ppolicymaxpwdage      = 42,
+  Integer $ppolicyhistorylength  = 24,
+  Integer $ppolicyminpwdlength   = 7,
+  Integer $ppolicyminpwdage      = 1,
+  Integer $ppolicymaxpwdage      = 42,
 ) inherits samba::params{
   $checkpp = ['on', 'off', 'default']
   $checkppstr = join($checkpp, ', ')
@@ -17,22 +17,6 @@ class samba::dc::ppolicy (
 
   unless member($checkpp, $ppolicyplaintext){
     fail("ppolicyplaintext must be in [${checkppstr}]")
-  }
-
-  unless is_integer($ppolicyhistorylength){
-    fail('ppolicyhistorylength must be an integer')
-  }
-
-  unless is_integer($ppolicyminpwdlength){
-    fail('ppolicyminpwdlength must be an integer')
-  }
-
-  unless is_integer($ppolicyminpwdage){
-    fail('ppolicyminpwdage must be an integer')
-  }
-
-  unless is_integer($ppolicymaxpwdage){
-    fail('ppolicymaxpwdage must be an integer')
   }
 
   # Configure Password Policy
