@@ -15,6 +15,8 @@ case distid
         if  FileTest.exists?("/usr/bin/apt-cache")
             version = Facter::Util::Resolution.exec('apt-cache show samba | sed \'s/Version:.*:\([0-9\.]\+\).*/\1/gp;d\' | head -n 1')
         end
+    when 'Archlinux'
+      version = Facter::Util::Resolution.exec('pacman -Si samba | awk "/Version/ {print $3}" | cut -d"-" -f1')
     else
         version = "0.0.0"
 end

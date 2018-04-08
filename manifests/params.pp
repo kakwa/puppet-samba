@@ -8,6 +8,7 @@ class samba::params(
   }else{
     case $facts['os']['family'] {
       'redhat': {
+          $cleanup                = undef
           $packagesambadc         = 'samba-dc'
           $packagesambaclassic    = 'samba'
           $packagesambawinbind    = 'samba-winbind'
@@ -27,6 +28,7 @@ class samba::params(
           $packagepyyaml          = 'PyYAML'
       }
       'Debian': {
+          $cleanup                = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
           $packagesambadc         = 'samba'
           $packagesambaclassic    = 'samba'
           $packagesambawinbind    = 'winbind'
@@ -49,6 +51,25 @@ class samba::params(
           $smbconffile            = '/etc/samba/smb.conf'
           $krbconffile            = '/etc/krb5.conf'
           $packagepyyaml          = 'python-yaml'
+      }
+      'Archlinux': {
+          $cleanup                = undef
+          $packagesambadc         = 'samba'
+          $packagesambaclassic    = 'samba'
+          $packagesambawinbind    = 'libwbclient'
+          $packagesambansswinbind = 'libnss-winbind'
+          $packagesambapamwinbind = 'libpam-winbind'
+          $packagesambaclient     = 'smbclient'
+          $servivesambadc         = 'samba'
+          $servivesmb             = 'smbd'
+          $servivewinbind         = 'winbindd'
+          $sambacmd               = '/usr/bin/samba-tool'
+          $sambaclientcmd         = '/usr/bin/smbclient'
+          $sambaoptsfile          = '/etc/default/samba4'
+          $sambaoptstmpl          = "${module_name}/debian-samba.erb"
+          $smbconffile            = '/etc/samba/smb.conf'
+          $krbconffile            = '/etc/krb5.conf'
+          $packagepyyaml          = 'python2-yaml'
       }
       default: {
           fail('unsupported os')

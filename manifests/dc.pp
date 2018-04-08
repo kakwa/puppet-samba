@@ -37,25 +37,26 @@
 #
 
 class samba::dc(
-  $domain                                    = undef,
-  $realm                                     = undef,
-  $dnsbackend                                = 'internal',
-  Optional[Stdlib::Ip_address] $dnsforwarder = undef,
-  $adminpassword                             = undef,
-  $role                                      = 'dc',
-  Stdlib::Absolutepath $targetdir            = '/var/lib/samba/',
-  $domainlevel                               = '2003',
-  $domainprovargs                            = '',
-  $sambaloglevel                             = 1,
-  $ip                                        = undef,
-  $logtosyslog                               = false,
-  $sambaclassloglevel                        = undef,
-  $globaloptions                             = {},
-  $netlogonoptions                           = {},
-  $sysvoloptions                             = {},
-  $globalabsentoptions                       = [],
-  $netlogonabsentoptions                     = [],
-  $sysvolabsentoptions                       = [],
+  $domain                                                         = undef,
+  $realm                                                          = undef,
+  $dnsbackend                                                     = 'internal',
+  Optional[Stdlib::Ip_address] $dnsforwarder                      = undef,
+  $adminpassword                                                  = undef,
+  $role                                                           = 'dc',
+  Stdlib::Absolutepath $targetdir                                 = '/var/lib/samba/',
+  Enum['2003', '2008', '2008 R2', '2012', '2012 R2'] $domainlevel = '2003',
+  $domainprovargs                                                 = '',
+  $sambaloglevel                                                  = 1,
+  $ip                                                             = undef,
+  $logtosyslog                                                    = false,
+  $sambaclassloglevel                                             = undef,
+  $globaloptions                                                  = {},
+  $netlogonoptions                                                = {},
+  $sysvoloptions                                                  = {},
+  $globalabsentoptions                                            = [],
+  $netlogonabsentoptions                                          = [],
+  $sysvolabsentoptions                                            = [],
+  Optional[String] $cleanup                                       = undef,
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -84,9 +85,14 @@ must be in ["internal", "bindFlat", "bindDLZ"]')
     '2008 R2': {
       $strdomainlevel = '2008_R2'
     }
+    '2012': {
+      $strdomainlevel = '2012'
+    }
+    '2012 R2': {
+      $strdomainlevel = '2012_R2'
+    }
     default: {
-      fail('unsupported domain level, \
-must be in ["2003", "2008", "2008 R2"]')
+      fail('unsupported domain level, must be in ["2003", "2008", "2008 R2", "2012", "2012 R2"]')
     }
   }
 
@@ -179,26 +185,15 @@ ex: domain="ad" and realm="ad.example.com"')
   # the debian package and the init script in debian are a bit crappy and
   # don't track the processes properly and start the samba service by
   # default
-  case $::osfamily {
-    'redhat': {
-        $cleanup = '/bin/true'
+  if $cleanup {
+    exec{ 'CleanService':
+      path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+      unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
+      command => $cleanup,
+      require => Package['SambaDC'],
+      before  => Exec['provisionAD'],
+      notify  => Service['SambaDC'],
     }
-    'Debian': {
-        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
-    }
-    'Ubuntu': {
-        $cleanup = 'pkill -9 smbd; pkill -9 nmbd; pkill -9 samba; rm -rf /var/run/samba; /bin/true'
-    }
-    default: {
-        fail('unsupported os')
-    }
-  }
-  exec{ 'CleanService':
-    path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-    unless  => "test -d '${targetdir}/state/sysvol/${realmdowncase}/'",
-    command => $cleanup,
-    require => Package['SambaDC'],
-    notify  => Service['SambaDC'],
   }
 
   # Provision the Domain Controler
@@ -211,7 +206,6 @@ ${::samba::params::sambacmd} domain provision ${hostip} \
 --targetdir='${targetdir}' --use-rfc2307 \
 --configfile='${::samba::params::smbconffile}' --server-role='${role}' ${domainprovargs} -d 1 && \
 mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
-    require => Exec['CleanService'],
     notify  => Service['SambaDC'],
   }
 
@@ -292,7 +286,7 @@ Administrator --newpassword=${adminpassword} -d 1",
     unless  => "${::samba::params::sambacmd} domain level show  -d 1\
 | grep 'Domain function level' | grep -q \"${domainlevel}$\"",
     command => "${::samba::params::sambacmd} domain \
-level raise --domain-level='${strdomainlevel}' -d 1",
+level raise --domain-level='${domainlevel}' -d 1",
     require => Service['SambaDC'],
   }
 
@@ -302,7 +296,7 @@ level raise --domain-level='${strdomainlevel}' -d 1",
     unless  => "${::samba::params::sambacmd} domain level show -d 1\
 | grep 'Forest function level' | grep -q '${domainlevel}$'",
     command => "${::samba::params::sambacmd} domain \
-level raise --forest-level='${strdomainlevel}' -d 1",
+level raise --forest-level='${domainlevel}' -d 1",
     require => Exec['setDomainFunctionLevel'],
   }
 
