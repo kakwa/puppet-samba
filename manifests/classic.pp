@@ -57,6 +57,9 @@ class samba::classic(
   $joinou                         = undef,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
+  $packagesambaclassic            = $::samba::params::packagesambaclassic,
+  $packagesambansswinbind         = $::samba::params::packagesambansswinbind,
+  $packagesambapamwinbind         = $::samba::params::packagesambapamwinbind,
 ) inherits samba::params{
 
 
@@ -118,7 +121,7 @@ class samba::classic(
     if $nsswitch {
       package{ 'SambaNssWinbind':
         ensure => 'installed',
-        name   => $samba::params::packagesambansswinbind
+        name   => $packagesambansswinbind
       }
 
       augeas{'samba nsswitch group':
@@ -150,7 +153,7 @@ class samba::classic(
       or !$nsswitch {
         package{ 'SambaPamWinbind':
           ensure => 'installed',
-          name   => $::samba::params::packagesambapamwinbind
+          name   => $packagesambapamwinbind
         }
       }
 
@@ -203,13 +206,13 @@ class samba::classic(
 
   package{ 'SambaClassic':
     ensure => 'installed',
-    name   => $samba::params::packagesambaclassic,
+    name   => $packagesambaclassic,
   }
 
   if $manage_winbind {
     package{ 'SambaClassicWinBind':
       ensure  => 'installed',
-      name    => $samba::params::packagesambawinbind,
+      name    => $::packagesambawinbind,
       require => File['/etc/samba/smb_path'],
     }
     Package['SambaClassicWinBind'] -> Package['SambaClassic']
