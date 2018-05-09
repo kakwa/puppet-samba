@@ -22,6 +22,10 @@
 # [*sambasmb_service_ensure*]
 #     Ensures the SambaSmb service is running/stopped.
 #     Default:  running
+# [*packagesambaclassic_ensure*]
+#     Controls the installation of the ::samba::params::packagesambaclassic package(s).
+#     Default: installed
+#     Notes:  Typically, theh package is 'samba'.
 #
 # === Variables
 #
@@ -81,6 +85,7 @@ class samba::classic(
   $sambasmb_package_ensure        = 'installed',
   $sambasmb_service_enable        = true,
   $sambasmb_service_ensure        = 'running',
+  $packagesambaclassic_ensure     = 'installed',
 ) inherits samba::params{
 
 
@@ -119,15 +124,15 @@ class samba::classic(
   $_default_realm = pick($default_realm, $realmuppercase)
 
 
-  file { '/etc/samba/':
-    ensure  => 'directory',
-  }
-
-  file { '/etc/samba/smb_path':
-    ensure  => 'present',
-    content => $samba::params::smbconffile,
-    require => File['/etc/samba/'],
-  }
+# BTS  file { '/etc/samba/':
+# BTS    ensure  => 'directory',
+# BTS  }
+# BTS
+# BTS  file { '/etc/samba/smb_path':
+# BTS    ensure  => 'present',
+# BTS    content => $samba::params::smbconffile,
+# BTS    require => File['/etc/samba/'],
+# BTS  }
 
   if $join_domain {
     if $krbconf {
@@ -234,7 +239,7 @@ class samba::classic(
     package{ 'SambaClassicWinBind':
       ensure  => $sambawinbind_package_ensure,
       name    => $samba::params::packagesambawinbind,
-      require => File['/etc/samba/smb_path'],
+      # BTS require => File['/etc/samba/smb_path'],
     }
     Package['SambaClassicWinBind'] -> Package['SambaClassic']
   }
