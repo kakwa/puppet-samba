@@ -4,11 +4,24 @@
 #
 # === Parameters
 #
-# Document parameters here.
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
+# [*sambawinbind_package_ensure*]
+#     Controls the installation of the SambaWinBind package.
+#     Default: installed
+# [*sambawinbind_service_enable*]
+#     Enables or Disables the SambaWinBind service on reboot.
+#     Default: true
+# [*sambawinbind_service_ensure*]
+#     Ensures the SambaWinbind service is running/stopped.
+#     Default:  running
+# [*sambasmb_package_ensure*]
+#     Controls the installation of the SambaSmb package.
+#     Default: installed
+# [*sambasmb_service_enable*]
+#     Enables or Disables the SambaSmb service on reboot.
+#     Default: true
+# [*sambasmb_service_ensure*]
+#     Ensures the SambaSmb service is running/stopped.
+#     Default:  running
 #
 # === Variables
 #
@@ -23,9 +36,14 @@
 #
 # === Examples
 #
-#  class { 'samba':
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#  }
+#  class { '::samba::classic':
+#    nsswitch     => true,
+#    domain       => "SAMBA",
+#    join_domain  => false,
+#    security     => 'ads',
+#    realm        => lookup('my::realm'),
+#    smbname      => $::hostname,
+#    }
 #
 # === Authors
 #
@@ -57,6 +75,12 @@ class samba::classic(
   $joinou                         = undef,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
+  $sambawinbind_package_ensure    = 'installed',
+  $sambawinbind_service_enable    = true,
+  $sambawinbind_service_ensure    = 'running',
+  $sambasmb_package_ensure        = 'installed',
+  $sambasmb_service_enable        = true,
+  $sambasmb_service_ensure        = 'running',
 ) inherits samba::params{
 
 
@@ -202,13 +226,13 @@ class samba::classic(
   }
 
   package{ 'SambaClassic':
-    ensure => 'installed',
+    ensure => $sambasmb_package_ensure,
     name   => $samba::params::packagesambaclassic,
   }
 
   if $manage_winbind {
     package{ 'SambaClassicWinBind':
-      ensure  => 'installed',
+      ensure  => $sambawinbind_package_ensure,
       name    => $samba::params::packagesambawinbind,
       require => File['/etc/samba/smb_path'],
     }
@@ -216,18 +240,18 @@ class samba::classic(
   }
 
   service{ 'SambaSmb':
-    ensure  => 'running',
+    ensure  => $sambasmb_service_ensure,
     name    => $samba::params::servivesmb,
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
-    enable  => true,
+    enable  => $sambasmb_service_enable,
   }
 
   if $manage_winbind {
     service{ 'SambaWinBind':
-      ensure  => 'running',
+      ensure  => $sambawinbind_service_ensure,
       name    => $samba::params::servivewinbind,
       require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
-      enable  => true,
+      enable  => $sambawinbind_service_enable,
     }
   }
   $sambamode = 'classic'
