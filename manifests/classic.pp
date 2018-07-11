@@ -57,12 +57,12 @@ class samba::classic(
   $joinou                         = undef,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
-  $packagesambadc                 = $samba::params::packagesambadc,
-  $packagesambaclassic            = $samba::params::packagesambaclassic,
-  $packagesambawinbind            = $samba::params::packagesambawinbind,
-  $packagesambansswinbind         = $samba::params::packagesambansswinbind,
-  $packagesambapamwinbind         = $samba::params::packagesambapamwinbind,
-  $packagesambaclient             = $samba::params::packagesambaclient,
+  $packagesambadc                 = $::samba::params::packagesambadc,
+  $packagesambaclassic            = $::samba::params::packagesambaclassic,
+  $packagesambawinbind            = $::samba::params::packagesambawinbind,
+  $packagesambansswinbind         = $::samba::params::packagesambansswinbind,
+  $packagesambapamwinbind         = $::samba::params::packagesambapamwinbind,
+  $packagesambaclient             = $::samba::params::packagesambaclient,
 ) inherits samba::params{
 
 
