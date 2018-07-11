@@ -57,6 +57,9 @@ class samba::dc(
   $netlogonabsentoptions                                          = [],
   $sysvolabsentoptions                                            = [],
   Optional[String] $cleanup                                       = undef,
+  $packagesambawinbind                                            = $::samba::params::packagesambawinbind,
+  $packagesambaclient                                             = $::samba::params::packagesambaclient,
+  $packagesambadc                                                 = $::samba::params::packagesambadc,
 ) inherits ::samba::params{
 
   case $dnsbackend {

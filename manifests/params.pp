@@ -8,14 +8,26 @@ class samba::params(
   }else{
     case $facts['os']['family'] {
       'redhat': {
+          case $facts['os']['release']['major'] {
+              '6': {
+                  $packagesambadc         = 'samba4-dc'
+                  $packagesambaclassic    = 'samba4'
+                  $packagesambawinbind    = 'samba4-winbind'
+                  $packagesambansswinbind = 'samba4-winbind-clients'
+                  $packagesambapamwinbind = 'samba4-winbind-clients'
+                  $packagesambaclient     = 'samba4-client'
+              }
+              default: {
+                  $packagesambadc         = 'samba-dc'
+                  $packagesambaclassic    = 'samba'
+                  $packagesambawinbind    = 'samba-winbind'
+                  $packagesambansswinbind = 'samba-winbind-clients'
+                  $packagesambapamwinbind = 'samba-winbind-clients'
+                  $packagesambaclient     = 'samba-client'
+              }
+          }
           $cleanup                = undef
-          $packagesambadc         = 'samba-dc'
-          $packagesambaclassic    = 'samba'
-          $packagesambawinbind    = 'samba-winbind'
-          $packagesambansswinbind = 'samba-winbind-clients'
-          $packagesambapamwinbind = 'samba-winbind-clients'
-          $packagesambaclient     = 'samba-client'
-          # for now, this is not supported by Debian
+          # for now, this is not supported by RedHat
           $servivesambadc         = undef
           $servivesmb             = 'smb'
           $servivewinbind         = 'winbind'
