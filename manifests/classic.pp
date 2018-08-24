@@ -342,7 +342,7 @@ class samba::classic(
         unless  => 'net ads testjoin',
         command => "echo '${adminpassword}'| net ads join -U '${adminuser}' ${ou}",
         notify  => Service['SambaWinBind'],
-        #require => [ Package['SambaClassic'], Service['SambaSmb'] ],
+        require => Package['SambaClassic'],
       }
     }
   }
