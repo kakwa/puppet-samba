@@ -344,6 +344,9 @@ class samba::classic(
         notify  => Service['SambaWinBind'],
         require => Package['SambaClassic'],
       }
+
+      # Add dependency for domain join to require all config options applied
+      Samba::Option <| |> -> Exec['Join Domain']
     }
   }
 }
