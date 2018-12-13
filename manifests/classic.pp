@@ -344,8 +344,12 @@ class samba::classic(
         default => '',
       }
       if $machinepass {
-        $pass = "machinepass=\"\${MACHINE_PASSWORD}\""
-        $machinepass_env = [ "MACHINE_PASSWORD=${machinepass}", ]
+        # Debug output -- put pass on command-line  :)
+        #$pass = "machinepass=\"\${MACHINE_PASSWORD}\""
+        #$machinepass_env = [ "MACHINE_PASSWORD=${machinepass}", ]
+        notify { "samba domain join being attempted with machinepass=${machinepass}": }
+        $pass = "machinepass=${machinepass}"
+        $machinepass_env = undef
       } else {
         $pass = ''
         $machinepass_env = undef
