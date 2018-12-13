@@ -343,17 +343,17 @@ class samba::classic(
         false   => '--no-dns-updates',
         default => '',
       }
-      $pass = $machinepass ? {
-        default => "machinepass=\"\$MACHINE_PASSWORD\"",
-        undef   => '',
+      if $machinepass {
+        $pass = "machinepass=\"\${MACHINE_PASSWORD}\""
+        $machinepass_env = [ "MACHINE_PASSWORD=${machinepass}", ]
+      } else {
+        $pass = ''
+        $machinepass_env = undef
       }
       exec{ 'Join Domain':
         path        => '/bin:/sbin:/usr/sbin:/usr/bin/',
         unless      => 'net ads testjoin',
-        environment => [
-          "NET_PASSWORD=${adminpassword}",
-          "MACHINE_PASSWORD=${machinepass}",
-        ],
+        environment => [ "NET_PASSWORD=${adminpassword}", ] + $machinepass_env,
         command     => "echo \$NET_PASSWORD | net ads join -U '${adminuser}' ${no_dns_updates} ${ou} ${pass}",
         notify      => Service['SambaWinBind'],
         require     => Package['SambaClassic'],
