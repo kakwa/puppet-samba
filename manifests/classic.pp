@@ -56,6 +56,7 @@ class samba::classic(
   $globaloptions                  = {},
   $globalabsentoptions            = [],
   $joinou                         = undef,
+  Optional[String] $machinepass   = undef,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
   $packagesambadc                 = $::samba::params::packagesambadc,
@@ -342,11 +343,18 @@ class samba::classic(
         false   => '--no-dns-updates',
         default => '',
       }
+      $pass = $machinepass ? {
+        default => "machinepass=\"\$MACHINE_PASSWORD\"",
+        undef   => '',
+      }
       exec{ 'Join Domain':
         path        => '/bin:/sbin:/usr/sbin:/usr/bin/',
         unless      => 'net ads testjoin',
-        environment => ["NET_PASSWORD=${adminpassword}"],
-        command     => "echo \$NET_PASSWORD | net ads join -U '${adminuser}' ${no_dns_updates} ${ou}",
+        environment => [
+          "NET_PASSWORD=${adminpassword}",
+          "MACHINE_PASSWORD=${machinepass}",
+        ],
+        command     => "echo \$NET_PASSWORD | net ads join -U '${adminuser}' ${no_dns_updates} ${ou} ${pass}",
         notify      => Service['SambaWinBind'],
         require     => Package['SambaClassic'],
       }
