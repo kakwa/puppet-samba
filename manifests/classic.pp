@@ -349,10 +349,10 @@ class samba::classic(
         #$machinepass_env = [ "MACHINE_PASSWORD=${machinepass}", ]
         notify { "samba domain join being attempted with machinepass=${machinepass}": }
         $pass = "machinepass=${machinepass}"
-        $machinepass_env = undef
+        $machinepass_env = [ ]
       } else {
         $pass = ''
-        $machinepass_env = undef
+        $machinepass_env = [ ]
       }
       exec{ 'Join Domain':
         path        => '/bin:/sbin:/usr/sbin:/usr/bin/',
