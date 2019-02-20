@@ -57,6 +57,9 @@ class samba::dc(
   $netlogonabsentoptions                                          = [],
   $sysvolabsentoptions                                            = [],
   Optional[String] $cleanup                                       = undef,
+  $packagesambadc                                                 = $::samba::params::packagesambadc,
+  $packagesambawinbind                                            = $::samba::params::packagesambawinbind,
+  $packagesambaclient                                             = $::samba::params::packagesambaclient,
 ) inherits ::samba::params{
 
   case $dnsbackend {
@@ -157,19 +160,19 @@ ex: domain="ad" and realm="ad.example.com"')
 
   package{ 'SambaWinBind':
     ensure  => 'installed',
-    name    => $::samba::params::packagesambawinbind,
+    name    => $packagesambawinbind,
     require => File['/etc/samba/smb_path'],
   }
 
   package{ 'SambaClient':
     ensure  => 'installed',
-    name    => $::samba::params::packagesambaclient,
+    name    => $packagesambaclient,
     require => File['/etc/samba/smb_path'],
   }
 
   package{ 'SambaDC':
     ensure  => 'installed',
-    name    => $::samba::params::packagesambadc,
+    name    => $packagesambadc,
     require => Package['SambaClient', 'SambaWinBind'],
   }
 
