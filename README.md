@@ -471,6 +471,40 @@ If you have questions regarding how to use this module, don't hesitate to fill a
 
 Contribution must not raise errors from puppet-lint.
 
+You can use [Vagrant](https://www.vagrantup.com) and [Virtualbox](https://www.virtualbox.org)
+for testing and developing this module. Currently the Vagrantfile creates an Ubuntu 18.04 VM
+("samba-bionic") and runs provisioning steps that
+
+* Install Puppet 5 from Puppetlabs
+* Fetch this module's dependencies with [librarian-puppet](https://librarian-puppet.com) based on metadata.json
+* Runs a Puppet manifest (simple_share.pp) with "puppet apply"
+
+The Puppet manifest sets up a standalone "classic" Samba server, creates one share and a user that
+can read and write to that share. Username is "vagrant" and password is "vagrant" for both Linux and
+Samba.
+
+To create or start the VM:
+
+    $ vagrant up
+
+To (re)provision the VM, usually to test new puppet code:
+
+    $ vagrant provision
+
+To shut down the VM:
+
+    $ vagrant halt
+
+To destroy the VM:
+
+    $ vagrant destroy
+
+If you want to test some particular Samba setup you can create a custom Puppet manifest and point
+your Vagrantfile to it. After the VM has been created you can comment out the prepare.sh
+provisioning step in the Vagranfile to speed up Puppet code testing.
+
+See [Vagrant documentation](https://www.vagrantup.com/docs/index.html) for details.
+
 ## Release Notes
 
 
