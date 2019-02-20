@@ -57,12 +57,8 @@ class samba::classic(
   $joinou                         = undef,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
+  Optional[Array] $shares         = undef,
 ) inherits samba::params{
-
-
-  unless is_domain_name($realm){
-    fail('realm must be a valid domain')
-  }
 
   unless is_domain_name($realm){
     fail('realm must be a valid domain')
@@ -340,6 +336,8 @@ class samba::classic(
       }
     }
   }
+  
+  create_resources('samba::share', $shares)
 }
 
 # vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2
