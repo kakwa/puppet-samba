@@ -46,6 +46,7 @@ class samba::classic(
   $security                       = 'ads',
   $sambaloglevel                  = 1,
   $join_domain                    = true,
+  $manage_lmhosts                 = true,
   $manage_winbind                 = true,
   $krbconf                        = true,
   $nsswitch                       = true,
@@ -206,6 +207,10 @@ class samba::classic(
     name   => $samba::params::packagesambaclassic,
   }
 
+  if $manage_lmhosts {
+    include ::samba::lmhosts
+  }
+
   if $manage_winbind {
     package{ 'SambaClassicWinBind':
       ensure  => 'installed',
@@ -231,7 +236,7 @@ class samba::classic(
     }
   }
   $sambamode = 'classic'
-  # Deploy /etc/sysconfig/|/etc/defaut/ file (startup options)
+  # Deploy /etc/sysconfig/|/etc/default/ file (startup options)
   file{ 'SambaOptsFile':
     path    => $samba::params::sambaoptsfile,
     content => template($samba::params::sambaoptstmpl),
