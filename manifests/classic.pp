@@ -46,7 +46,7 @@ class samba::classic(
   $security                       = 'ads',
   $sambaloglevel                  = 1,
   $join_domain                    = true,
-  #Boolean $force_join             = false,
+  Boolean $force_join             = false,
   $join_dns_update                = true,
   $manage_winbind                 = true,
   $krbconf                        = true,
@@ -356,16 +356,16 @@ class samba::classic(
         $machinepass_env = [ ]
       }
 
-      #if $force_join {
-      #  $unlesstest = 'false'
-      #} else {
-      #  $unlesstest = 'net ads testjoin'
-      #}
+      if $force_join {
+        $unlesstest = 'false'
+      } else {
+        $unlesstest = 'net ads testjoin'
+      }
 
       exec{ 'Join Domain':
         path        => '/bin:/sbin:/usr/sbin:/usr/bin/',
-        #unless      => $unlesstest,
-        unless      => 'net ads testjoin',
+        unless      => $unlesstest,
+        #unless      => 'net ads testjoin',
         environment => [ "NET_PASSWORD=${adminpassword}", ] + $machinepass_env,
         command     => "echo \$NET_PASSWORD | net ads join -U '${adminuser}' ${no_dns_updates} ${ou} ${pass}",
         notify      => Service['SambaWinBind'],
