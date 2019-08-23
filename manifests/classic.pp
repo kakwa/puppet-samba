@@ -55,19 +55,16 @@ class samba::classic(
   $globaloptions                  = {},
   $globalabsentoptions            = [],
   $joinou                         = undef,
+  $standalonemode                 = false,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
 ) inherits samba::params{
 
-
+unless $standalonemode {
   unless is_domain_name($realm){
     fail('realm must be a valid domain')
   }
-
-  unless is_domain_name($realm){
-    fail('realm must be a valid domain')
-  }
-
+}
   validate_slength($smbname, 15)
   unless is_domain_name("${smbname}.${realm}"){
     fail('smbname must be a valid domain')
@@ -91,9 +88,9 @@ class samba::classic(
   $realmlowercase = downcase($realm)
   $realmuppercase = upcase($realm)
   $globaloptsexclude = concat(keys($globaloptions), $globalabsentoptions)
-
-  $_default_realm = pick($default_realm, $realmuppercase)
-
+  unless $standalonemode {
+    $_default_realm = pick($default_realm, $realmuppercase)
+  }
 
   file { '/etc/samba/':
     ensure  => 'directory',
@@ -257,6 +254,17 @@ class samba::classic(
       'winbind refresh tickets'            => 'Yes',
       'winbind separator'                  => '+',
     }
+  }
+  elsif $standalonemode {
+      $mandatoryglobaloptions = {
+      'workgroup'                          => $domain,
+      'realm'                              => undef,
+      'netbios name'                       => $smbname,
+      'security'                           => $security,
+      'map acl inherit'                    => 'No',
+      'store dos attributes'               => 'Yes',
+      'map untrusted to domain'            => 'No ',
+    }    
   }
   else {
     $mandatoryglobaloptions = {
