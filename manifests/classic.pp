@@ -46,6 +46,7 @@ class samba::classic(
   $security                       = 'ads',
   $sambaloglevel                  = 1,
   $join_domain                    = true,
+  Boolean $force_join             = false,
   $join_dns_update                = true,
   $manage_winbind                 = true,
   $krbconf                        = true,
@@ -344,19 +345,26 @@ class samba::classic(
         default => '',
       }
       if $machinepass {
-        # Debug output -- put pass on command-line  :)
-        #$pass = "machinepass=\"\${MACHINE_PASSWORD}\""
-        #$machinepass_env = [ "MACHINE_PASSWORD=${machinepass}", ]
-        notify { "samba domain join being attempted with machinepass=${machinepass}": }
-        $pass = "machinepass=${machinepass}"
-        $machinepass_env = [ ]
+        # Debug output -- put pass on command-line  :<
+        $pass = "machinepass=\"\${MACHINE_PASSWORD}\""
+        $machinepass_env = [ "MACHINE_PASSWORD=${machinepass}", ]
+        #notify { "samba domain join being attempted with machinepass=${machinepass}": }
+        #$pass = "machinepass=${machinepass}"
+        #$machinepass_env = [ ]
       } else {
         $pass = ''
         $machinepass_env = [ ]
       }
+
+      if $force_join {
+        $unlesstest = 'false'
+      } else {
+        $unlesstest = 'net ads testjoin'
+      }
+
       exec{ 'Join Domain':
         path        => '/bin:/sbin:/usr/sbin:/usr/bin/',
-        unless      => 'net ads testjoin',
+        unless      => $unlesstest,
         environment => [ "NET_PASSWORD=${adminpassword}", ] + $machinepass_env,
         command     => "echo \$NET_PASSWORD | net ads join -U '${adminuser}' ${no_dns_updates} ${ou} ${pass}",
         notify      => Service['SambaWinBind'],
