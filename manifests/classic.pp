@@ -264,7 +264,7 @@ unless $standalonemode {
       'map acl inherit'                    => 'No',
       'store dos attributes'               => 'Yes',
       'map untrusted to domain'            => 'No ',
-    }    
+    }
   }
   else {
     $mandatoryglobaloptions = {
