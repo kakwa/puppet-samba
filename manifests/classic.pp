@@ -236,6 +236,7 @@ class samba::classic(
       ensure  => 'running',
       name    => $samba::params::servivewinbind,
       require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
+      before  => [ Service['SambaSmb'] ], # required for smbd to run now
       enable  => true,
     }
   }
