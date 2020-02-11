@@ -217,7 +217,7 @@ class samba::classic(
 
   service{ 'SambaSmb':
     ensure  => 'running',
-    name    => $samba::params::servivesmb,
+    name    => $samba::params::servicesmb,
     require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
     enable  => true,
   }
@@ -225,7 +225,7 @@ class samba::classic(
   if $manage_winbind {
     service{ 'SambaWinBind':
       ensure  => 'running',
-      name    => $samba::params::servivewinbind,
+      name    => $samba::params::servicewinbind,
       require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
       enable  => true,
     }

@@ -16,9 +16,9 @@ class samba::params(
           $packagesambapamwinbind = 'samba-winbind-clients'
           $packagesambaclient     = 'samba-client'
           # for now, this is not supported by Debian
-          $servivesambadc         = undef
-          $servivesmb             = 'smb'
-          $servivewinbind         = 'winbind'
+          $servicesambadc         = undef
+          $servicesmb             = 'smb'
+          $servicewinbind         = 'winbind'
           $sambacmd               = '/usr/bin/samba-tool'
           $sambaclientcmd         = '/usr/bin/smbclient'
           $sambaoptsfile          = '/etc/sysconfig/samba'
@@ -35,15 +35,15 @@ class samba::params(
           $packagesambansswinbind = 'libnss-winbind'
           $packagesambapamwinbind = 'libpam-winbind'
           $packagesambaclient     = 'smbclient'
-          $servivesambadc         = 'samba-ad-dc'
+          $servicesambadc         = 'samba-ad-dc'
           if $facts['os']['name'] == 'Ubuntu' {
-            $servivesmb           = 'smbd'
-          } elsif ($facts['os']['name'] == 'Debian') and ($facts['os']['release']['major'] >= '8') {
-            $servivesmb           = 'smbd'
+            $servicesmb           = 'smbd'
+          } elsif ($facts['os']['name'] == 'Debian') and (versioncmp($facts['os']['release']['full'], '8') >= 0) {
+            $servicesmb           = 'smbd'
           } else {
-            $servivesmb           = 'samba'
+            $servicesmb           = 'samba'
           }
-          $servivewinbind         = 'winbind'
+          $servicewinbind         = 'winbind'
           $sambacmd               = '/usr/bin/samba-tool'
           $sambaclientcmd         = '/usr/bin/smbclient'
           $sambaoptsfile          = '/etc/default/samba4'
@@ -60,9 +60,9 @@ class samba::params(
           $packagesambansswinbind = 'libnss-winbind'
           $packagesambapamwinbind = 'libpam-winbind'
           $packagesambaclient     = 'smbclient'
-          $servivesambadc         = 'samba'
-          $servivesmb             = 'smbd'
-          $servivewinbind         = 'winbindd'
+          $servicesambadc         = 'samba'
+          $servicesmb             = 'smbd'
+          $servicewinbind         = 'winbindd'
           $sambacmd               = '/usr/bin/samba-tool'
           $sambaclientcmd         = '/usr/bin/smbclient'
           $sambaoptsfile          = '/etc/default/samba4'

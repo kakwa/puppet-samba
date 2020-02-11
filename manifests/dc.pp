@@ -175,7 +175,7 @@ ex: domain="ad" and realm="ad.example.com"')
 
   service{ 'SambaClassic':
     ensure  => 'stopped',
-    name    => $::samba::params::servivesmb,
+    name    => $::samba::params::servicesmb,
     enable  => false,
     require => Package['SambaDC'],
     notify  => Service['SambaDC'],
@@ -211,7 +211,7 @@ mv '${targetdir}/etc/smb.conf' '${::samba::params::smbconffile}'",
 
   service{ 'SambaDC':
     ensure  => 'running',
-    name    => $::samba::params::servivesambadc,
+    name    => $::samba::params::servicesambadc,
     require => [ Exec['provisionAD'], File['SambaOptsFile'] ],
     enable  => true,
   }
