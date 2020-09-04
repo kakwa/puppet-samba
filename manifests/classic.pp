@@ -37,7 +37,7 @@
 #
 
 class samba::classic(
-  $smbname                        = undef,
+  String[1,15] $smbname           = undef,
   $domain                         = undef,
   $realm                          = undef,
   $strictrealm                    = true,
@@ -68,7 +68,6 @@ class samba::classic(
     fail('realm must be a valid domain')
   }
 
-  validate_slength($smbname, 15)
   unless is_domain_name("${smbname}.${realm}"){
     fail('smbname must be a valid domain')
   }
