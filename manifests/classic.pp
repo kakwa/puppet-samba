@@ -46,6 +46,8 @@ class samba::classic(
   $security                       = 'ads',
   $sambaloglevel                  = 1,
   $join_domain                    = true,
+  Boolean $force_join             = false,
+  $join_dns_update                = true,
   $manage_winbind                 = true,
   $krbconf                        = true,
   $nsswitch                       = true,
@@ -55,8 +57,15 @@ class samba::classic(
   $globaloptions                  = {},
   $globalabsentoptions            = [],
   $joinou                         = undef,
+  Optional[String] $machinepass   = undef,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
+  $packagesambadc                 = $::samba::params::packagesambadc,
+  $packagesambaclassic            = $::samba::params::packagesambaclassic,
+  $packagesambawinbind            = $::samba::params::packagesambawinbind,
+  $packagesambansswinbind         = $::samba::params::packagesambansswinbind,
+  $packagesambapamwinbind         = $::samba::params::packagesambapamwinbind,
+  $packagesambaclient             = $::samba::params::packagesambaclient,
 ) inherits samba::params{
 
 
@@ -118,7 +127,7 @@ class samba::classic(
     if $nsswitch {
       package{ 'SambaNssWinbind':
         ensure => 'installed',
-        name   => $samba::params::packagesambansswinbind
+        name   => $packagesambansswinbind
       }
 
       augeas{'samba nsswitch group':
@@ -146,11 +155,11 @@ class samba::classic(
     if $pam {
       # Only add package here if different to the nss-winbind package,
       # or nss and pam aren't both enabled, to avoid duplicate definition.
-      if ($samba::params::packagesambapamwinbind != $samba::params::packagesambansswinbind)
+      if ($packagesambapamwinbind != $packagesambansswinbind)
       or !$nsswitch {
         package{ 'SambaPamWinbind':
           ensure => 'installed',
-          name   => $::samba::params::packagesambapamwinbind
+          name   => $packagesambapamwinbind
         }
       }
 
@@ -203,13 +212,13 @@ class samba::classic(
 
   package{ 'SambaClassic':
     ensure => 'installed',
-    name   => $samba::params::packagesambaclassic,
+    name   => $packagesambaclassic,
   }
 
   if $manage_winbind {
     package{ 'SambaClassicWinBind':
       ensure  => 'installed',
-      name    => $samba::params::packagesambawinbind,
+      name    => $packagesambawinbind,
       require => File['/etc/samba/smb_path'],
     }
     Package['SambaClassicWinBind'] -> Package['SambaClassic']
@@ -227,6 +236,7 @@ class samba::classic(
       ensure  => 'running',
       name    => $samba::params::servivewinbind,
       require => [ Package['SambaClassic'], File['SambaOptsFile'] ],
+      before  => [ Service['SambaSmb'] ], # required for smbd to run now
       enable  => true,
     }
   }
@@ -331,13 +341,40 @@ class samba::classic(
         default => "createcomputer=\"${joinou}\"",
         undef   => '',
       }
-      exec{ 'Join Domain':
-        path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
-        unless  => 'net ads testjoin',
-        command => "echo '${adminpassword}'| net ads join -U '${adminuser}' ${ou}",
-        notify  => Service['SambaWinBind'],
-        require => [ Package['SambaClassic'], Service['SambaSmb'] ],
+      $no_dns_updates = $join_dns_update ? {
+        false   => '--no-dns-updates',
+        default => '',
       }
+      if $machinepass {
+        # Debug output -- put pass on command-line  :)
+        #$pass = "machinepass=\"\${MACHINE_PASSWORD}\""
+        #$machinepass_env = [ "MACHINE_PASSWORD=${machinepass}", ]
+        #notify { "samba domain join being attempted with machinepass=${machinepass}": }
+        $pass = "machinepass=${machinepass}"
+        $machinepass_env = [ ]
+      } else {
+        $pass = ''
+        $machinepass_env = [ ]
+      }
+
+      if $force_join {
+        $unlesstest = 'false'
+      } else {
+        $unlesstest = 'net ads testjoin'
+      }
+
+      exec{ 'Join Domain':
+        path        => '/bin:/sbin:/usr/sbin:/usr/bin/',
+        unless      => $unlesstest,
+        #unless      => 'net ads testjoin',
+        environment => [ "NET_PASSWORD=${adminpassword}", ] + $machinepass_env,
+        command     => "echo \$NET_PASSWORD | net ads join -U '${adminuser}' ${no_dns_updates} ${ou} ${pass}",
+        notify      => Service['SambaWinBind'],
+        require     => Package['SambaClassic'],
+      }
+
+      # Add dependency for domain join to require all config options applied
+      Samba::Option <| |> -> Exec['Join Domain']
     }
   }
 }

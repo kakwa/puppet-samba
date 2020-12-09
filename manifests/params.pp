@@ -9,13 +9,13 @@ class samba::params(
     case $facts['os']['family'] {
       'redhat': {
           $cleanup                = undef
+          # for now, this is not supported by RedHat
           $packagesambadc         = 'samba-dc'
           $packagesambaclassic    = 'samba'
           $packagesambawinbind    = 'samba-winbind'
           $packagesambansswinbind = 'samba-winbind-clients'
           $packagesambapamwinbind = 'samba-winbind-clients'
           $packagesambaclient     = 'samba-client'
-          # for now, this is not supported by Debian
           $servivesambadc         = undef
           $servivesmb             = 'smb'
           $servivewinbind         = 'winbind'
