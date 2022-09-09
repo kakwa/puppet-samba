@@ -55,6 +55,7 @@ class samba::classic(
   $globaloptions                  = {},
   $globalabsentoptions            = [],
   $joinou                         = undef,
+  $join_options                   = '',
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
 ) inherits samba::params{
@@ -334,7 +335,7 @@ class samba::classic(
       exec{ 'Join Domain':
         path    => '/bin:/sbin:/usr/sbin:/usr/bin/',
         unless  => 'net ads testjoin',
-        command => "echo '${adminpassword}'| net ads join -U '${adminuser}' ${ou}",
+        command => "echo '${adminpassword}'| net ads join -U '${adminuser}' ${ou} ${join_options}",
         notify  => Service['SambaWinBind'],
         require => [ Package['SambaClassic'], Service['SambaSmb'] ],
       }
