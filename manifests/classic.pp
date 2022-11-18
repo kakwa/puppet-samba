@@ -94,6 +94,12 @@ class samba::classic(
 
   $_default_realm = pick($default_realm, $realmuppercase)
 
+  if $manage_winbind {
+    $services_to_notify = ['SambaSmb', 'SambaWinBind']
+  }
+  else {
+    $services_to_notify = ['SambaSmb']
+  }
 
   file { '/etc/samba/':
     ensure  => 'directory',
@@ -111,7 +117,7 @@ class samba::classic(
         ensure  => present,
         mode    => '0644',
         content => template("${module_name}/krb5.conf.erb"),
-        notify  => Service['SambaSmb', 'SambaWinBind'],
+        notify  => Service[$services_to_notify];
       }
     }
 
@@ -281,12 +287,6 @@ class samba::classic(
   $mandatoryglobaloptionsindex = prefix(keys($mandatoryglobaloptions),
     '[global]')
 
-  if $manage_winbind {
-    $services_to_notify = ['SambaSmb', 'SambaWinBind']
-  }
-  else {
-    $services_to_notify = ['SambaSmb']
-  }
   samba::option{ $mandatoryglobaloptionsindex:
     options         => $mandatoryglobaloptions,
     section         => 'global',
