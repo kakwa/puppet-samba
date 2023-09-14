@@ -8,11 +8,11 @@ distid = Facter.value(:operatingsystem)
 
 case distid
     when /RedHatEnterprise|CentOS|Fedora|RHEL/
-        if  FileTest.exists?("/usr/bin/yum")
+        if  FileTest.exist?("/usr/bin/yum")
             version = Facter::Util::Resolution.exec('/usr/bin/yum info samba | sed \'s/Version *: \([0-9\.]\+\)/\1/gp;d\' | head -n 1')
         end
     when /Ubuntu|Debian/
-        if  FileTest.exists?("/usr/bin/apt-cache")
+        if  FileTest.exist?("/usr/bin/apt-cache")
             version = Facter::Util::Resolution.exec('apt-cache show samba | sed \'s/Version:.*:\([0-9\.]\+\).*/\1/gp;d\' | head -n 1')
         end
     when 'Archlinux'
@@ -29,4 +29,3 @@ Facter.add("samba_version") do
         version
     end
 end
-
