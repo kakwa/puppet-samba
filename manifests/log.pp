@@ -11,7 +11,7 @@ define samba::log(
   $classliststr = join($classlist, ', ')
 
   if $sambaclassloglevel != undef {
-    unless is_hash($sambaclassloglevel)
+    unless $sambaclassloglevel =~ Hash
     and difference(keys($sambaclassloglevel), $classlist) == [] {
       fail("sambaclassloglevel must be a hash with keys in [${classliststr}]")
     }

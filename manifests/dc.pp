@@ -105,7 +105,7 @@ must be in ["internal", "bindFlat", "bindDLZ"]')
     fail("role must be in [${checkrolestr}]")
   }
 
-  unless is_domain_name($realm){
+  unless ($realm =~ Variant[Stdlib::Fqdn, Stdlib::Dns::Zone]) {
     fail('realm must be a valid domain')
   }
 
