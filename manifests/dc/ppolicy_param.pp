@@ -6,20 +6,18 @@ define samba::dc::ppolicy_param(
   String $value,
 ){
 
-  validate_re(
-    $option,
-    '^--.*$',
-    "option must start with '--' and be \
+  if $option !~ /^--.*$/ {
+    fail("option must start with '--' and be \
 a valid 'samba-tool domain passwordsettings' option",
-  )
+    )
+  }
 
-  validate_re(
-    $show_string,
-    '^.*:$',
-    "show_string must end with ':' \
+  if $show_string !~ /^.*:$/ {
+    fail("show_string must end with ':' \
 and be the string in 'samba-tool domain passwordsettings show' \
 corresponding to option",
-  )
+    )
+  }
 
   exec{"cmd_ppolicy_param ${option}":
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',

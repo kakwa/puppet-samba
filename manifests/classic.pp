@@ -57,19 +57,16 @@ class samba::classic(
   $joinou                         = undef,
   Optional[String] $default_realm = undef,
   Array $additional_realms        = [],
-) inherits samba::params{
-
-
-  unless is_domain_name($realm){
+) inherits samba::params {
+  unless ($realm =~ Variant[Stdlib::Fqdn, Stdlib::Dns::Zone]) {
     fail('realm must be a valid domain')
   }
 
-  unless is_domain_name($realm){
-    fail('realm must be a valid domain')
+  unless ($smbname =~ String[1,15]) {
+    fail('smbname too short or too long')
   }
 
-  validate_slength($smbname, 15)
-  unless is_domain_name("${smbname}.${realm}"){
+  unless ("${smbname}.${realm}" =~ Variant[Stdlib::Fqdn, Stdlib::Dns::Zone]) {
     fail('smbname must be a valid domain')
   }
 
